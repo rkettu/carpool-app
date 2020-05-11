@@ -38,6 +38,7 @@ public class GeoCoderHelper {
 
 
     //You can use this function to get NAME of the CITY only with specific address
+    //You may need this if you want print just a city, not full address
     public String getCity(String address, Context context)
     {
         String city = "";
