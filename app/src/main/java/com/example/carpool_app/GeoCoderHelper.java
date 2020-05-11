@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GeoLocateHelper {
+public class GeoCoderHelper {
 
     //Use this function to get coordinates for specific address
     //If you need latitude only use get(0), If you need longitude only use get(1)
