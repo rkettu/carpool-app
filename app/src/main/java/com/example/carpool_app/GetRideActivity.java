@@ -53,10 +53,16 @@ public class GetRideActivity extends AppCompatActivity {
                 String startPoint = startPointEditText.getText().toString();
                 String destination = destinationEditText.getText().toString();
 
-
-
                 FindRideASync findRideASync = new FindRideASync();
-                findRideASync.FindRideASync(getApplicationContext());
+                findRideASync.FindRideASync(new FindRideInterface() {
+
+                    //Interface to communicate with FindRideASync
+                    @Override
+                    public void getRideData(String s) {
+                        //Template for real interface
+                    }
+                }, getApplicationContext());
+
                 findRideASync.execute(startPoint, destination);
             }
         });
