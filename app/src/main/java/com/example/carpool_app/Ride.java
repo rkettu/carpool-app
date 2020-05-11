@@ -21,6 +21,9 @@ public class Ride implements Serializable {
     private String startCity;
     private String endCity;
 
+    //no-arg constructor so doc.toObject can deserialize
+    public Ride(){ }
+
     // Constructor with all parameters - required for document<->object
     // Use when creating a ride
     public Ride(String uid, String duration, long leaveTime,

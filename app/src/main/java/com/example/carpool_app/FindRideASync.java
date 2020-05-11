@@ -43,6 +43,7 @@ public class FindRideASync extends AsyncTask<String, Integer, String> {
         super.onPreExecute();
     }
 
+    //If you have to do something in apps background
     @Override
     protected String doInBackground(String... strings)
     {
@@ -53,6 +54,8 @@ public class FindRideASync extends AsyncTask<String, Integer, String> {
         float startLongitude = getCoordinates(startPoint).get(1);
         float destinationLatitude = getCoordinates(destination).get(0);
         float destinationLongitude = getCoordinates(destination).get(1);
+
+        //TODO get time in millis
 
         try
         {

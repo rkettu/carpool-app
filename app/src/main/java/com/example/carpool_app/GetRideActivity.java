@@ -56,7 +56,7 @@ public class GetRideActivity extends AppCompatActivity {
                 FindRideASync findRideASync = new FindRideASync();
                 findRideASync.FindRideASync(new FindRideInterface() {
 
-                    //Interface to communicate with FindRideASync
+                    //Interface to communicate with FindRideASync class
                     @Override
                     public void getRideData(String s) {
                         //Template for real interface
