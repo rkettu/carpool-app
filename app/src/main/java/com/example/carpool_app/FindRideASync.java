@@ -2,6 +2,8 @@ package com.example.carpool_app;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
+
 import java.util.ArrayList;
 
 public class FindRideASync extends AsyncTask<String, Integer, String> {
@@ -29,6 +31,8 @@ public class FindRideASync extends AsyncTask<String, Integer, String> {
         float startLongitude = getCoordinates(startPoint).get(1);
         float destinationLatitude = getCoordinates(destination).get(0);
         float destinationLongitude = getCoordinates(destination).get(1);
+
+        Log.d(TAG, "doInBackground: " + startLatitude + " " + startLongitude + " " + destinationLatitude + " " + destinationLongitude);
 
         return null;
     }
