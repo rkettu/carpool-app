@@ -12,4 +12,11 @@
 /captures
 .externalNativeBuild
 .cxx
+
 /app/src/main/res/values/apikey.xml
+
+
+app/google-services.json
+
+*.json
+

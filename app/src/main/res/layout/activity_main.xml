@@ -4,23 +4,142 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_login"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-    <Button
-        android:id="@+id/main_SetRide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SetRideActivity"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/main_btnSettings"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="AppSettings"
         />
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/main_appLogo"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="50dp"
+        android:alpha="100"
+        android:src="@mipmap/ic_launcher"
+        app:civ_border_color="@color/white"
+        app:civ_border_width="2dp"
+        app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="@+id/main_guideline_left"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ListView
+        android:id="@+id/main_settingsListView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/main_btnSettings"
+        app:layout_constraintRight_toLeftOf="@id/main_guideline_right"
+        app:layout_constraintLeft_toRightOf="@id/main_appLogo"
+        />
+
+    <Button
+        android:id="@+id/main_btnBookedTrips"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/custom_button2"
+        android:onClick="SelectBookedTrips"
+        android:text="Booked trips"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="@+id/main_guideline_middle"
+        app:layout_constraintStart_toStartOf="@+id/main_guideline_left"
+        app:layout_constraintTop_toBottomOf="@id/main_appLogo"
+        android:fontFamily="@font/montserrat_medium"
+        android:textSize="15sp"/>
+
+
+    <Button
+        android:id="@+id/main_btnOfferedRides"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:text="Offered rides"
+        android:background="@drawable/custom_button2"
+        android:textColor="@color/white"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="12dp"
+        app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
+        app:layout_constraintStart_toEndOf="@id/main_guideline_middle"
+        app:layout_constraintTop_toBottomOf="@+id/main_appLogo"
+        android:onClick="SelectOfferedTrips"
+        android:fontFamily="@font/montserrat_medium"
+        android:textSize="15sp"/>
+
+    <Button
+        android:id="@+id/main_btnGetRide"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/custom_button2"
+        android:drawableTop="@drawable/ic_noun_hitchhiking"
+        android:paddingTop="120dp"
+        android:drawablePadding="-120dp"
+        android:text="Get A Ride"
+        android:textColor="@color/white"
+        android:textSize="21sp"
+        app:layout_constraintEnd_toStartOf="@+id/main_guideline_middle"
+        app:layout_constraintStart_toEndOf="@+id/main_guideline_left"
+        app:layout_constraintTop_toBottomOf="@+id/main_btnBookedTrips"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        android:onClick="SelectGetARide"
+        android:fontFamily="@font/montserrat_medium"
+        />
+
+    <Button
+        android:id="@+id/main_btnOfferRide"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/custom_button2"
+        android:drawableTop="@drawable/ic_time_to_leave_black_50dp"
+        android:paddingTop="120dp"
+        android:drawablePadding="-120dp"
+        android:text="Offer A Ride"
+        android:textColor="@color/white"
+        android:textSize="21sp"
+        android:gravity="center"
+        app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
+        app:layout_constraintStart_toEndOf="@id/main_guideline_middle"
+        app:layout_constraintTop_toBottomOf="@id/main_btnOfferedRides"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:onClick="SelectOfferARide"
+        android:fontFamily="@font/montserrat_medium"
+        />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/main_guideline_middle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/main_guideline_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="24dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/main_guideline_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="24dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
