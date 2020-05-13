@@ -3,6 +3,7 @@ package com.example.carpool_app;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.util.Log;
 
 import java.io.IOException;
@@ -47,6 +48,26 @@ public class GeoCoderHelper {
             List<Address> addresses = geocoder.getFromLocationName(address, 1);
             city = addresses.get(0).getLocality();
             return city;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    //Palauttaa täydellisen osoitteen oman sijainnin mukaan esim: "Kaarnatie 5, 90530 Oulu, Suomi"
+    public String fullAddress(Location location, Context context)
+    {
+        String geoAddress = "";
+        Log.d("TESTI", "MORO " + location.toString());
+        Geocoder geocoder = new Geocoder(context);
+        try{
+            Log.d("TESTI", "MORO " + location.getLatitude());
+            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            geoAddress = addresses.get(0).getAddressLine(0);
+            return geoAddress;
         }
         catch (IOException e)
         {

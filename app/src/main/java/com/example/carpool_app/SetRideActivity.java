@@ -6,11 +6,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -30,6 +32,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -49,6 +52,7 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
 
     //Oman sijainnin asetukset
     private FusedLocationProviderClient fusedLocationClient;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,20 +133,19 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
             if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-                Toast.makeText(getApplicationContext(),"juuuuuu", Toast.LENGTH_SHORT).show();
             }
             else{
-                final Geocoder geocoder = new Geocoder(this);
                 fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
                         if(location != null){
                             try {
-                                List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(),1);
-                                String geoAddress = addresses.get(0).getAddressLine(0);
+                                GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
+                                String geoAddress = geoCoderHelper.fullAddress(location, context);
+                                Log.d("TESTI", "Strin geoAddress: " + geoAddress);
                                 lahtoEditori.setQuery(geoAddress, false);
                             }
-                            catch (IOException e){
+                            catch (Exception e){
                                 e.printStackTrace();
                                 Toast.makeText(getApplicationContext(),"Location error", Toast.LENGTH_SHORT).show();
                             }
