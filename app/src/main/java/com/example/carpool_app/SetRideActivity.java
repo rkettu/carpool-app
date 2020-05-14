@@ -40,7 +40,10 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
 
     private GoogleMap mMap;
 
-    private SearchView lahtoEditori;
+    private SearchView lahtoEditori, loppuEditori;
+
+    //Muuttujat
+    private String strLahto, strLoppu;
 
     //Layoutin valikon animaation asetukset
     Animation ttbAnim, bttAnim;
@@ -52,7 +55,6 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
 
     //Oman sijainnin asetukset
     private FusedLocationProviderClient fusedLocationClient;
-    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +64,11 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
         //Buttonien määritykset
         sijaintiButton = findViewById(R.id.set_ride_sijaintiButton);
         sijaintiButton.setOnClickListener(this);
+        findViewById(R.id.set_ride_haeButton).setOnClickListener(this);
 
         //editorit
         lahtoEditori = (SearchView) findViewById(R.id.set_ride_lahtoEdit);
+        loppuEditori = (SearchView) findViewById(R.id.set_ride_maaranpaaEdit);
 
         //Kartan asetus set_ride_mapViewiin
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -127,7 +131,32 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.set_ride_sijaintiButton)
+        if(v.getId() == R.id.set_ride_haeButton)
+        {
+            //Reitin haku napin toiminnallisuus
+            strLahto = lahtoEditori.getQuery().toString();
+            strLoppu = loppuEditori.getQuery().toString();
+
+            if (strLahto.trim().equals("") || strLoppu.trim().equals(""))
+            {
+                Toast.makeText(getApplicationContext(),"Valitse lähtö- ja määränpää pisteet", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                try
+                {
+                    double startLat = getCoordinates(strLahto).get(0);
+                    double startLon = getCoordinates(strLahto).get(1);
+                    double stopLat = getCoordinates(strLoppu).get(0);
+                    double stopLon = getCoordinates(strLoppu).get(1);
+                    Log.d("TESTI", "strlahto: " + startLat);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        //Sijainti napin toiminnallisuus
+        else if(v.getId() == R.id.set_ride_sijaintiButton)
         {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
             if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
@@ -141,7 +170,7 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
                         if(location != null){
                             try {
                                 GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
-                                String geoAddress = geoCoderHelper.fullAddress(location, context);
+                                String geoAddress = geoCoderHelper.fullAddress(location, SetRideActivity.this);
                                 Log.d("TESTI", "Strin geoAddress: " + geoAddress);
                                 lahtoEditori.setQuery(geoAddress, false);
                             }
@@ -158,5 +187,12 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
             }
         }
 
+    }
+
+    //Get addresses latitude and longitude using GeoCoderHelper class
+    private ArrayList<Float> getCoordinates(String address)
+    {
+        GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
+        return geoCoderHelper.getCoordinates(address, this);
     }
 }

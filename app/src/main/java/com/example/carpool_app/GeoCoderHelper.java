@@ -61,16 +61,18 @@ public class GeoCoderHelper {
     public String fullAddress(Location location, Context context)
     {
         String geoAddress = "";
-        Log.d("TESTI", "MORO " + location.toString());
+        Log.d("TESTI", "MORO " + location.getLatitude() + location.getLongitude());
         Geocoder geocoder = new Geocoder(context);
         try{
-            Log.d("TESTI", "MORO " + location.getLatitude());
-            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-            geoAddress = addresses.get(0).getAddressLine(0);
+            Log.d("TESTI", "fullAddress try");
+            List<Address> addresses2 = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            geoAddress = addresses2.get(0).getAddressLine(0);
+            Log.d("TESTI", "geocooderi geoaddress: " + geoAddress);
             return geoAddress;
         }
         catch (IOException e)
         {
+            Log.d("TESTI", "fullAddress catch");
             e.printStackTrace();
         }
         return null;
