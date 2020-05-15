@@ -6,11 +6,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -30,6 +32,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -37,7 +40,10 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
 
     private GoogleMap mMap;
 
-    private SearchView lahtoEditori;
+    private SearchView lahtoEditori, loppuEditori;
+
+    //Muuttujat
+    private String strLahto, strLoppu;
 
     //Layoutin valikon animaation asetukset
     Animation ttbAnim, bttAnim;
@@ -58,9 +64,11 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
         //Buttonien määritykset
         sijaintiButton = findViewById(R.id.set_ride_sijaintiButton);
         sijaintiButton.setOnClickListener(this);
+        findViewById(R.id.set_ride_haeButton).setOnClickListener(this);
 
         //editorit
         lahtoEditori = (SearchView) findViewById(R.id.set_ride_lahtoEdit);
+        loppuEditori = (SearchView) findViewById(R.id.set_ride_maaranpaaEdit);
 
         //Kartan asetus set_ride_mapViewiin
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -123,26 +131,50 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.set_ride_sijaintiButton)
+        if(v.getId() == R.id.set_ride_haeButton)
+        {
+            //Reitin haku napin toiminnallisuus
+            strLahto = lahtoEditori.getQuery().toString();
+            strLoppu = loppuEditori.getQuery().toString();
+
+            if (strLahto.trim().equals("") || strLoppu.trim().equals(""))
+            {
+                Toast.makeText(getApplicationContext(),"Valitse lähtö- ja määränpää pisteet", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                try
+                {
+                    double startLat = getCoordinates(strLahto).get(0);
+                    double startLon = getCoordinates(strLahto).get(1);
+                    double stopLat = getCoordinates(strLoppu).get(0);
+                    double stopLon = getCoordinates(strLoppu).get(1);
+                    Log.d("TESTI", "strlahto: " + startLat);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        //Sijainti napin toiminnallisuus
+        else if(v.getId() == R.id.set_ride_sijaintiButton)
         {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
             if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-                Toast.makeText(getApplicationContext(),"juuuuuu", Toast.LENGTH_SHORT).show();
             }
             else{
-                final Geocoder geocoder = new Geocoder(this);
                 fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
                         if(location != null){
                             try {
-                                List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(),1);
-                                String geoAddress = addresses.get(0).getAddressLine(0);
+                                GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
+                                String geoAddress = geoCoderHelper.fullAddress(location, SetRideActivity.this);
+                                Log.d("TESTI", "Strin geoAddress: " + geoAddress);
                                 lahtoEditori.setQuery(geoAddress, false);
                             }
-                            catch (IOException e){
+                            catch (Exception e){
                                 e.printStackTrace();
                                 Toast.makeText(getApplicationContext(),"Location error", Toast.LENGTH_SHORT).show();
                             }
@@ -155,5 +187,12 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
             }
         }
 
+    }
+
+    //Get addresses latitude and longitude using GeoCoderHelper class
+    private ArrayList<Float> getCoordinates(String address)
+    {
+        GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
+        return geoCoderHelper.getCoordinates(address, this);
     }
 }
