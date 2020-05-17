@@ -3,6 +3,7 @@ package com.example.carpool_app;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,9 +14,17 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthEmailException;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,10 +65,9 @@ public class SignUpActivity extends AppCompatActivity {
         fnameEdit = findViewById(R.id.signup_fnameEdit);
         lnameEdit = findViewById(R.id.signup_lnameEdit);
         phoneEdit = findViewById(R.id.signup_phoneEdit);
-        emailEdit = findViewById(R.id.signup_phoneEdit);
+        emailEdit = findViewById(R.id.signup_emailEdit);
         passEdit = findViewById(R.id.signup_passEdit);
         confirmPassEdit = findViewById(R.id.signup_confirmPassEdit);
-        editTextList.addAll(fnameEdit, lnameEdit, phoneEdit, emailEdit, passEdit, confirmPassEdit);
     }
 
     // Called on clicking confirm signup
@@ -76,7 +84,13 @@ public class SignUpActivity extends AppCompatActivity {
         final String fname = fnameEdit.getText().toString();
         final String lname = lnameEdit.getText().toString();
 
-        fieldDataList.add(email, pass1, pass2, phone, fname, lname);
+        fieldDataList.add(email);
+        fieldDataList.add(pass1);
+        fieldDataList.add(pass2);
+        fieldDataList.add(phone);
+        fieldDataList.add(fname);
+        fieldDataList.add(lname);
+
 
         // Checking that there are no empty fields
         for(String fieldText : fieldDataList)
@@ -112,12 +126,34 @@ public class SignUpActivity extends AppCompatActivity {
                     // Setting first name as FirebaseUsers display name
                     UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
                             .setDisplayName(fname).build();
-                    FirebaseAuth.getInstance().getCurrentUser().updateProfile(profileUpdate);
+                    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                    currentUser.updateProfile(profileUpdate);
 
-                    // TODO: Add user as document to firestore REMEMBER ERROR HANDLING
-                    // TODO: GOTO edit profile (hint: prefill fields with info from intent.putExtra)
+                    String uid = currentUser.getUid();
 
+                    User user = new User(fname, lname, phone, email, "", "", uid, null, 0, 0);
+                    user.setProfCreated(false);
 
+                    // Moving to edit profile activity...
+                    Intent i = new Intent(getApplicationContext(), EditProfileActivity.class);
+                    i.putExtra("USERINFO", user);
+                    startActivity(i);
+
+                } else /* failed to create user */ {
+                    try {
+                        throw task.getException();
+                    } catch(FirebaseAuthUserCollisionException e) {
+                        Toast.makeText(SignUpActivity.this, "Account already exists for that email", Toast.LENGTH_SHORT).show();
+                    } catch(FirebaseAuthWeakPasswordException e) {
+                        Toast.makeText(SignUpActivity.this, "Password too weak", Toast.LENGTH_SHORT).show();
+                    } catch(FirebaseAuthEmailException e) {
+                        Toast.makeText(SignUpActivity.this, "Invalid email address", Toast.LENGTH_SHORT).show();
+                    } catch(Exception e) {
+                        Log.d(TAG, "Unexpected exception :: sending to Firebase Crashlytics");
+                        FirebaseCrashlytics.getInstance().recordException(e);
+                        e.printStackTrace();
+                        Toast.makeText(SignUpActivity.this, "Unexpected error. Sending error report", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
