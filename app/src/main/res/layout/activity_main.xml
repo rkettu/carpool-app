@@ -90,6 +90,7 @@
         app:layout_constraintStart_toEndOf="@+id/main_guideline_left"
         app:layout_constraintTop_toBottomOf="@+id/main_btnBookedTrips"
         app:layout_constraintBottom_toBottomOf="parent"
+
         android:onClick="SelectGetARide"
         android:fontFamily="@font/montserrat_medium"
         />
@@ -139,5 +140,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="24dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
