@@ -1,5 +1,6 @@
 package com.example.carpool_app;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.RestrictionEntry;
 import android.os.AsyncTask;
@@ -19,16 +20,20 @@ import com.google.firebase.firestore.core.Query;
 import java.util.ArrayList;
 
 interface FindRideInterface{
-    void getRideData(String s);
+    void getRideData(Ride ride);
+    void getUserData(User user);
+    void getErrorData(String data);
 }
 
-public class FindRideASync extends AsyncTask<String, Integer, String> {
+public class FindRideASync extends AsyncTask<String, Integer, Void> {
 
     private FindRideInterface findRideInterface;
     private Context context;
     private CollectionReference rideReference = FirebaseFirestore.getInstance().collection("rides");
     private CollectionReference userReference = FirebaseFirestore.getInstance().collection("users");
     private final static String TAG = "FindRideASync";
+    private float startLatitude, startLongitude, destinationLatitude, destinationLongitude;
+    private ProgressDialog progressDialog;
 
     //ASyncTasks constructor
     public void FindRideASync(FindRideInterface findRideInterface, Context context)
@@ -41,29 +46,32 @@ public class FindRideASync extends AsyncTask<String, Integer, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Finding matching routes");
+        progressDialog.show();
     }
 
     //If you have to do something in apps background
     @Override
-    protected String doInBackground(String... strings)
+    protected Void doInBackground(String... strings)
     {
         String startPoint = strings[0];
         String destination = strings[1];
 
-        float startLatitude = getCoordinates(startPoint).get(0);
-        float startLongitude = getCoordinates(startPoint).get(1);
-        float destinationLatitude = getCoordinates(destination).get(0);
-        float destinationLongitude = getCoordinates(destination).get(1);
+        startLatitude = getCoordinates(startPoint).get(0);
+        startLongitude = getCoordinates(startPoint).get(1);
+        destinationLatitude = getCoordinates(destination).get(0);
+        destinationLongitude = getCoordinates(destination).get(1);
 
         //TODO get time in millis
-
         try
         {
-            getMatchingRides(startLatitude, startLongitude, destinationLatitude, destinationLongitude);
+             getMatchingRides(startLatitude, startLongitude, destinationLatitude, destinationLongitude);
         }
         catch (Exception e)
         {
             e.printStackTrace();
+            progressDialog.dismiss();
         }
 
         return null;
@@ -71,12 +79,10 @@ public class FindRideASync extends AsyncTask<String, Integer, String> {
 
     //Do something on post execute
     @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
-        //example of using interface in post execute
-        if(findRideInterface != null){
-            findRideInterface.getRideData(s);
-        }
+    protected void onPostExecute(Void aVoid)
+    {
+        super.onPostExecute(aVoid);
+        progressDialog.dismiss();
     }
 
     //TODO find matching routes from database
@@ -95,6 +101,7 @@ public class FindRideASync extends AsyncTask<String, Integer, String> {
                            //Adds data to ride class from database
                            Ride ride = rideDoc.toObject(Ride.class);
                            final String rideUid = ride.getUid();
+                           findRideInterface.getRideData(ride);
 
                            //uses uid to get correct provider data from database
                            userReference.document(rideUid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -107,10 +114,14 @@ public class FindRideASync extends AsyncTask<String, Integer, String> {
                                        {
                                            //Adds data to user class from database
                                            User user = userDoc.toObject(User.class);
+                                           findRideInterface.getUserData(user);
                                        }
                                    }
-                                   catch (Exception e){
+                                   catch (Exception e)
+                                   {
                                        //Cant find userDoc DocumentSnapshot
+                                       findRideInterface.getErrorData(e.toString());
+                                       progressDialog.dismiss();
                                        e.printStackTrace();
                                        Log.d(TAG, "userReference" + e.toString());
                                    }
@@ -120,13 +131,19 @@ public class FindRideASync extends AsyncTask<String, Integer, String> {
                        catch (Exception e)
                        {
                            //Cannot Add data to ride class
+                           findRideInterface.getErrorData(e.toString());
+                           progressDialog.dismiss();
                            e.printStackTrace();
                            Log.d(TAG, "rideReference" + e.toString());
                        }
                    }
                }
-               else{
+               else
+               {
                    //Task is not successful
+                   progressDialog.dismiss();
+                   //TODO if task if not successful
+                   //findRideInterface.getErrorData("Failed");
                }
            }
        });

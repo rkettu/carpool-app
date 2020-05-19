@@ -13,10 +13,8 @@
 .externalNativeBuild
 .cxx
 
-/app/src/main/res/values/apikey.xml
-
-
-app/google-services.json
+/app/google-services.json
+/app/src/main/res/values/api_key.xml
 
 *.json
 

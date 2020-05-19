@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GeoCoderHelper {
-
     //Use this function to get coordinates for specific address
     //If you need latitude only use get(0), If you need longitude only use get(1)
     public ArrayList<Float> getCoordinates(String address, Context context)
@@ -36,7 +35,6 @@ public class GeoCoderHelper {
         }
         return null;
     }
-
 
     //You can use this function to get NAME of the CITY only with specific address
     //You may need this if you want print just a city, not full address
