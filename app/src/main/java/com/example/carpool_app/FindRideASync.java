@@ -22,6 +22,7 @@ import java.util.ArrayList;
 interface FindRideInterface{
     void getRideData(Ride ride);
     void getUserData(User user);
+    void getErrorData(String data);
 }
 
 public class FindRideASync extends AsyncTask<String, Integer, Void> {
@@ -47,7 +48,6 @@ public class FindRideASync extends AsyncTask<String, Integer, Void> {
         super.onPreExecute();
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Finding matching routes");
-        progressDialog.setCancelable(false);
         progressDialog.show();
     }
 
@@ -120,6 +120,8 @@ public class FindRideASync extends AsyncTask<String, Integer, Void> {
                                    catch (Exception e)
                                    {
                                        //Cant find userDoc DocumentSnapshot
+                                       findRideInterface.getErrorData(e.toString());
+                                       progressDialog.dismiss();
                                        e.printStackTrace();
                                        Log.d(TAG, "userReference" + e.toString());
                                    }
@@ -129,13 +131,19 @@ public class FindRideASync extends AsyncTask<String, Integer, Void> {
                        catch (Exception e)
                        {
                            //Cannot Add data to ride class
+                           findRideInterface.getErrorData(e.toString());
+                           progressDialog.dismiss();
                            e.printStackTrace();
                            Log.d(TAG, "rideReference" + e.toString());
                        }
                    }
                }
-               else{
+               else
+               {
                    //Task is not successful
+                   progressDialog.dismiss();
+                   //TODO if task if not successful
+                   //findRideInterface.getErrorData("Failed");
                }
            }
        });

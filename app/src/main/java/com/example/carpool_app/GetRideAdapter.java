@@ -22,7 +22,9 @@ public class GetRideAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     public static final String TAG = "GetRideAdapter";
 
-    public GetRideAdapter(){}
+    public GetRideAdapter(){
+        //Needs constructor for notifyDataSetChanges function
+    }
 
     public GetRideAdapter(Context context, ArrayList<User> userArrayList, ArrayList<Ride> rideArrayList) {
         this.context = context;
@@ -53,7 +55,6 @@ public class GetRideAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View view, ViewGroup parent)
     {
-
         //initializing list item elements
         final ViewHolder viewHolder;
         if(view == null)
@@ -72,7 +73,6 @@ public class GetRideAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
 
-        Log.d(TAG, "getView: taalla ollaan adapterissa");
         //printing data from array lists
         viewHolder.startPointTextView.setText(rideArrayList.get(position).getStartCity());
         viewHolder.destinationTextView.setText(rideArrayList.get(position).getEndCity());

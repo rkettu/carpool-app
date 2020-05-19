@@ -34,7 +34,7 @@ public class GetRideActivity extends AppCompatActivity {
         initGetRideButtons();
     }
 
-    //Initializing all xml elements, TextViews, EditText and ListView + sets adapter to ListView
+    //Initializing all xml, TextViews, EditText and ListView + sets adapter to ListView
     private void initGetRideLayoutElements(){
         searchRideButton = findViewById(R.id.getRide_btnSearch);
         backButton = findViewById(R.id.getRide_btnBack);
@@ -45,6 +45,8 @@ public class GetRideActivity extends AppCompatActivity {
         estStartDateEditText = findViewById(R.id.getRide_estimateStartTimeEditText);
         estEndDateEditText = findViewById(R.id.getRide_estimateEndTimeEditText);
         rideListView = findViewById(R.id.getRide_rideListView);
+        startPointEditText.setText("Oulu");
+        destinationEditText.setText("Helsinki");
 
         getRideAdapter = new GetRideAdapter(this, userArrayList, rideArrayList);
         rideListView.setAdapter(getRideAdapter);
@@ -70,30 +72,33 @@ public class GetRideActivity extends AppCompatActivity {
                 FindRideASync findRideASync = new FindRideASync();
                 findRideASync.FindRideASync(new FindRideInterface() {
 
+                    @Override
+                    public void getErrorData(String errorMessage){
+                        //TODO if error occurs
+                    }
+
                     //Interface to communicate with FindRideASync class, gets data for ride details
                     @Override
                     public void getRideData(final Ride ride) {
+                        rideArrayList.add(ride);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                rideArrayList.add(ride);
                                 getRideAdapter.notifyDataSetChanged();
                             }
                         });
-                        Log.d(TAG, "getRideData: taalla ollaan rajapinnassa" + ride.getEndCity());
                     }
 
                     //Interface to communicate with FindRideASync class, gets data for user details
                     @Override
                     public void getUserData(final User user){
+                        userArrayList.add(user);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                userArrayList.add(user);
                                 getRideAdapter.notifyDataSetChanged();
                             }
                         });
-                        Log.d(TAG, "getUserData: taalla ollaan rajapinnassa" + user.getFname());
                     }
                 }, GetRideActivity.this);
                 findRideASync.execute(startPoint, destination);
