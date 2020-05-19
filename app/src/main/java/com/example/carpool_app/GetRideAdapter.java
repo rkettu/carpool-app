@@ -73,7 +73,7 @@ public class GetRideAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
 
-        //printing data from array lists
+        //printing data from array lists to list view
         viewHolder.startPointTextView.setText(rideArrayList.get(position).getStartCity());
         viewHolder.destinationTextView.setText(rideArrayList.get(position).getEndCity());
         viewHolder.rideProviderTextView.setText(userArrayList.get(position).getFname());
@@ -87,6 +87,7 @@ public class GetRideAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 //TODO go new activity for more info
+                //putExtra elements from rideArrayList and userArrayList from their position in list view
             }
         });
 

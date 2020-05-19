@@ -55,7 +55,7 @@ public class GetRideActivity extends AppCompatActivity {
     //Initialising two buttons, Search Rides and Back Arrow
     private void initGetRideButtons()
     {
-        //TODO find trip in asynctask
+        //TODO timestamps from editTexts to ASyncTask in millis
         //if you press Search Button
         searchRideButton.setOnClickListener(new View.OnClickListener() {
             @Override
