@@ -14,5 +14,6 @@
 .cxx
 
 app/google-services.json
+app/src/main/res/values/apikey.xml
 
 *.json

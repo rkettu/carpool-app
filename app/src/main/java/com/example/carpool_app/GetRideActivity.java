@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GetRideActivity extends AppCompatActivity {
@@ -20,6 +21,9 @@ public class GetRideActivity extends AppCompatActivity {
     private EditText startPointEditText, destinationEditText, startDateEditText, endDateEditText, estStartDateEditText, estEndDateEditText;
     private ListView rideListView;
     private final static String TAG = "GetRideActivity";
+    private ArrayList<User> userArrayList = new ArrayList<>();
+    private ArrayList<Ride> rideArrayList = new ArrayList<>();
+    private GetRideAdapter getRideAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +49,8 @@ public class GetRideActivity extends AppCompatActivity {
     //Initialising two buttons, Search Rides and Back Arrow
     private void initGetRideButtons()
     {
+        getRideAdapter = new GetRideAdapter(this, userArrayList, rideArrayList);
+        rideListView.setAdapter(getRideAdapter);
         //TODO find trip in asynctask
         //if you press Search Button
         searchRideButton.setOnClickListener(new View.OnClickListener() {
@@ -58,8 +64,17 @@ public class GetRideActivity extends AppCompatActivity {
 
                     //Interface to communicate with FindRideASync class
                     @Override
-                    public void getRideData(String s) {
-                        //Template for real interface
+                    public void getRideData(Ride ride) {
+                        rideArrayList.add(ride);
+                        getRideAdapter.notifyDataSetChanged();
+                        Log.d(TAG, "getRideData: taalla ollaan rajapinnassa" + ride.getEndCity());
+                    }
+
+                    @Override
+                    public void getUserData(User user){
+                        userArrayList.add(user);
+                        getRideAdapter.notifyDataSetChanged();
+                        Log.d(TAG, "getUserData: taalla ollaan rajapinnassa" + user.getFname());
                     }
                 }, getApplicationContext());
 
