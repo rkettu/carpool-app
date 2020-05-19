@@ -1,5 +1,6 @@
 package com.example.carpool_app;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.RestrictionEntry;
 import android.os.AsyncTask;
@@ -31,6 +32,7 @@ public class FindRideASync extends AsyncTask<String, Integer, Void> {
     private CollectionReference userReference = FirebaseFirestore.getInstance().collection("users");
     private final static String TAG = "FindRideASync";
     private float startLatitude, startLongitude, destinationLatitude, destinationLongitude;
+    private ProgressDialog progressDialog;
 
     //ASyncTasks constructor
     public void FindRideASync(FindRideInterface findRideInterface, Context context)
@@ -43,6 +45,10 @@ public class FindRideASync extends AsyncTask<String, Integer, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Finding matching routes");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
     }
 
     //If you have to do something in apps background
@@ -58,7 +64,6 @@ public class FindRideASync extends AsyncTask<String, Integer, Void> {
         destinationLongitude = getCoordinates(destination).get(1);
 
         //TODO get time in millis
-
         try
         {
              getMatchingRides(startLatitude, startLongitude, destinationLatitude, destinationLongitude);
@@ -66,6 +71,7 @@ public class FindRideASync extends AsyncTask<String, Integer, Void> {
         catch (Exception e)
         {
             e.printStackTrace();
+            progressDialog.dismiss();
         }
 
         return null;
@@ -75,7 +81,8 @@ public class FindRideASync extends AsyncTask<String, Integer, Void> {
     @Override
     protected void onPostExecute(Void aVoid)
     {
-
+        super.onPostExecute(aVoid);
+        progressDialog.dismiss();
     }
 
     //TODO find matching routes from database

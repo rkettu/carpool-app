@@ -22,6 +22,8 @@ public class GetRideAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     public static final String TAG = "GetRideAdapter";
 
+    public GetRideAdapter(){}
+
     public GetRideAdapter(Context context, ArrayList<User> userArrayList, ArrayList<Ride> rideArrayList) {
         this.context = context;
         this.userArrayList = userArrayList;
@@ -35,7 +37,7 @@ public class GetRideAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 0;
+        return userArrayList.size();
     }
 
     @Override

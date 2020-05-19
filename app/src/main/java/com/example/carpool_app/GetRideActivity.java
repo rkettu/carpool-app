@@ -34,6 +34,7 @@ public class GetRideActivity extends AppCompatActivity {
         initGetRideButtons();
     }
 
+    //Initializing all xml elements, TextViews, EditText and ListView + sets adapter to ListView
     private void initGetRideLayoutElements(){
         searchRideButton = findViewById(R.id.getRide_btnSearch);
         backButton = findViewById(R.id.getRide_btnBack);
@@ -44,45 +45,62 @@ public class GetRideActivity extends AppCompatActivity {
         estStartDateEditText = findViewById(R.id.getRide_estimateStartTimeEditText);
         estEndDateEditText = findViewById(R.id.getRide_estimateEndTimeEditText);
         rideListView = findViewById(R.id.getRide_rideListView);
+
+        getRideAdapter = new GetRideAdapter(this, userArrayList, rideArrayList);
+        rideListView.setAdapter(getRideAdapter);
     }
 
     //Initialising two buttons, Search Rides and Back Arrow
     private void initGetRideButtons()
     {
-        getRideAdapter = new GetRideAdapter(this, userArrayList, rideArrayList);
-        rideListView.setAdapter(getRideAdapter);
         //TODO find trip in asynctask
         //if you press Search Button
         searchRideButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //clearing array lists, if you press button twice
+                userArrayList.clear();
+                rideArrayList.clear();
+
+                //takes start point and destination to String, so we can use them on search
                 String startPoint = startPointEditText.getText().toString();
                 String destination = destinationEditText.getText().toString();
 
+                //ASyncTask, where we find matching rides for our start point and destination
                 FindRideASync findRideASync = new FindRideASync();
                 findRideASync.FindRideASync(new FindRideInterface() {
 
-                    //Interface to communicate with FindRideASync class
+                    //Interface to communicate with FindRideASync class, gets data for ride details
                     @Override
-                    public void getRideData(Ride ride) {
-                        rideArrayList.add(ride);
-                        getRideAdapter.notifyDataSetChanged();
+                    public void getRideData(final Ride ride) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                rideArrayList.add(ride);
+                                getRideAdapter.notifyDataSetChanged();
+                            }
+                        });
                         Log.d(TAG, "getRideData: taalla ollaan rajapinnassa" + ride.getEndCity());
                     }
 
+                    //Interface to communicate with FindRideASync class, gets data for user details
                     @Override
-                    public void getUserData(User user){
-                        userArrayList.add(user);
-                        getRideAdapter.notifyDataSetChanged();
+                    public void getUserData(final User user){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                userArrayList.add(user);
+                                getRideAdapter.notifyDataSetChanged();
+                            }
+                        });
                         Log.d(TAG, "getUserData: taalla ollaan rajapinnassa" + user.getFname());
                     }
-                }, getApplicationContext());
-
+                }, GetRideActivity.this);
                 findRideASync.execute(startPoint, destination);
             }
         });
 
-        //if you press Back Arrow
+        //if you press Back Arrow on top of activity
         backButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
