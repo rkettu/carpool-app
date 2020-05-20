@@ -237,6 +237,8 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
         return url;
     }
 
+
+    //SetRideTaskLoadedCallbackin onTaskDone, piirtää reitin karttaan jos reitin haku onnistuu.
     @Override
     public void onTaskDone(Object... values) {
         if(currentPolyline!=null)
