@@ -131,7 +131,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                     String uid = currentUser.getUid();
 
-                    User user = new User(fname, lname, phone, email, "", "", uid, null, 0, 0);
+                    User user = new User(fname, lname, phone, email, "This is my bio", Constant.defaultProfileImageAddress, uid, null, 0, 0);
                     user.setProfCreated(false);
 
                     // Moving to edit profile activity...

@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -42,7 +43,8 @@ public class EditProfileActivity extends AppCompatActivity {
     EditText bioEdit;
     EditText passEdit;
     EditText passConfEdit;
-    User user;
+    User user = null;
+    String uid = null;
 
     ArrayList<EditText> textEditArray;
 
@@ -72,6 +74,73 @@ public class EditProfileActivity extends AppCompatActivity {
         textEditArray.add(cellEdit);
         textEditArray.add(bioEdit);
 
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // Attempting to fill fields with user's info...
+        user = (User) getIntent().getSerializableExtra("USERINFO");
+        if(user != null)
+        {
+            try {
+                // Loading profile image...
+                Picasso.with(EditProfileActivity.this).load(user.getImgUri()).into(profileImage);
+            }
+            fNameEdit.setText(user.getFname());
+            lNameEdit.setText(user.getLname());
+            eMailEdit.setText(user.getEmail());
+            cellEdit.setText(user.getPhone());
+            bioEdit.setText(user.getBio());
+        } else {
+            // No user info? Generating User instance with placeholder variables...
+            user = new User("Fname", "Lname", "0450450450", "placeholder", "placeholder",
+                    Constant.defaultProfileImageAddress, uid, null, 0, 0);
+        }
+
+        applyButton = findViewById(R.id.editprofile_saveProfileDetailButton);
+        applyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ApplyChanges();
+            }
+        });
+    }
+
+    // Function for saving changes made to profile and updating them to database
+    // Also sets user logged in to True on success
+    private void ApplyChanges()
+    {
+        boolean hasEmptyFields = false;
+
+        for(EditText et : textEditArray)
+        {
+            if(et.getText().equals(""))
+            {
+                // Some text field is empty...
+                Toast.makeText(EditProfileActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        // All necessary fields are filled...
+        // Attempting to set new user info
+        user.setProfCreated(true);
+        user.setFname(fNameEdit.getText().toString());
+        user.setLname(lNameEdit.getText().toString());
+        user.setBio(bioEdit.getText().toString());
+        user.setPhone(cellEdit.getText().toString());
+        user.setEmail(eMailEdit.getText().toString());
+        FirebaseFirestore.getInstance().collection("users").document(uid).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful())
+                {
+                    Toast.makeText(EditProfileActivity.this, "Changes applied successfully", Toast.LENGTH_SHORT).show();
+                    FirebaseHelper.loggedIn = true; // User now has full logged-in permissions
+                } else {
+                    // error setting user info...
+                    Toast.makeText(EditProfileActivity.this, "Saving changes failed... please try again", Toast.LENGTH_SHORT).show();
+                }
+            }
+        })
     }
 
 /////////////Check permissions for picking images from phones external storage. Nothing else below/////////////////
