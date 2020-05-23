@@ -115,6 +115,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         // All checks passed, continue with user creation
+        FirebaseHelper.userJustCreated = true;
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass1).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -140,6 +141,7 @@ public class SignUpActivity extends AppCompatActivity {
                     startActivity(i);
 
                 } else /* failed to create user */ {
+                    FirebaseHelper.userJustCreated = false;
                     try {
                         throw task.getException();
                     } catch(FirebaseAuthUserCollisionException e) {

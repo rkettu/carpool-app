@@ -6,5 +6,5 @@ public class Constant {
     public final static long HourInMillis = 3600000;
     public final static long DayInMillis = 86400000;
 
-    public final static String defaultProfileImageAddress = "https://firebasestorage.googleapis.com/v0/b/mobproj2020.appspot.com/o/profpics%2F07qA6HyFc6OMcD6VShJ2N0saKhh2?alt=media&token=ceb6a8d4-de0f-42d1-9243-770dffc360b8";
+    public final static String defaultProfileImageAddress = "https://firebasestorage.googleapis.com/v0/b/carpool-app-2020.appspot.com/o/profpics%2Fdefault_pic.jpg?alt=media&token=f84336d2-c628-475a-82de-0941586fd0f7";
 }

@@ -16,6 +16,7 @@ public class FirebaseHelper {
     // Set to true when user is logged in and profile exists for that user
     // Else false
     public static boolean loggedIn = false;
+    public static boolean userJustCreated = false;
 
     // Used at login checks to send user to login screen if not logged in
     public static void GoToLogin(Context context)
@@ -40,22 +41,33 @@ public class FirebaseHelper {
 
         if(uid != null)
         {
-            final boolean profileCreated = false;
+
             // Fetching profile data from database
             FirebaseFirestore.getInstance().collection("users").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful())
+                    boolean profileCreated = false;
+                    User user = task.getResult().toObject(User.class);
+                    if(user != null)
                     {
                         // Data fetched successfully, getting "profile created"-variable
                         profileCreated = task.getResult().toObject(User.class).getProfileCreated();
                         if(profileCreated)
                             loggedIn = true;
                     }
-                    if(!profileCreated)
+                    else
                     {
                         // User has no set profile => sending user to profile edit Activity
-                        context.startActivity(new Intent(context, EditProfileActivity.class));
+                        // If document exists, passing it as an intent extra
+                        // HOWEVER, if user has just been created, they will be automatically send there anyway
+                        // And therefore not needed to go there twice...
+                        if(!userJustCreated)
+                        {
+                            Intent intent = new Intent(context, EditProfileActivity.class);
+                            intent.putExtra("USERINFO", task.getResult().toObject(User.class));
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(intent);
+                        }
                     }
                 }
             });

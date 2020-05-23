@@ -43,7 +43,7 @@ public class EditProfileActivity extends AppCompatActivity {
     EditText bioEdit;
     EditText passEdit;
     EditText passConfEdit;
-    User user = null;
+    User mUser = null;
     String uid = null;
 
     ArrayList<EditText> textEditArray;
@@ -77,21 +77,26 @@ public class EditProfileActivity extends AppCompatActivity {
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         // Attempting to fill fields with user's info...
-        user = (User) getIntent().getSerializableExtra("USERINFO");
-        if(user != null)
+        mUser = (User) getIntent().getSerializableExtra("USERINFO");
+        if(mUser != null)
         {
             try {
                 // Loading profile image...
-                Picasso.with(EditProfileActivity.this).load(user.getImgUri()).into(profileImage);
+                String imgUri = mUser.getImgUri();
+                Picasso.with(EditProfileActivity.this).load(imgUri).into(profileImage);
+                profileImage.setTag(imgUri);
+            } catch(Exception e) {
+                // Failed to load profile image
+                e.printStackTrace();
             }
-            fNameEdit.setText(user.getFname());
-            lNameEdit.setText(user.getLname());
-            eMailEdit.setText(user.getEmail());
-            cellEdit.setText(user.getPhone());
-            bioEdit.setText(user.getBio());
+            fNameEdit.setText(mUser.getFname());
+            lNameEdit.setText(mUser.getLname());
+            eMailEdit.setText(mUser.getEmail());
+            cellEdit.setText(mUser.getPhone());
+            bioEdit.setText(mUser.getBio());
         } else {
             // No user info? Generating User instance with placeholder variables...
-            user = new User("Fname", "Lname", "0450450450", "placeholder", "placeholder",
+            mUser = new User("Fname", "Lname", "0450450450", "placeholder", "placeholder",
                     Constant.defaultProfileImageAddress, uid, null, 0, 0);
         }
 
@@ -120,6 +125,8 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         }
 
+        final User user = mUser;
+
         // All necessary fields are filled...
         // Attempting to set new user info
         user.setProfCreated(true);
@@ -128,20 +135,53 @@ public class EditProfileActivity extends AppCompatActivity {
         user.setBio(bioEdit.getText().toString());
         user.setPhone(cellEdit.getText().toString());
         user.setEmail(eMailEdit.getText().toString());
-        FirebaseFirestore.getInstance().collection("users").document(uid).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+        final StorageReference ppRef = FirebaseStorage.getInstance().getReference().child("profpics/"+uid);
+
+        // Attempting to save profile image to storage
+        final String imgUri = (String) profileImage.getTag();
+        ppRef.putFile(Uri.parse(imgUri)).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if(task.isSuccessful())
                 {
-                    Toast.makeText(EditProfileActivity.this, "Changes applied successfully", Toast.LENGTH_SHORT).show();
-                    FirebaseHelper.loggedIn = true; // User now has full logged-in permissions
-                } else {
-                    // error setting user info...
-                    Toast.makeText(EditProfileActivity.this, "Saving changes failed... please try again", Toast.LENGTH_SHORT).show();
+                    // Image uploaded to storage succesfully!
+                    // Getting image download address...
+                    FirebaseStorage.getInstance().getReference("profpics/"+uid).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+
+                            if(task.getResult() != null)
+                            {
+                                // Image download address acquired
+                                // Now let's apply all changes to user's own document
+                                user.setImgUid(String.valueOf(task.getResult()));
+                                FirebaseFirestore.getInstance().collection("users").document(uid).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful())
+                                        {
+                                            Toast.makeText(EditProfileActivity.this, "Changes applied successfully", Toast.LENGTH_SHORT).show();
+                                            FirebaseHelper.loggedIn = true; // User now has full logged-in permissions
+                                        } else {
+                                            // error setting user info...
+                                            Toast.makeText(EditProfileActivity.this, "Saving changes failed... please try again", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+
+
                 }
             }
-        })
+        });
+
     }
+
+
+
 
 /////////////Check permissions for picking images from phones external storage. Nothing else below/////////////////
 
@@ -186,27 +226,8 @@ public class EditProfileActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE){
             final Uri uData = data.getData();
             Log.d("DATAAAAAAAAAAAAAAA", uData.toString());
-
-            // Putting image to storage
-            StorageReference ref = FirebaseStorage.getInstance().getReference().child("profpics/" + user.getUid());
-            ref.putFile(uData).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    if(task.isSuccessful())
-                    {
-                        // image uploaded to storage successfully!
-                        Log.d("IMAGETASK", "Image upload to storage :: SUCCESS");
-                        // Setting profile image to circleview
-                        profileImage.setImageURI(uData);
-                        // TODO: Set some value such as hasImage to user...
-                    } else {
-                        // Image upload failed
-                        Log.d("IMAGETASK", "Image upload to storage :: FAILURE");
-                        // Informing user...
-                        Toast.makeText(EditProfileActivity.this, "Image upload failed", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+            profileImage.setImageURI(uData);
+            profileImage.setTag(uData);
         }
     }
 }
