@@ -7,7 +7,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -78,27 +81,24 @@ public class EditProfileActivity extends AppCompatActivity {
 
         // Attempting to fill fields with user's info...
         mUser = (User) getIntent().getSerializableExtra("USERINFO");
-        if(mUser != null)
-        {
-            try {
-                // Loading profile image...
-                String imgUri = mUser.getImgUri();
-                Picasso.with(EditProfileActivity.this).load(imgUri).into(profileImage);
-                profileImage.setTag(imgUri);
-            } catch(Exception e) {
-                // Failed to load profile image
-                e.printStackTrace();
-            }
-            fNameEdit.setText(mUser.getFname());
-            lNameEdit.setText(mUser.getLname());
-            eMailEdit.setText(mUser.getEmail());
-            cellEdit.setText(mUser.getPhone());
-            bioEdit.setText(mUser.getBio());
-        } else {
-            // No user info? Generating User instance with placeholder variables...
-            mUser = new User("Fname", "Lname", "0450450450", "placeholder", "placeholder",
+        if(mUser == null) {
+            // If no User object, creating one with placeholder values
+            mUser = new User("Place", "Holder", "000 000 0000", "placeholder@placeholder.com", "placeholder bio",
                     Constant.defaultProfileImageAddress, uid, null, 0, 0);
         }
+        try {
+            // Loading profile image...
+            String imgUri = mUser.getImgUri();
+            Picasso.with(EditProfileActivity.this).load(imgUri).into(profileImage);
+        } catch(Exception e) {
+            // Failed to load profile image
+            e.printStackTrace();
+        }
+        fNameEdit.setText(mUser.getFname());
+        lNameEdit.setText(mUser.getLname());
+        eMailEdit.setText(mUser.getEmail());
+        cellEdit.setText(mUser.getPhone());
+        bioEdit.setText(mUser.getBio());
 
         applyButton = findViewById(R.id.editprofile_saveProfileDetailButton);
         applyButton.setOnClickListener(new View.OnClickListener() {
@@ -139,8 +139,11 @@ public class EditProfileActivity extends AppCompatActivity {
         final StorageReference ppRef = FirebaseStorage.getInstance().getReference().child("profpics/"+uid);
 
         // Attempting to save profile image to storage
-        final String imgUri = (String) profileImage.getTag();
-        ppRef.putFile(Uri.parse(imgUri)).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+        Bitmap bm = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        ppRef.putBytes(data).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if(task.isSuccessful())
@@ -169,11 +172,15 @@ public class EditProfileActivity extends AppCompatActivity {
                                         }
                                     }
                                 });
+                            } else {
+                                // No download url found
+                                // WTF
                             }
                         }
                     });
-
-
+                } else {
+                    // Failed to upload image
+                    Toast.makeText(EditProfileActivity.this, "Saving changes failed... please try again", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -227,7 +234,6 @@ public class EditProfileActivity extends AppCompatActivity {
             final Uri uData = data.getData();
             Log.d("DATAAAAAAAAAAAAAAA", uData.toString());
             profileImage.setImageURI(uData);
-            profileImage.setTag(uData);
         }
     }
 }
