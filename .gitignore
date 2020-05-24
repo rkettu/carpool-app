@@ -18,3 +18,4 @@
 
 *.json
 
+/app/src/main/res/values/api_key.xml
