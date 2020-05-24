@@ -1,5 +1,7 @@
 package com.example.carpool_app;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -76,6 +78,7 @@ public class SetRideDataParser {
         } catch (Exception e) {
         }
         SetRideConstant.pointsList = myList;
+        Log.d("TESTI", routes.toString());
         return routes;
     }
 

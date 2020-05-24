@@ -3,6 +3,8 @@ package com.example.carpool_app;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -39,7 +41,7 @@ public class SetRidePointsParser extends AsyncTask<String, Integer, List<List<Ha
             // Starts parsing data
             routes = parser.parse(jObject);
             Log.d("mylog", "Executing routes");
-            Log.d("mylog", routes.toString());
+            Log.d("mylog", "koko = " + routes.size() + " " +routes.toString());
 
         } catch (Exception e) {
             Log.d("mylog", e.toString());
@@ -50,7 +52,9 @@ public class SetRidePointsParser extends AsyncTask<String, Integer, List<List<Ha
 
     // Executes in UI thread, after the parsing process
     @Override
-    protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+    protected void onPostExecute(final List<List<HashMap<String, String>>> result) {
+
+        Log.d("mylog", "onPostExecuteTESTI: " + result.size());
         ArrayList<LatLng> points;
         PolylineOptions lineOptions = null;
         // Traversing through all the routes
@@ -69,20 +73,18 @@ public class SetRidePointsParser extends AsyncTask<String, Integer, List<List<Ha
             }
             // Adding all the points in the route to LineOptions
             lineOptions.addAll(points);
-            if (directionMode.equalsIgnoreCase("walking")) {
-                lineOptions.width(10);
-                lineOptions.color(Color.MAGENTA);
-            } else {
-                lineOptions.width(20);
-                lineOptions.color(Color.BLUE);
-            }
-            Log.d("mylog", "onPostExecute lineoptions decoded");
+
+            lineOptions.width(20);
+            lineOptions.color(Color.BLUE);
+            taskCallback.onTaskDone(lineOptions);
+
+            Log.d("mylog", "onPostExecute lineoptions decoded " + lineOptions.toString());
         }
 
         // Drawing polyline in the Google Map for the i-th route
         if (lineOptions != null) {
             //mMap.addPolyline(lineOptions);
-            taskCallback.onTaskDone(lineOptions);
+
 
         } else {
             Log.d("mylog", "without Polylines drawn");

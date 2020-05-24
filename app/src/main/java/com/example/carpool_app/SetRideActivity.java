@@ -233,7 +233,7 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
         // Output format
         String output = "json";
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.google_maps_key);
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&alternatives=true&key=" + getString(R.string.google_maps_key);
         return url;
     }
 
@@ -241,8 +241,13 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     //SetRideTaskLoadedCallbackin onTaskDone, piirtää reitin karttaan jos reitin haku onnistuu.
     @Override
     public void onTaskDone(Object... values) {
-        if(currentPolyline!=null)
+        /*
+        if(currentPolyline!=null){
             currentPolyline.remove();
+        }*/
         currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+        currentPolyline.setClickable(true);
+        Log.d("mylog", "POLYLINE LISÄTTY ");
+
     }
 }
