@@ -29,6 +29,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
@@ -36,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SetRideActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
+public class SetRideActivity extends AppCompatActivity implements OnMapReadyCallback, SetRideTaskLoadedCallback, View.OnClickListener {
 
     private GoogleMap mMap;
 
@@ -55,6 +58,10 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
 
     //Oman sijainnin asetukset
     private FusedLocationProviderClient fusedLocationClient;
+
+    //Reitinhaun muuttujat
+    MarkerOptions place1, place2;
+    Polyline currentPolyline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,11 +130,15 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        Log.d("TESTI", "onMapReady: ");
+
         //Zoomaa kartan suomen kohdalle activityn aukaistessa
         LatLng suomi = new LatLng(65.55, 25.55);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(suomi));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(suomi, 5));
+
     }
+
 
     @Override
     public void onClick(View v) {
@@ -149,7 +160,17 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
                     double startLon = getCoordinates(strLahto).get(1);
                     double stopLat = getCoordinates(strLoppu).get(0);
                     double stopLon = getCoordinates(strLoppu).get(1);
-                    Log.d("TESTI", "strlahto: " + startLat);
+
+                    place1 = new MarkerOptions().position(new LatLng(startLat, startLon)).title("Location 1");
+                    place2 = new MarkerOptions().position(new LatLng(stopLat, stopLon)).title("Location 2");
+                    new SetRideFetchURL(SetRideActivity.this).execute(getUrl(place1.getPosition(), place2.getPosition(),"driving"), "driving");
+                    routeDetails.setVisibility(View.VISIBLE);
+
+                    mMap.addMarker(place1);
+                    mMap.addMarker(place2);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place1.getPosition(),10));
+
+
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -167,7 +188,9 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
                 fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
+                        Log.d("TESTI", "onSuccess: location: " + location);
                         if(location != null){
+
                             try {
                                 GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
                                 String geoAddress = geoCoderHelper.fullAddress(location, SetRideActivity.this);
@@ -194,5 +217,32 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     {
         GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
         return geoCoderHelper.getCoordinates(address, this);
+    }
+    private String getUrl(LatLng origin, LatLng dest, String directionMode){
+
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+        // Mode
+        String mode = "mode=" + directionMode;
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + mode;
+
+        //String parameters = str_origin + "&" + str_dest + 64.080600,%2024.533221" + "&" + mode;
+        // Output format
+        String output = "json";
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.google_maps_key);
+        return url;
+    }
+
+
+    //SetRideTaskLoadedCallbackin onTaskDone, piirtää reitin karttaan jos reitin haku onnistuu.
+    @Override
+    public void onTaskDone(Object... values) {
+        if(currentPolyline!=null)
+            currentPolyline.remove();
+        currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
     }
 }
