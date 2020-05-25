@@ -1,7 +1,9 @@
 package com.example.carpool_app;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,7 +11,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +34,9 @@ public class GetRideActivity extends AppCompatActivity {
     private ArrayList<User> userArrayList = new ArrayList<>();
     private ArrayList<Ride> rideArrayList = new ArrayList<>();
     private GetRideAdapter getRideAdapter;
+    private CollectionReference rideReference = FirebaseFirestore.getInstance().collection("rides");
+    private CollectionReference userReference = FirebaseFirestore.getInstance().collection("users");
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,40 +81,11 @@ public class GetRideActivity extends AppCompatActivity {
                 String startPoint = startPointEditText.getText().toString();
                 String destination = destinationEditText.getText().toString();
 
-                //ASyncTask, where we find matching rides for our start point and destination
-                FindRideASync findRideASync = new FindRideASync();
-                findRideASync.FindRideASync(new FindRideInterface() {
-
-                    @Override
-                    public void getErrorData(String errorMessage){
-                        //TODO if error occurs
-                    }
-
-                    //Interface to communicate with FindRideASync class, gets data for ride details
-                    @Override
-                    public void getRideData(final Ride ride) {
-                        rideArrayList.add(ride);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                getRideAdapter.notifyDataSetChanged();
-                            }
-                        });
-                    }
-
-                    //Interface to communicate with FindRideASync class, gets data for user details
-                    @Override
-                    public void getUserData(final User user){
-                        userArrayList.add(user);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                getRideAdapter.notifyDataSetChanged();
-                            }
-                        });
-                    }
-                }, GetRideActivity.this);
-                findRideASync.execute(startPoint, destination);
+                progressDialog = new ProgressDialog(GetRideActivity.this);
+                progressDialog.setMessage("Finding matching routes");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+                findRides(startPoint, destination);
             }
         });
 
@@ -110,6 +94,85 @@ public class GetRideActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 onBackPressed();
+            }
+        });
+    }
+
+    private void findRides(String startPoint, String destination)
+    {
+        // ThreadPoolExecutor with 2 threads for each processor on the device and a 5 second keep-alive time.
+        //int numOfCores = Runtime.getRuntime().availableProcessors();
+        //final ThreadPoolExecutor executor = new ThreadPoolExecutor(numOfCores * 2, numOfCores * 2, 5L, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>());
+        //Log.d(TAG, "findRides: " + executor.toString());
+        final List<Task<DocumentSnapshot>> myList = new ArrayList<>();
+
+        //TODO algorithm, exceptions and testing
+        rideReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task)
+            {
+                if(task.isSuccessful())
+                {
+                    for(QueryDocumentSnapshot rideDoc : task.getResult()){
+                        try
+                        {
+                            //Adds data to ride class from database
+                            final Ride ride = rideDoc.toObject(Ride.class);
+
+                            if(ride.getUid() != null)
+                            {
+                                Task<DocumentSnapshot> taskItem = userReference.document(ride.getUid()).get();
+                                //uses uid to get correct provider data from database
+                                userReference.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if(task.isSuccessful())
+                                        {
+                                            DocumentSnapshot userDoc = task.getResult();
+                                            try
+                                            {
+                                                final User user = userDoc.toObject(User.class);
+                                                rideArrayList.add(ride);
+                                                userArrayList.add(user);
+                                                Log.d(TAG, "onComplete: hhaha");
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                });
+                                myList.add(taskItem);
+                            }
+                            Log.d(TAG, "getUserData: ousdia" );
+                        }
+                        catch (Exception e)
+                        {
+                            //Cannot Add data to ride class
+                            e.printStackTrace();
+                            Log.d(TAG, "rideReference" + e.toString());
+                        }
+                    }
+                    Tasks.whenAll(myList).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            progressDialog.dismiss();
+                            Log.d(TAG, "onComplete: Tasks.whenall ");
+                            getRideAdapter.notifyDataSetChanged();
+                            for(int i = 0; i < rideArrayList.size(); i++){
+                                Log.d(TAG, "onComplete: " + rideArrayList.get(i).getUid() + " " + userArrayList.get(i).getFname());
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    Exception exception = task.getException();
+                    Log.d(TAG, "onComplete: task failed because: " + exception);
+                    //Task is not successful
+                    //TODO if task if not successful
+                }
             }
         });
     }
