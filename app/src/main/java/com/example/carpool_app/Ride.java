@@ -58,6 +58,7 @@ public class Ride implements Serializable {
     public double getDistance() { return distance; }
     public String getStartCity() { return startCity; }
     public String getEndCity() { return endCity; }
+    public String getUid() { return uid; }
 
     public void removeFreeSlot() {
         this.freeSlots--;

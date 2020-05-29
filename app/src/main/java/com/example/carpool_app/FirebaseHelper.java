@@ -2,6 +2,7 @@ package com.example.carpool_app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -47,24 +48,38 @@ public class FirebaseHelper {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     boolean profileCreated = false;
-                    User user = task.getResult().toObject(User.class);
-                    if(user != null)
+
+                    if(task.getResult().exists())
                     {
                         // Data fetched successfully, getting "profile created"-variable
                         profileCreated = task.getResult().toObject(User.class).getProfileCreated();
                         if(profileCreated)
                             loggedIn = true;
+                        else
+                        {
+                            // User has no set profile => sending user to profile edit Activity
+                            // If document exists, passing it as an intent extra
+                            // HOWEVER, if user has just been created, they will be automatically send there anyway
+                            // And therefore not needed to go there twice...
+                            if(!userJustCreated) {
+                                Intent intent = new Intent(context, EditProfileActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                try {
+                                    User user = task.getResult().toObject(User.class);
+                                    intent.putExtra("USERINFO", user);
+                                } catch(Exception e) {
+                                    Log.d("CHECK_PROFILE_CREATED_ERROR", "Failed document to Object");
+                                }
+                                context.startActivity(intent);
+                            }
+                        }
                     }
                     else
                     {
-                        // User has no set profile => sending user to profile edit Activity
-                        // If document exists, passing it as an intent extra
-                        // HOWEVER, if user has just been created, they will be automatically send there anyway
-                        // And therefore not needed to go there twice...
+                        // User has no document...
                         if(!userJustCreated)
                         {
                             Intent intent = new Intent(context, EditProfileActivity.class);
-                            intent.putExtra("USERINFO", task.getResult().toObject(User.class));
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             context.startActivity(intent);
                         }
