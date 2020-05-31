@@ -44,8 +44,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void SelectOfferARide(View v)
     {
+        /*
         // Go to log in... for testing purposes
         Intent i = new Intent(MainActivity.this, LogInActivity.class);
         startActivity(i);
+         */
+        // Go to profile test
+        ActivitySwitcher.GoToProfileActivity(getApplicationContext(), FirebaseHelper.getUid());
     }
 }
