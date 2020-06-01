@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,12 +24,15 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class GetRideActivity extends AppCompatActivity {
 
     private Button searchRideButton;
     private ImageView backButton;
-    private EditText startPointEditText, destinationEditText, startDateEditText, endDateEditText, estStartDateEditText, estEndDateEditText;
+    private EditText startPointEditText, destinationEditText, startDateEditText, endDateEditText, estStartTimeEditText, estEndTimeEditText;
     private ListView rideListView;
     private final static String TAG = "GetRideActivity";
     private ArrayList<User> userArrayList = new ArrayList<>();
@@ -47,7 +51,7 @@ public class GetRideActivity extends AppCompatActivity {
         initGetRideButtons();
     }
 
-    //Initializing all xml, TextViews, EditText and ListView + sets adapter to ListView
+    //Initializing all xml, TextViews, EditText and ListView + sets adapter to ListView + add current time as placeholder in start time/date
     private void initGetRideLayoutElements(){
         searchRideButton = findViewById(R.id.getRide_btnSearch);
         backButton = findViewById(R.id.getRide_btnBack);
@@ -55,14 +59,17 @@ public class GetRideActivity extends AppCompatActivity {
         destinationEditText = findViewById(R.id.getRide_destinationEditText);
         startDateEditText = findViewById(R.id.getRide_startDate);
         endDateEditText = findViewById(R.id.getRide_endDate);
-        estStartDateEditText = findViewById(R.id.getRide_estimateStartTimeEditText);
-        estEndDateEditText = findViewById(R.id.getRide_estimateEndTimeEditText);
+        estStartTimeEditText = findViewById(R.id.getRide_estimateStartTimeEditText);
+        estEndTimeEditText = findViewById(R.id.getRide_estimateEndTimeEditText);
         rideListView = findViewById(R.id.getRide_rideListView);
         startPointEditText.setText("Oulu");
         destinationEditText.setText("Helsinki");
 
         getRideAdapter = new GetRideAdapter(this, userArrayList, rideArrayList);
         rideListView.setAdapter(getRideAdapter);
+
+        startDateEditText.setText(CalendarHelper.getDateTimeString(System.currentTimeMillis()));
+        estStartTimeEditText.setText(CalendarHelper.getHHMMString(System.currentTimeMillis()));
     }
 
     //Initialising two buttons, Search Rides and Back Arrow
@@ -77,15 +84,25 @@ public class GetRideActivity extends AppCompatActivity {
                 userArrayList.clear();
                 rideArrayList.clear();
 
-                //takes start point and destination to String, so we can use them on search
-                String startPoint = startPointEditText.getText().toString();
-                String destination = destinationEditText.getText().toString();
+                try
+                {
+                    //takes start point and destination to String, so we can use them on search
+                    String startPoint = startPointEditText.getText().toString();
+                    String destination = destinationEditText.getText().toString();
 
-                progressDialog = new ProgressDialog(GetRideActivity.this);
-                progressDialog.setMessage("Finding matching routes");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-                findRides(startPoint, destination);
+                    //takes start date/time and end date/time to string
+                    final String startDate = startDateEditText.getText().toString();
+                    final String estStartTime = estStartTimeEditText.getText().toString();
+                    final String endDate = endDateEditText.getText().toString();
+                    final String estEndTime = estEndTimeEditText.getText().toString();
+
+                    showProgressDialog(GetRideActivity.this);
+                    findRides(startPoint, destination);
+                }
+                catch (Exception e)
+                {
+                    //missing important data from editTexts
+                }
             }
         });
 
@@ -98,16 +115,24 @@ public class GetRideActivity extends AppCompatActivity {
         });
     }
 
+    private void showProgressDialog(Context context)
+    {
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Finding matching routes");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
     private void findRides(String startPoint, String destination)
     {
-        // ThreadPoolExecutor with 2 threads for each processor on the device and a 5 second keep-alive time.
-        //int numOfCores = Runtime.getRuntime().availableProcessors();
-        //final ThreadPoolExecutor executor = new ThreadPoolExecutor(numOfCores * 2, numOfCores * 2, 5L, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>());
+        //ThreadPoolExecutor with 2 threads for each processor on the device and a 5 second keep-alive time.
+        int numOfCores = Runtime.getRuntime().availableProcessors();
+        final ThreadPoolExecutor executor = new ThreadPoolExecutor(numOfCores * 2, numOfCores * 2, 5L, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>());
         //Log.d(TAG, "findRides: " + executor.toString());
         final List<Task<DocumentSnapshot>> myList = new ArrayList<>();
 
         //TODO algorithm, exceptions and testing
-        rideReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        rideReference.get().addOnCompleteListener(executor, new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task)
             {
@@ -134,12 +159,17 @@ public class GetRideActivity extends AppCompatActivity {
                                                 final User user = userDoc.toObject(User.class);
                                                 rideArrayList.add(ride);
                                                 userArrayList.add(user);
-                                                Log.d(TAG, "onComplete: hhaha");
+                                                Log.d(TAG, "onComplete: laitettu listoihin objectit");
                                             }
                                             catch (Exception e)
                                             {
                                                 e.printStackTrace();
                                             }
+                                        }
+                                        else
+                                        {
+                                            Exception exception = task.getException();
+                                            Log.d(TAG, "onComplete: " + exception);
                                         }
                                     }
                                 });
