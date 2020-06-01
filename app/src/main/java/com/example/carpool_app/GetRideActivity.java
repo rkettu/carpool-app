@@ -125,6 +125,8 @@ public class GetRideActivity extends AppCompatActivity {
 
     private void findRides(String startPoint, String destination)
     {
+        //counter to check when all tasks are done
+        final int[] counter = {0};
         //ThreadPoolExecutor with 2 threads for each processor on the device and a 5 second keep-alive time.
         int numOfCores = Runtime.getRuntime().availableProcessors();
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(numOfCores * 2, numOfCores * 2, 5L, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>());
@@ -146,6 +148,7 @@ public class GetRideActivity extends AppCompatActivity {
 
                             if(ride.getUid() != null)
                             {
+                                counter[0]++;
                                 Task<DocumentSnapshot> taskItem = userReference.document(ride.getUid()).get();
                                 //uses uid to get correct provider data from database
                                 userReference.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -160,10 +163,20 @@ public class GetRideActivity extends AppCompatActivity {
                                                 rideArrayList.add(ride);
                                                 userArrayList.add(user);
                                                 Log.d(TAG, "onComplete: laitettu listoihin objectit");
+                                                counter[0]--;
+                                                Log.d(TAG, "onComplete: " + counter[0]);
                                             }
                                             catch (Exception e)
                                             {
                                                 e.printStackTrace();
+                                            }
+                                            if(counter[0] == 0){
+                                                getRideAdapter.notifyDataSetChanged();
+                                                progressDialog.dismiss();
+                                                for(int i = 0; i < rideArrayList.size(); i++)
+                                                {
+                                                    Log.d(TAG, "onComplete: " + userArrayList.get(i).getFname() + " " + rideArrayList.get(i).getUid() + " " + rideArrayList.get(i).getDuration());
+                                                }
                                             }
                                         }
                                         else
@@ -173,7 +186,14 @@ public class GetRideActivity extends AppCompatActivity {
                                         }
                                     }
                                 });
+
                                 myList.add(taskItem);
+                            }
+                            else
+                            {
+                                //rideUid is null
+                                //we have to skip task, if rideUid is null
+                                counter[0]--;
                             }
                             Log.d(TAG, "getUserData: ousdia" );
                         }
@@ -184,17 +204,6 @@ public class GetRideActivity extends AppCompatActivity {
                             Log.d(TAG, "rideReference" + e.toString());
                         }
                     }
-                    Tasks.whenAll(myList).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            progressDialog.dismiss();
-                            Log.d(TAG, "onComplete: Tasks.whenall ");
-                            getRideAdapter.notifyDataSetChanged();
-                            for(int i = 0; i < rideArrayList.size(); i++){
-                                Log.d(TAG, "onComplete: " + rideArrayList.get(i).getUid() + " " + userArrayList.get(i).getFname());
-                            }
-                        }
-                    });
                 }
                 else
                 {
