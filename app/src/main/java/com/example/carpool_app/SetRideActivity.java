@@ -6,10 +6,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,20 +29,18 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 
-public class SetRideActivity extends AppCompatActivity implements OnMapReadyCallback, SetRideTaskLoadedCallback, View.OnClickListener {
+public class SetRideActivity extends AppCompatActivity implements OnMapReadyCallback, SetRideTaskLoadedCallback, View.OnClickListener, GoogleMap.OnPolylineClickListener {
 
     private GoogleMap mMap;
 
     private SearchView lahtoEditori, loppuEditori;
-
+    Polyline currentPolyline = null;
     //Muuttujat
     private String strLahto, strLoppu;
 
@@ -61,7 +57,10 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
 
     //Reitinhaun muuttujat
     MarkerOptions place1, place2;
-    Polyline currentPolyline;
+
+    private HashMap<String, ArrayList<LatLng>> polylineHashMap = new HashMap<>();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,12 +129,13 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        Log.d("TESTI", "onMapReady: ");
 
         //Zoomaa kartan suomen kohdalle activityn aukaistessa
         LatLng suomi = new LatLng(65.55, 25.55);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(suomi));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(suomi, 5));
+
+        mMap.setOnPolylineClickListener(this);
 
     }
 
@@ -144,6 +144,8 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     public void onClick(View v) {
         if(v.getId() == R.id.set_ride_haeButton)
         {
+            mMap.clear();
+
             //Reitin haku napin toiminnallisuus
             strLahto = lahtoEditori.getQuery().toString();
             strLoppu = loppuEditori.getQuery().toString();
@@ -241,13 +243,38 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     //SetRideTaskLoadedCallbackin onTaskDone, piirtää reitin karttaan jos reitin haku onnistuu.
     @Override
     public void onTaskDone(Object... values) {
-        /*
-        if(currentPolyline!=null){
-            currentPolyline.remove();
-        }*/
-        currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+
+        SetRidePolylineData polylineData = (SetRidePolylineData) values[0];
+        currentPolyline = mMap.addPolyline(polylineData.getPolylineOptions());
+
         currentPolyline.setClickable(true);
-        Log.d("mylog", "POLYLINE LISÄTTY ");
+        Log.d("mylog", "POLYLINE LISÄTTY " + currentPolyline.getId());
+
+        polylineHashMap.put(currentPolyline.getId(), polylineData.getLatLngArrayList());
+    }
+
+    @Override
+    public void onPolylineClick(Polyline polyline) {
+        Log.d("mylog", "onPolylineClick: POLYLINE " + polyline.getId());
+        Log.d("mylog", "onPolylineClick HASHMAPPI: " + polylineHashMap.toString());
+
+        for(int i = 0; i < polylineHashMap.size(); i++)
+        {
+            if(polyline.getId().equals(polylineHashMap.get(polyline.getId())))
+            {
+
+            }
+            else
+            {
+                currentPolyline.setColor(Color.GRAY);
+            }
+        }
+
+
+        polyline.setColor(Color.BLUE);
+        polylineHashMap.get(polyline.getId());
+        //Log.d("mylog", "onPolylineClick: " + polylineHashMap.get(polyline.getId()));
 
     }
+
 }

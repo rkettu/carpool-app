@@ -19,6 +19,7 @@ import java.util.List;
 public class SetRidePointsParser extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
     SetRideTaskLoadedCallback taskCallback;
     String directionMode = "driving";
+    //private ArrayList<SetRidePolylineData> polylineData = new ArrayList<>();
 
     public SetRidePointsParser(Context mContext, String directionMode) {
         this.taskCallback = (SetRideTaskLoadedCallback) mContext;
@@ -73,11 +74,22 @@ public class SetRidePointsParser extends AsyncTask<String, Integer, List<List<Ha
             }
             // Adding all the points in the route to LineOptions
             lineOptions.addAll(points);
-
+            Log.d("mytag", "onPostExecute: " + points);
             lineOptions.width(20);
-            lineOptions.color(Color.BLUE);
-            taskCallback.onTaskDone(lineOptions);
+            if(i == 0)
+            {
+                lineOptions.color(Color.BLUE);
+                lineOptions.zIndex(1);
 
+            }
+            else {
+                lineOptions.color(Color.GRAY);
+            }
+
+            //poly.add(new SetRidePolylineData(lineOptions, points));
+            SetRidePolylineData data = new SetRidePolylineData(lineOptions, points);
+
+            taskCallback.onTaskDone(data);
             Log.d("mylog", "onPostExecute lineoptions decoded " + lineOptions.toString());
         }
 

@@ -29,11 +29,12 @@ public class SetRideDataParser {
             /** Traversing all routes */
             for (int i = 0; i < jRoutes.length(); i++) {
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
+                Log.d("mytag", "parse: " + jLegs);
                 List path = new ArrayList<>();
                 /** Traversing all legs */
                 for (int j = 0; j < jLegs.length(); j++) {
                     jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
-
+                    Log.d("mytag", "jsteps: " + jSteps);
                     //Kokonaismatkan haku jsonista
                     jDistance = ((JSONObject) jLegs.get(j)).getJSONObject("distance");
                     totalDistance = totalDistance + Long.parseLong(jDistance.getString("value"));
@@ -71,6 +72,7 @@ public class SetRideDataParser {
                     int minutes = ((totalSeconds - hours * 3600) / 60);
                     SetRideConstant.DURATION = String.valueOf(hours + "h " + minutes + "min");
                 }
+
             }
 
         } catch (JSONException e) {
