@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SetRideDataParser {
+    private ArrayList<SetRidePolylineData> mPolylinesData = new ArrayList<>();
     public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
         List<List<HashMap<String, String>>> routes = new ArrayList<>();
         JSONArray jRoutes;
@@ -71,6 +72,7 @@ public class SetRideDataParser {
                     int hours = (totalSeconds / 3600);
                     int minutes = ((totalSeconds - hours * 3600) / 60);
                     SetRideConstant.DURATION = String.valueOf(hours + "h " + minutes + "min");
+
                 }
 
             }

@@ -29,10 +29,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class SetRideActivity extends AppCompatActivity implements OnMapReadyCallback, SetRideTaskLoadedCallback, View.OnClickListener, GoogleMap.OnPolylineClickListener {
@@ -59,7 +61,7 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     MarkerOptions place1, place2;
 
     private HashMap<String, ArrayList<LatLng>> polylineHashMap = new HashMap<>();
-
+    private ArrayList<SetRidePolylineData> mPolylinesData = new ArrayList<>();
 
 
     @Override
@@ -137,6 +139,16 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
 
         mMap.setOnPolylineClickListener(this);
 
+        //SetRidePolylineDatan tyhjennys. Ehkä turha?
+        /*if(mPolylinesData.size() > 0)
+        {
+            for(SetRidePolylineData polylineData: mPolylinesData)
+            {
+                polylineData.getPolyline().remove();
+            }
+            mPolylinesData.clear();
+            mPolylinesData = new ArrayList<>();
+        }*/
     }
 
 
@@ -244,35 +256,44 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onTaskDone(Object... values) {
 
-        SetRidePolylineData polylineData = (SetRidePolylineData) values[0];
-        currentPolyline = mMap.addPolyline(polylineData.getPolylineOptions());
-
+        Log.d("mylog", "onTaskDone: " + values[1]);
+        //SetRidePolylineData polylineData = (SetRidePolylineData) values;
+        //currentPolyline = mMap.addPolyline(new PolylineOptions().addAll(polylineData.getPolyline()));
+        currentPolyline = mMap.addPolyline(new PolylineOptions().addAll((Iterable<LatLng>) values[1]));
+        currentPolyline.setColor(Color.GRAY);
         currentPolyline.setClickable(true);
+
+        mPolylinesData.add(new SetRidePolylineData(currentPolyline, (List<LatLng>) values[1]));
         Log.d("mylog", "POLYLINE LISÄTTY " + currentPolyline.getId());
 
-        polylineHashMap.put(currentPolyline.getId(), polylineData.getLatLngArrayList());
+        //polylineHashMap.put(currentPolyline.getId(), polylineData.getLatLngArrayList());
     }
 
     @Override
     public void onPolylineClick(Polyline polyline) {
         Log.d("mylog", "onPolylineClick: POLYLINE " + polyline.getId());
-        Log.d("mylog", "onPolylineClick HASHMAPPI: " + polylineHashMap.toString());
+        //Log.d("mylog", "onPolylineClick HASHMAPPI: " );
 
-        for(int i = 0; i < polylineHashMap.size(); i++)
+        polyline.setColor(Color.BLUE);
+        for(SetRidePolylineData polylineData: mPolylinesData)
         {
-            if(polyline.getId().equals(polylineHashMap.get(polyline.getId())))
+            if(polyline.getId().equals(polylineData.getPolyline().getId()))
             {
+                polylineData.getPolyline().setColor(Color.BLUE);
+                polylineData.getPolyline().setZIndex(1);
+
 
             }
             else
             {
-                currentPolyline.setColor(Color.GRAY);
+                polylineData.getPolyline().setColor(Color.GRAY);
+                polylineData.getPolyline().setZIndex(0);
             }
         }
 
 
-        polyline.setColor(Color.BLUE);
-        polylineHashMap.get(polyline.getId());
+        //polyline.setColor(Color.BLUE);
+        //polylineHashMap.get(polyline.getId());
         //Log.d("mylog", "onPolylineClick: " + polylineHashMap.get(polyline.getId()));
 
     }

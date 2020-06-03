@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONObject;
@@ -19,7 +20,7 @@ import java.util.List;
 public class SetRidePointsParser extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
     SetRideTaskLoadedCallback taskCallback;
     String directionMode = "driving";
-    //private ArrayList<SetRidePolylineData> polylineData = new ArrayList<>();
+    private ArrayList<SetRidePolylineData> polylineData = new ArrayList<>();
 
     public SetRidePointsParser(Context mContext, String directionMode) {
         this.taskCallback = (SetRideTaskLoadedCallback) mContext;
@@ -86,10 +87,11 @@ public class SetRidePointsParser extends AsyncTask<String, Integer, List<List<Ha
                 lineOptions.color(Color.GRAY);
             }
 
+            //Polyline polyline = lineOptions
             //poly.add(new SetRidePolylineData(lineOptions, points));
-            SetRidePolylineData data = new SetRidePolylineData(lineOptions, points);
+            //SetRidePolylineData data = new SetRidePolylineData(lineOptions, points);
 
-            taskCallback.onTaskDone(data);
+            taskCallback.onTaskDone(lineOptions, points);
             Log.d("mylog", "onPostExecute lineoptions decoded " + lineOptions.toString());
         }
 
