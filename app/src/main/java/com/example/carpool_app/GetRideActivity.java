@@ -3,19 +3,22 @@ package com.example.carpool_app;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TimePicker;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,6 +26,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -41,6 +45,9 @@ public class GetRideActivity extends AppCompatActivity {
     private CollectionReference rideReference = FirebaseFirestore.getInstance().collection("rides");
     private CollectionReference userReference = FirebaseFirestore.getInstance().collection("users");
     private ProgressDialog progressDialog;
+    private int newYear, newMonth, newDay, newHour, newMinute;
+    private int pickedDate1, pickedMonth1, pickedYear1, pickedHour1, pickedMinute1;
+    private int pickedDate2, pickedMonth2, pickedYear2, pickedHour2, pickedMinute2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +120,58 @@ public class GetRideActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+        final Calendar calendar;
+        calendar = Calendar.getInstance();
+
+        newYear = calendar.get(Calendar.YEAR);
+        newMonth = calendar.get(Calendar.MONTH);
+        newDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(GetRideActivity.this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, final int year, final int month, final int dayOfMonth) {
+                final String dateString = (dayOfMonth + "." + (month + 1) + "." + year);
+                pickedDate1 = newDay;
+                pickedMonth1 = newMonth;
+                pickedYear1 = newYear;
+
+                startDateEditText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        pickedDate1 = dayOfMonth;
+                        pickedMonth1 = month;
+                        pickedYear1 = year;
+                        startDateEditText.setText(dateString);
+                    }
+                });
+
+                endDateEditText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        pickedDate2 = dayOfMonth;
+                        pickedMonth2 = month;
+                        pickedYear2 = year;
+                        endDateEditText.setText(dateString);
+                    }
+                });
+            }
+        }, newYear, newMonth, newDay);
+        datePickerDialog.show();
+
+        estStartTimeEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        estEndTimeEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     private void showProgressDialog(Context context)
@@ -173,10 +232,6 @@ public class GetRideActivity extends AppCompatActivity {
                                             if(counter[0] == 0){
                                                 getRideAdapter.notifyDataSetChanged();
                                                 progressDialog.dismiss();
-                                                for(int i = 0; i < rideArrayList.size(); i++)
-                                                {
-                                                    Log.d(TAG, "onComplete: " + userArrayList.get(i).getFname() + " " + rideArrayList.get(i).getUid() + " " + rideArrayList.get(i).getDuration());
-                                                }
                                             }
                                         }
                                         else
