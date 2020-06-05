@@ -19,14 +19,18 @@ import android.widget.TimePicker;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -45,9 +49,12 @@ public class GetRideActivity extends AppCompatActivity {
     private CollectionReference rideReference = FirebaseFirestore.getInstance().collection("rides");
     private CollectionReference userReference = FirebaseFirestore.getInstance().collection("users");
     private ProgressDialog progressDialog;
-    private int newYear, newMonth, newDay, newHour, newMinute;
-    private int pickedDate1, pickedMonth1, pickedYear1, pickedHour1, pickedMinute1;
-    private int pickedDate2, pickedMonth2, pickedYear2, pickedHour2, pickedMinute2;
+    private int mYear, mMonth, mDay, newHour, newMinute;
+    private int startDateDay, startDateMonth, startDateYear, startTimeHour, startTimeMinute;
+    private int endDateDay, endDateMonth, endDateYear, endTimeHour, endTimeMinute;
+    private String startDateString;
+    private Calendar calendar;
+    private List<HashMap<String, String>> points;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,21 +97,22 @@ public class GetRideActivity extends AppCompatActivity {
                 //clearing array lists, if you press button twice
                 userArrayList.clear();
                 rideArrayList.clear();
-
                 try
                 {
                     //takes start point and destination to String, so we can use them on search
                     String startPoint = startPointEditText.getText().toString();
                     String destination = destinationEditText.getText().toString();
 
-                    //takes start date/time and end date/time to string
-                    final String startDate = startDateEditText.getText().toString();
-                    final String estStartTime = estStartTimeEditText.getText().toString();
-                    final String endDate = endDateEditText.getText().toString();
-                    final String estEndTime = estEndTimeEditText.getText().toString();
+                    calendar.set(startDateYear, startDateMonth, startDateDay, startTimeHour, startTimeMinute);
+                    float date1 = calendar.getTimeInMillis();
+                    Log.d(TAG, "onClick: " + date1);
+
+                    calendar.set(endDateYear, endDateMonth, endDateDay, endTimeHour, endTimeMinute);
+                    float date2 = calendar.getTimeInMillis();
+                    Log.d(TAG, "onClick: " + date2);
 
                     showProgressDialog(GetRideActivity.this);
-                    findRides(startPoint, destination);
+                    findRides(startPoint, destination, date1, date2);
                 }
                 catch (Exception e)
                 {
@@ -121,59 +129,109 @@ public class GetRideActivity extends AppCompatActivity {
             }
         });
 
-        final Calendar calendar;
         calendar = Calendar.getInstance();
+        mYear = calendar.get(Calendar.YEAR);
+        mMonth = calendar.get(Calendar.MONTH);
+        mDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-        newYear = calendar.get(Calendar.YEAR);
-        newMonth = calendar.get(Calendar.MONTH);
-        newDay = calendar.get(Calendar.DAY_OF_MONTH);
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(GetRideActivity.this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, final int year, final int month, final int dayOfMonth) {
-                final String dateString = (dayOfMonth + "." + (month + 1) + "." + year);
-                pickedDate1 = newDay;
-                pickedMonth1 = newMonth;
-                pickedYear1 = newYear;
-
-                startDateEditText.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        pickedDate1 = dayOfMonth;
-                        pickedMonth1 = month;
-                        pickedYear1 = year;
-                        startDateEditText.setText(dateString);
-                    }
-                });
-
-                endDateEditText.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        pickedDate2 = dayOfMonth;
-                        pickedMonth2 = month;
-                        pickedYear2 = year;
-                        endDateEditText.setText(dateString);
-                    }
-                });
-            }
-        }, newYear, newMonth, newDay);
-        datePickerDialog.show();
-
-        estStartTimeEditText.setOnClickListener(new View.OnClickListener() {
+        //when you press startDateEditText, it will open datePickerDialog where you can select date in dd/MM/yyyy
+        startDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(GetRideActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        calendar.set(year, month, dayOfMonth);
 
+                        //format the output of date
+                        startDateString = new SimpleDateFormat("dd.MM.yyyy").format(calendar.getTime());
+                        startDateEditText.setText(startDateString);
+
+                        //place picked date into variables, so we can change the date into millis in algorithm
+                        startDateYear = calendar.get(Calendar.YEAR);
+                        startDateMonth = calendar.get(Calendar.MONTH);
+                        startDateDay = calendar.get(Calendar.DAY_OF_MONTH);
+                    }
+                }, mYear, mMonth, mDay);
+                //datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+                datePickerDialog.show();
             }
         });
 
+        //when you press endDateEditText, it will open datePickerDialog where you can select date in dd/MM/yyyy
+        endDateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(GetRideActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        calendar.set(year, month, dayOfMonth);
+
+                        //format the output of date
+                        String dateString = new SimpleDateFormat("dd.MM.yyyy").format(calendar.getTime());
+                        endDateEditText.setText(dateString);
+
+                        //place picked date into variables, so we can change the date into millis in algorithm
+                        endDateYear = calendar.get(Calendar.YEAR);
+                        endDateMonth = calendar.get(Calendar.MONTH);
+                        endDateDay = calendar.get(Calendar.DAY_OF_MONTH);
+                    }
+                }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
+
+        newHour = calendar.get(Calendar.HOUR_OF_DAY);
+        newMinute = calendar.get(Calendar.MINUTE);
+
+        //when you click estStartTimeText, it will popup timePickerDialog, where you set hours and minutes
+        estStartTimeEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePickerDialog timePickerDialog = new TimePickerDialog(GetRideActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        //place picked time into variables, so we can change the date into millis in algorithm
+                        startTimeHour = hourOfDay;
+                        startTimeMinute = minute;
+
+                        //format the output of time
+                        String format = "%1$02d";
+                        String estHour = String.format(format, hourOfDay);
+                        String estMinute = String.format(format, minute);
+                        String estTime = estHour + ":" + estMinute;
+                        estStartTimeEditText.setText(estTime);
+                    }
+                }, newHour, newMinute, true);
+                timePickerDialog.show();
+            }
+        });
+
+        //when you click estEndTimeText, it will popup timePickerDialog, where you set hours and minutes
         estEndTimeEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                TimePickerDialog timePickerDialog = new TimePickerDialog(GetRideActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        //place picked time into variables, so we can change the date into millis in algorithm
+                        endTimeHour = hourOfDay;
+                        endTimeMinute = minute;
 
+                        //format the output of time
+                        String format = "%1$02d";
+                        String estHour = String.format(format, hourOfDay);
+                        String estMinute = String.format(format, minute);
+                        String estTime = estHour + ":" + estMinute;
+                        estEndTimeEditText.setText(estTime);
+                    }
+                }, newHour, newMinute, true);
+                timePickerDialog.show();
             }
         });
     }
 
+    //progress dialog. shows when called. used when app is finding matches
     private void showProgressDialog(Context context)
     {
         progressDialog = new ProgressDialog(context);
@@ -182,18 +240,27 @@ public class GetRideActivity extends AppCompatActivity {
         progressDialog.show();
     }
 
-    private void findRides(String startPoint, String destination)
+    //algorithm and db search
+    private void findRides(final String startPoint, final String destination, float date1, float date2)
     {
-        //counter to check when all tasks are done
-        final int[] counter = {0};
         //ThreadPoolExecutor with 2 threads for each processor on the device and a 5 second keep-alive time.
         int numOfCores = Runtime.getRuntime().availableProcessors();
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(numOfCores * 2, numOfCores * 2, 5L, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>());
         //Log.d(TAG, "findRides: " + executor.toString());
         final List<Task<DocumentSnapshot>> myList = new ArrayList<>();
 
-        //TODO algorithm, exceptions and testing
-        rideReference.get().addOnCompleteListener(executor, new OnCompleteListener<QuerySnapshot>() {
+        Log.d(TAG, "findRides: ennen query");
+
+        //making query, where ride time is between date1 and date2
+        Query query = rideReference.whereGreaterThanOrEqualTo("leaveTime", date1).whereLessThanOrEqualTo("leaveTime", date2);
+        query.orderBy("leaveTime");
+
+        //counter to check when all tasks are done
+        final int[] counter = {0};
+
+        //TODO when task is completed, exceptions and testing
+        Log.d(TAG, "findRides: queryn jälkeen");
+        query.get().addOnCompleteListener(executor, new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task)
             {
@@ -202,55 +269,69 @@ public class GetRideActivity extends AppCompatActivity {
                     for(QueryDocumentSnapshot rideDoc : task.getResult()){
                         try
                         {
-                            //Adds data to ride class from database
-                            final Ride ride = rideDoc.toObject(Ride.class);
+                            float pickUpDistance = (long) rideDoc.get("pickUpDistance");
+                            points = (List) rideDoc.get("points");
+                            AppMath appMath = new AppMath();
+                            GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
+                            float startLat = geoCoderHelper.getCoordinates(startPoint, GetRideActivity.this).get(0);
+                            float startLng = geoCoderHelper.getCoordinates(startPoint, GetRideActivity.this).get(1);
+                            float destinationLat = geoCoderHelper.getCoordinates(destination, GetRideActivity.this).get(0);
+                            float destinationLng = geoCoderHelper.getCoordinates(destination, GetRideActivity.this).get(1);
 
-                            if(ride.getUid() != null)
+                            Log.d(TAG, "onComplete: ollaan ennen appmath if lausetta");
+
+                            if(appMath.isRouteInRange(pickUpDistance, startLat, startLng, destinationLat, destinationLng, points))
                             {
-                                counter[0]++;
-                                Task<DocumentSnapshot> taskItem = userReference.document(ride.getUid()).get();
-                                //uses uid to get correct provider data from database
-                                userReference.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if(task.isSuccessful())
-                                        {
-                                            DocumentSnapshot userDoc = task.getResult();
-                                            try
-                                            {
-                                                final User user = userDoc.toObject(User.class);
-                                                rideArrayList.add(ride);
-                                                userArrayList.add(user);
-                                                Log.d(TAG, "onComplete: laitettu listoihin objectit");
-                                                counter[0]--;
-                                                Log.d(TAG, "onComplete: " + counter[0]);
-                                            }
-                                            catch (Exception e)
-                                            {
-                                                e.printStackTrace();
-                                            }
-                                            if(counter[0] == 0){
-                                                getRideAdapter.notifyDataSetChanged();
-                                                progressDialog.dismiss();
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Exception exception = task.getException();
-                                            Log.d(TAG, "onComplete: " + exception);
-                                        }
-                                    }
-                                });
+                                //Adds data to ride class from database
+                                final Ride ride = rideDoc.toObject(Ride.class);
+                                Log.d(TAG, "onComplete: ollaan ride objectia ");
 
-                                myList.add(taskItem);
+                                if (ride.getUid() != null) {
+                                    counter[0]++;
+                                    Log.d(TAG, "onComplete: ride.getUid() != null");
+                                    Task<DocumentSnapshot> taskItem = userReference.document(ride.getUid()).get();
+                                    //uses uid to get correct provider data from database
+                                    userReference.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                DocumentSnapshot userDoc = task.getResult();
+                                                try {
+                                                    final User user = userDoc.toObject(User.class);
+                                                    rideArrayList.add(ride);
+                                                    userArrayList.add(user);
+                                                    Log.d(TAG, "onComplete: laitettu listoihin objectit");
+                                                    counter[0]--;
+                                                    Log.d(TAG, "onComplete: " + counter[0]);
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                                if (counter[0] == 0) {
+                                                    getRideAdapter.notifyDataSetChanged();
+                                                    progressDialog.dismiss();
+                                                }
+                                            } else {
+                                                Exception exception = task.getException();
+                                                Log.d(TAG, "onComplete: " + exception);
+                                            }
+                                        }
+                                    });
+                                    myList.add(taskItem);
+                                }
+                                else
+                                {
+                                    //rideUid is null
+                                    //we have to skip task, if rideUid is null
+                                    counter[0]--;
+                                }
+
+                                Log.d(TAG, "getUserData: route rangella funktion loppu" );
                             }
                             else
                             {
-                                //rideUid is null
-                                //we have to skip task, if rideUid is null
-                                counter[0]--;
+                                //appMath failed
+                                Log.d(TAG, "appMath failed");
                             }
-                            Log.d(TAG, "getUserData: ousdia" );
                         }
                         catch (Exception e)
                         {
@@ -269,5 +350,6 @@ public class GetRideActivity extends AppCompatActivity {
                 }
             }
         });
+        Log.d(TAG, "findRides: ollaan täällä");
     }
 }
