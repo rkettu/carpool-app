@@ -53,18 +53,19 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     private ImageButton sijaintiButton;
     private boolean drawer_expand = true;
 
+    List<Polyline> allPolylines = new ArrayList<>(); // Contains all currently drawn polyline data, REMEMBER TO CLEAR
+
     //Oman sijainnin asetukset
     private FusedLocationProviderClient fusedLocationClient;
 
     //Reitinhaun muuttujat
     MarkerOptions place1, place2;
 
-    int counter = 0;
     private String reitinValinta;
-    private HashMap<String, ArrayList<LatLng>> polylineHashMap = new HashMap<>();
-    private ArrayList<SetRidePolylineData> mPolylinesData = new ArrayList<>();
-    List<Polyline> polylines = new ArrayList<Polyline>();
-    Polyline currentPolyline = null;
+    private HashMap<String, Route> polylineHashMap = new HashMap<>(); // Contains polyline id and matching route info
+
+    private Route currentRoute;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,17 +159,10 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     public void onClick(View v) {
         if(v.getId() == R.id.set_ride_haeButton)
         {
-            mMap.clear();
-            counter = 0;
+            mMap.clear();   // Clearing map markers and polylines
+            allPolylines.clear(); // Clearing list containing references to those polylines => frees their memory
+            polylineHashMap.clear();
 
-            for(Polyline line : polylines)
-            {
-                line.remove();
-                mPolylinesData.remove(line);
-                Log.d("mylog", "REMOVED POLYLINE ");
-            }
-            polylines.clear();
-            mPolylinesData.clear();
 
             //Reitin haku napin toiminnallisuus
             strLahto = lahtoEditori.getQuery().toString();
@@ -260,68 +254,47 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
         String output = "json";
         // Building the url to the web service
         String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&alternatives=true&key=" + getString(R.string.google_maps_key);
+
         return url;
     }
 
 
     //SetRideTaskLoadedCallbackin onTaskDone, piirtää reitin karttaan jos reitin haku onnistuu.
+    // This is called once for each polyline added
     @Override
     public void onTaskDone(Object... values) {
+        Route route = (Route) values[0];
+        Log.d("mylog", "onTaskDone: " + route.rideDistance + "km ride");
 
-        Log.d("mylog", "onTaskDone: " + values[1]);
-        //SetRidePolylineData polylineData = (SetRidePolylineData) values;
-        //currentPolyline = mMap.addPolyline(new PolylineOptions().addAll(polylineData.getPolyline()));
-        //currentPolyline = mMap.addPolyline(new PolylineOptions().addAll((Iterable<LatLng>) values[1]));
-        Log.d("mylog", "POLYLINES SIZE: " + polylines.size());
-        polylines.add(mMap.addPolyline(new PolylineOptions().addAll((Iterable<LatLng>) values[1])));
+        PolylineOptions polylineOptions = route.getLineOptions();
 
-        if(counter == 0)
-        {
-            //currentPolyline.setColor(Color.BLUE);
-            reitinValinta = "pl0";
-            //currentPolyline.setZIndex(1);
-            polylines.get(counter).setColor(Color.BLUE);
-            polylines.get(counter).setZIndex(1);
-        }
-        else
-        {
-            //currentPolyline.setColor(Color.GRAY);
-            //currentPolyline.setZIndex(0);
-            polylines.get(counter).setColor(Color.GRAY);
-            polylines.get(counter).setZIndex(0);
-        }
+        Polyline polyline = mMap.addPolyline(polylineOptions);
+        allPolylines.add(polyline); // Adding polyline to list of all polylines
+        polylineHashMap.put(polyline.getId(), route);
 
-        //currentPolyline.setClickable(true);
-        polylines.get(counter).setClickable(true);
-
-        mPolylinesData.add(new SetRidePolylineData(polylines.get(counter), (List<LatLng>) values[1]));
-        //mPolylinesData.add(new SetRidePolylineData(currentPolyline, (List<LatLng>) values[1]));
-        //Log.d("mylog", "POLYLINE LISÄTTY " + currentPolyline.getId());
-
-        counter++;
-        //polylineHashMap.put(currentPolyline.getId(), polylineData.getLatLngArrayList());
+        polyline.setClickable(true);
     }
 
     @Override
-    public void onPolylineClick(Polyline polyline) {
+    public void onPolylineClick(Polyline clickedPolyline) {
 
-        Log.d("mylog", "onPolylineClick: POLYLINE " + polyline.getId());
-        //Log.d("mylog", "onPolylineClick HASHMAPPI: " );
+        Log.d("mylog", "onPolylineClick: POLYLINE " + clickedPolyline.getId());
 
-        polyline.setColor(Color.BLUE);
-        for(SetRidePolylineData polylineData: mPolylinesData)
+        for(Polyline polyline : allPolylines)
         {
-            if(polyline.getId().equals(polylineData.getPolyline().getId()))
+            // Checking for clicked polyline match in list
+            if(clickedPolyline.getId().equals(polyline.getId()))
             {
-                polylineData.getPolyline().setColor(Color.BLUE);
-                polylineData.getPolyline().setZIndex(1);
-                reitinValinta = polyline.getId();
-                Log.d("mylog", "ROUTEINFFOOOOOOOOOOOO: " + SetRidePolylineData.routeInfo.get(polyline.getId()));
+                polyline.setColor(Color.BLUE);
+                polyline.setZIndex(1);
+                currentRoute = polylineHashMap.get(polyline.getId());
+                Log.d("mylog", "ROUTEINFFOOOOOOOOOOOO: " + polyline.getId());
+                Log.d("Polylineclick!", "Clicked polyline with id: " + polyline.getId() + " and route distance: " + polylineHashMap.get(polyline.getId()).rideDistance);
             }
             else
             {
-                polylineData.getPolyline().setColor(Color.GRAY);
-                polylineData.getPolyline().setZIndex(0);
+                polyline.setColor(Color.GRAY);
+                polyline.setZIndex(0);
             }
         }
 
@@ -331,5 +304,4 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
         //Log.d("mylog", "onPolylineClick: " + polylineHashMap.get(polyline.getId()));
 
     }
-
 }

@@ -14,15 +14,17 @@ import java.util.List;
 
 public class SetRideDataParser {
 
-    public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
-        List<List<HashMap<String, String>>> routes = new ArrayList<>();
+    public List<Route> parse(JSONObject jObject) {
+
+        List<Route> routes = new ArrayList<>();
         JSONArray jRoutes;
         JSONArray jLegs;
         JSONArray jSteps;
         JSONObject jDistance;
         JSONObject jDuration;
+        String distance;
+        String duration;
 
-        List<HashMap<String, String>> myList = new ArrayList<>();
         try {
             jRoutes = jObject.getJSONArray("routes");
             /** Traversing all routes */
@@ -32,7 +34,8 @@ public class SetRideDataParser {
                 int myIndex = 0;
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
                 Log.d("mytag", "parse: " + jLegs);
-                List path = new ArrayList<>();
+                List<HashMap<String,String>> path = new ArrayList<>();  // Holds all coordinate points of this route
+                List<HashMap<String, String>> myList = new ArrayList<>();   // Holds every 100th coordinate point of this route
                 /** Traversing all legs */
                 for (int j = 0; j < jLegs.length(); j++) {
                     jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
@@ -64,7 +67,6 @@ public class SetRideDataParser {
                             myIndex++;
                         }
                     }
-                    routes.add(path);
 
                     //matkan pituuden määritys
                     int dist = totalDistance / 1000;
@@ -77,7 +79,12 @@ public class SetRideDataParser {
                     //SetRideConstant.DURATION = String.valueOf(hours + "h " + minutes + "min");
 
                     //Matkan pituuden määritys SetRidePolylineDataan. Hashmap = key "pl0, pl1, jne.."
-                    SetRidePolylineData.routeInfo.put("pl" + i,  String.valueOf(hours+ "h " + minutes + "min " + String.valueOf(dist) + "km " ));
+                    duration =  String.valueOf(hours) + " h " + minutes + " min";
+                    distance = String.valueOf(dist) + " km";
+
+                    // Building route object from necessary data and adding to list
+                    Route route = new Route(path, myList, distance, duration);
+                    routes.add(route);
                 }
 
             }
@@ -86,7 +93,7 @@ public class SetRideDataParser {
             e.printStackTrace();
         } catch (Exception e) {
         }
-        SetRideConstant.pointsList = myList;
+
         Log.d("TESTI", routes.toString());
         return routes;
     }
