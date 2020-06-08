@@ -17,7 +17,10 @@ public class User implements Serializable {
     private float rating;
     private int ratingAmount;
 
-    public User() {}
+
+    //no-arg constructor so doc.toObject can deserialize
+    public User(){ }
+
 
     // Constructor with all parameters - required for document<->object
     // Use when creating a user
