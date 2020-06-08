@@ -60,6 +60,8 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     //Reitinhaun muuttujat
     MarkerOptions place1, place2;
 
+    int counter = 0;
+    private String reitinValinta;
     private HashMap<String, ArrayList<LatLng>> polylineHashMap = new HashMap<>();
     private ArrayList<SetRidePolylineData> mPolylinesData = new ArrayList<>();
 
@@ -157,6 +159,7 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
         if(v.getId() == R.id.set_ride_haeButton)
         {
             mMap.clear();
+            counter = 0;
 
             //Reitin haku napin toiminnallisuus
             strLahto = lahtoEditori.getQuery().toString();
@@ -260,17 +263,30 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
         //SetRidePolylineData polylineData = (SetRidePolylineData) values;
         //currentPolyline = mMap.addPolyline(new PolylineOptions().addAll(polylineData.getPolyline()));
         currentPolyline = mMap.addPolyline(new PolylineOptions().addAll((Iterable<LatLng>) values[1]));
-        currentPolyline.setColor(Color.GRAY);
+        if(counter == 0)
+        {
+            currentPolyline.setColor(Color.BLUE);
+            reitinValinta = "pl0";
+            currentPolyline.setZIndex(1);
+        }
+        else
+        {
+            currentPolyline.setColor(Color.GRAY);
+            currentPolyline.setZIndex(0);
+        }
+
         currentPolyline.setClickable(true);
 
         mPolylinesData.add(new SetRidePolylineData(currentPolyline, (List<LatLng>) values[1]));
         Log.d("mylog", "POLYLINE LISÄTTY " + currentPolyline.getId());
 
+        counter++;
         //polylineHashMap.put(currentPolyline.getId(), polylineData.getLatLngArrayList());
     }
 
     @Override
     public void onPolylineClick(Polyline polyline) {
+
         Log.d("mylog", "onPolylineClick: POLYLINE " + polyline.getId());
         //Log.d("mylog", "onPolylineClick HASHMAPPI: " );
 
@@ -281,8 +297,8 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
             {
                 polylineData.getPolyline().setColor(Color.BLUE);
                 polylineData.getPolyline().setZIndex(1);
-
-
+                reitinValinta = polyline.getId();
+                Log.d("mylog", "ROUTEINFFOOOOOOOOOOOO: " + SetRidePolylineData.routeInfo.get(polyline.getId()));
             }
             else
             {

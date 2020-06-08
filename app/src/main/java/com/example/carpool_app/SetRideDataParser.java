@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SetRideDataParser {
-    private ArrayList<SetRidePolylineData> mPolylinesData = new ArrayList<>();
+
     public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
         List<List<HashMap<String, String>>> routes = new ArrayList<>();
         JSONArray jRoutes;
@@ -21,14 +21,15 @@ public class SetRideDataParser {
         JSONArray jSteps;
         JSONObject jDistance;
         JSONObject jDuration;
-        long totalDistance = 0;
-        int totalSeconds = 0;
-        int myIndex = 0;
+
         List<HashMap<String, String>> myList = new ArrayList<>();
         try {
             jRoutes = jObject.getJSONArray("routes");
             /** Traversing all routes */
             for (int i = 0; i < jRoutes.length(); i++) {
+                int totalDistance = 0;
+                int totalSeconds = 0;
+                int myIndex = 0;
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
                 Log.d("mytag", "parse: " + jLegs);
                 List path = new ArrayList<>();
@@ -36,9 +37,10 @@ public class SetRideDataParser {
                 for (int j = 0; j < jLegs.length(); j++) {
                     jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
                     Log.d("mytag", "jsteps: " + jSteps);
+
                     //Kokonaismatkan haku jsonista
                     jDistance = ((JSONObject) jLegs.get(j)).getJSONObject("distance");
-                    totalDistance = totalDistance + Long.parseLong(jDistance.getString("value"));
+                    totalDistance = totalDistance + Integer.parseInt(jDistance.getString("value"));
 
                     //Kokonaisajan haku jsonista
                     jDuration = ((JSONObject) jLegs.get(j)).getJSONObject("duration");
@@ -65,14 +67,17 @@ public class SetRideDataParser {
                     routes.add(path);
 
                     //matkan pituuden määritys
-                    double dist = totalDistance / 1000.0;
-                    SetRideConstant.DISTANCE = String.valueOf(dist);
+                    int dist = totalDistance / 1000;
+                    //SetRideConstant.DISTANCE = String.valueOf(dist);
+
 
                     //matka ajan määritys
                     int hours = (totalSeconds / 3600);
                     int minutes = ((totalSeconds - hours * 3600) / 60);
-                    SetRideConstant.DURATION = String.valueOf(hours + "h " + minutes + "min");
+                    //SetRideConstant.DURATION = String.valueOf(hours + "h " + minutes + "min");
 
+                    //Matkan pituuden määritys SetRidePolylineDataan. Hashmap = key "pl0, pl1, jne.."
+                    SetRidePolylineData.routeInfo.put("pl" + i,  String.valueOf(hours+ "h " + minutes + "min " + String.valueOf(dist) + "km " ));
                 }
 
             }
