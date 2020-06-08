@@ -12,11 +12,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -46,10 +49,12 @@ public class GetRideActivity extends AppCompatActivity {
     private Button searchRideButton;
     private ImageView backButton;
     private EditText startPointEditText, destinationEditText, startDateEditText, endDateEditText, estStartTimeEditText, estEndTimeEditText;
+    private Spinner sortListSpinner;
     private ListView rideListView;
     private final static String TAG = "GetRideActivity";
     private ArrayList<RideUser> rideUserArrayList = new ArrayList<>();
     private GetRideAdapter getRideAdapter;
+    private ArrayAdapter<String> spinnerAdapter;
     private CollectionReference rideReference = FirebaseFirestore.getInstance().collection("rides");
     private CollectionReference userReference = FirebaseFirestore.getInstance().collection("users");
     private ProgressDialog progressDialog;
@@ -80,6 +85,12 @@ public class GetRideActivity extends AppCompatActivity {
         estStartTimeEditText = findViewById(R.id.getRide_estimateStartTimeEditText);
         estEndTimeEditText = findViewById(R.id.getRide_estimateEndTimeEditText);
         rideListView = findViewById(R.id.getRide_rideListView);
+
+        sortListSpinner = findViewById(R.id.getRide_sortListSpinner);
+        String[] spinnerItems = new String[]{"Aika", "Hinta"};
+        spinnerAdapter = new ArrayAdapter<>(GetRideActivity.this, R.layout.support_simple_spinner_dropdown_item, spinnerItems);
+        sortListSpinner.setAdapter(spinnerAdapter);
+
         startPointEditText.setText("Oulu");
         destinationEditText.setText("Helsinki");
 
@@ -238,6 +249,46 @@ public class GetRideActivity extends AppCompatActivity {
                 timePickerDialog.show();
             }
         });
+
+        sortListSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position)
+                {
+                    case 0:
+                        //case 0 is when user select "aika"
+                        Collections.sort(rideUserArrayList, new Comparator<RideUser>() {
+                            @Override
+                            public int compare(RideUser o1, RideUser o2) {
+                                String first = String.valueOf(o1.getRide().getLeaveTime());
+                                String second = String.valueOf(o2.getRide().getLeaveTime());
+                                return first.compareTo(second);
+                            }
+                        });
+                        getRideAdapter.notifyDataSetChanged();
+                        break;
+
+                    case 1:
+                        //case 1 is when user select "hinta"
+                        Collections.sort(rideUserArrayList, new Comparator<RideUser>() {
+                            @Override
+                            public int compare(RideUser o1, RideUser o2) {
+                                Log.d(TAG, "compare: " + o1.getRide().getPrice());
+                                String first = String.valueOf(o1.getRide().getPrice());
+                                String second = String.valueOf(o2.getRide().getPrice());
+                                return first.compareTo(second);
+                            }
+                        });
+                        getRideAdapter.notifyDataSetChanged();
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     //progress dialog. shows when called. used when app is finding matches
@@ -262,7 +313,6 @@ public class GetRideActivity extends AppCompatActivity {
 
         //making query, where ride time is between date1 and date2
         Query query = rideReference.whereGreaterThanOrEqualTo("leaveTime", date1).whereLessThanOrEqualTo("leaveTime", date2);
-        query.orderBy("leaveTime");
 
         //counter to check when all tasks are done
         final int[] counter = {0};
@@ -314,10 +364,7 @@ public class GetRideActivity extends AppCompatActivity {
                                                 try
                                                 {
                                                     final User user = userDoc.toObject(User.class);
-                                                    for(int i = 0; i < 10; i++)
-                                                    {
-                                                        rideUserArrayList.add(new RideUser(ride, user));
-                                                    }
+                                                    rideUserArrayList.add(new RideUser(ride, user));
                                                     Log.d(TAG, "onComplete: laitettu listoihin objectit");
                                                     counter[0]--;
                                                     Log.d(TAG, "onComplete: " + counter[0]);
@@ -395,13 +442,12 @@ public class GetRideActivity extends AppCompatActivity {
     }
 
     public static void hideKeyboard(Activity activity) {
-        /*InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         View v = activity.getCurrentFocus();
         if (v == null)
         {
             v = new View(activity);
         }
         inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
-         */
     }
 }

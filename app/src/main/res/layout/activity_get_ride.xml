@@ -191,7 +191,6 @@
         android:layout_marginStart="15dp"
         app:layout_constraintTop_toBottomOf="@id/getRide_startPointEditText"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/getRide_guideline"
         />
 
     <Button
@@ -213,6 +212,18 @@
         app:layout_constraintBottom_toBottomOf="@id/getRide_destinationEditText"
         />
 
+    <Spinner
+        android:id="@+id/getRide_sortListSpinner"
+
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="15dp"
+        app:layout_constraintTop_toBottomOf="@id/getRide_destinationEditText"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/getRide_guideline"
+        />
+
     <ListView
         android:id="@+id/getRide_rideListView"
         android:layout_width="0dp"
@@ -227,6 +238,8 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         />
+
+
 
     <!--
     <TextView
