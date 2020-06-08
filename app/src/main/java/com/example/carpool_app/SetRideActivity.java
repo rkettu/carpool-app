@@ -42,7 +42,6 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     private GoogleMap mMap;
 
     private SearchView lahtoEditori, loppuEditori;
-    Polyline currentPolyline = null;
     //Muuttujat
     private String strLahto, strLoppu;
 
@@ -64,7 +63,8 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     private String reitinValinta;
     private HashMap<String, ArrayList<LatLng>> polylineHashMap = new HashMap<>();
     private ArrayList<SetRidePolylineData> mPolylinesData = new ArrayList<>();
-
+    List<Polyline> polylines = new ArrayList<Polyline>();
+    Polyline currentPolyline = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +160,15 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
         {
             mMap.clear();
             counter = 0;
+
+            for(Polyline line : polylines)
+            {
+                line.remove();
+                mPolylinesData.remove(line);
+                Log.d("mylog", "REMOVED POLYLINE ");
+            }
+            polylines.clear();
+            mPolylinesData.clear();
 
             //Reitin haku napin toiminnallisuus
             strLahto = lahtoEditori.getQuery().toString();
@@ -262,23 +271,32 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
         Log.d("mylog", "onTaskDone: " + values[1]);
         //SetRidePolylineData polylineData = (SetRidePolylineData) values;
         //currentPolyline = mMap.addPolyline(new PolylineOptions().addAll(polylineData.getPolyline()));
-        currentPolyline = mMap.addPolyline(new PolylineOptions().addAll((Iterable<LatLng>) values[1]));
+        //currentPolyline = mMap.addPolyline(new PolylineOptions().addAll((Iterable<LatLng>) values[1]));
+        Log.d("mylog", "POLYLINES SIZE: " + polylines.size());
+        polylines.add(mMap.addPolyline(new PolylineOptions().addAll((Iterable<LatLng>) values[1])));
+
         if(counter == 0)
         {
-            currentPolyline.setColor(Color.BLUE);
+            //currentPolyline.setColor(Color.BLUE);
             reitinValinta = "pl0";
-            currentPolyline.setZIndex(1);
+            //currentPolyline.setZIndex(1);
+            polylines.get(counter).setColor(Color.BLUE);
+            polylines.get(counter).setZIndex(1);
         }
         else
         {
-            currentPolyline.setColor(Color.GRAY);
-            currentPolyline.setZIndex(0);
+            //currentPolyline.setColor(Color.GRAY);
+            //currentPolyline.setZIndex(0);
+            polylines.get(counter).setColor(Color.GRAY);
+            polylines.get(counter).setZIndex(0);
         }
 
-        currentPolyline.setClickable(true);
+        //currentPolyline.setClickable(true);
+        polylines.get(counter).setClickable(true);
 
-        mPolylinesData.add(new SetRidePolylineData(currentPolyline, (List<LatLng>) values[1]));
-        Log.d("mylog", "POLYLINE LISÄTTY " + currentPolyline.getId());
+        mPolylinesData.add(new SetRidePolylineData(polylines.get(counter), (List<LatLng>) values[1]));
+        //mPolylinesData.add(new SetRidePolylineData(currentPolyline, (List<LatLng>) values[1]));
+        //Log.d("mylog", "POLYLINE LISÄTTY " + currentPolyline.getId());
 
         counter++;
         //polylineHashMap.put(currentPolyline.getId(), polylineData.getLatLngArrayList());
