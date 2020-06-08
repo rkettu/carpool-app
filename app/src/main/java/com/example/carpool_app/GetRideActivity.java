@@ -117,6 +117,9 @@ public class GetRideActivity extends AppCompatActivity {
                     showProgressDialog(GetRideActivity.this);
                     hideKeyboard(GetRideActivity.this);
 
+                    //show 0 data in list
+                    getRideAdapter.notifyDataSetChanged();
+
                     //calling findRides function where is db search with algorithm
                     findRides(startPoint, destination, date1, date2);
                 }
@@ -311,8 +314,10 @@ public class GetRideActivity extends AppCompatActivity {
                                                 try
                                                 {
                                                     final User user = userDoc.toObject(User.class);
-                                                    Picasso.with(GetRideActivity.this).load(user.getImgUri()).fetch();
-                                                    rideUserArrayList.add(new RideUser(ride, user));
+                                                    for(int i = 0; i < 10; i++)
+                                                    {
+                                                        rideUserArrayList.add(new RideUser(ride, user));
+                                                    }
                                                     Log.d(TAG, "onComplete: laitettu listoihin objectit");
                                                     counter[0]--;
                                                     Log.d(TAG, "onComplete: " + counter[0]);
@@ -390,12 +395,13 @@ public class GetRideActivity extends AppCompatActivity {
     }
 
     public static void hideKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        /*InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         View v = activity.getCurrentFocus();
         if (v == null)
         {
             v = new View(activity);
         }
         inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+         */
     }
 }
