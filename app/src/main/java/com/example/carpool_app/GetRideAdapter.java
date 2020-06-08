@@ -16,8 +16,7 @@ import java.util.List;
 
 public class GetRideAdapter extends BaseAdapter {
 
-    private ArrayList<User> userArrayList = new ArrayList<>();
-    private ArrayList<Ride> rideArrayList = new ArrayList<>();
+    private ArrayList<RideUser> rideUserArrayList = new ArrayList<>();
     private Context context;
     private LayoutInflater inflater;
     public static final String TAG = "GetRideAdapter";
@@ -26,20 +25,19 @@ public class GetRideAdapter extends BaseAdapter {
         //Needs constructor for notifyDataSetChanges function
     }
 
-    public GetRideAdapter(Context context, ArrayList<User> userArrayList, ArrayList<Ride> rideArrayList) {
+    public GetRideAdapter(Context context, ArrayList<RideUser> rideUserArrayList) {
         this.context = context;
-        this.userArrayList = userArrayList;
-        this.rideArrayList = rideArrayList;
+        this.rideUserArrayList = rideUserArrayList;
     }
 
     public static class ViewHolder
     {
-        TextView startPointTextView, destinationTextView, rideProviderTextView, durationTextView, leaveTimeTextView;
+        TextView startPointDestinationTextView, destinationTextView, rideProviderTextView, dateTextView, timeTextView;
     }
 
     @Override
     public int getCount() {
-        return userArrayList.size();
+        return rideUserArrayList.size();
     }
 
     @Override
@@ -61,11 +59,11 @@ public class GetRideAdapter extends BaseAdapter {
         {
             viewHolder = new ViewHolder();
             view = inflater.from(parent.getContext()).inflate(R.layout.adapter_get_ride, parent, false);
-            viewHolder.startPointTextView = view.findViewById(R.id.getRideAdapter_startPointTextView);
-            viewHolder.destinationTextView = view.findViewById(R.id.getRideAdapter_destinationTextView);
+            viewHolder.startPointDestinationTextView = view.findViewById(R.id.getRideAdapter_startPointDestinationTextView);
+            //viewHolder.destinationTextView = view.findViewById(R.id.getRideAdapter_destinationTextView);
             viewHolder.rideProviderTextView = view.findViewById(R.id.getRideAdapter_userNameTextView);
-            viewHolder.durationTextView = view.findViewById(R.id.getRideAdapter_durationTextView);
-            viewHolder.leaveTimeTextView = view.findViewById(R.id.getRideAdapter_timeTextView);
+            viewHolder.dateTextView = view.findViewById(R.id.getRideAdapter_dateTextView);
+            viewHolder.timeTextView = view.findViewById(R.id.getRideAdapter_timeTextView);
             view.setTag(viewHolder);
         }
         else
@@ -73,11 +71,15 @@ public class GetRideAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
 
+        Long date = rideUserArrayList.get(position).getRide().getLeaveTime();
+        String newDate = CalendarHelper.getDateTimeString(date);
+        String newTime = CalendarHelper.getHHMMString(date);
+
         //printing data from array lists to list view
-        viewHolder.startPointTextView.setText(rideArrayList.get(position).getStartCity());
-        viewHolder.destinationTextView.setText(rideArrayList.get(position).getEndCity());
-        viewHolder.rideProviderTextView.setText(userArrayList.get(position).getFname());
-        viewHolder.durationTextView.setText(rideArrayList.get(position).getDuration());
+        viewHolder.startPointDestinationTextView.setText(rideUserArrayList.get(position).getRide().getStartCity() + " - " + rideUserArrayList.get(position).getRide().getEndCity());
+        viewHolder.rideProviderTextView.setText(rideUserArrayList.get(position).getUser().getFname());
+        viewHolder.dateTextView.setText(newDate);
+        viewHolder.timeTextView.setText(newTime);
 
         //TODO calendarHelper from git
         //viewHolder.leaveTimeTextView.setText(rideArrayList.get(position).getLeaveTime());
