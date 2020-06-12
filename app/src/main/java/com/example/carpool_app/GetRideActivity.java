@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
@@ -31,13 +32,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -54,7 +55,7 @@ public class GetRideActivity extends AppCompatActivity {
     private final static String TAG = "GetRideActivity";
     private ArrayList<RideUser> rideUserArrayList = new ArrayList<>();
     private GetRideAdapter getRideAdapter;
-    private ArrayAdapter<String> spinnerAdapter;
+    private ArrayAdapter<CharSequence> spinnerAdapter;
     private CollectionReference rideReference = FirebaseFirestore.getInstance().collection("rides");
     private CollectionReference userReference = FirebaseFirestore.getInstance().collection("users");
     private ProgressDialog progressDialog;
@@ -64,6 +65,7 @@ public class GetRideActivity extends AppCompatActivity {
     private String startDateString;
     private Calendar calendar;
     private List<HashMap<String, String>> points;
+    private int spinnerCase = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,11 +88,13 @@ public class GetRideActivity extends AppCompatActivity {
         estEndTimeEditText = findViewById(R.id.getRide_estimateEndTimeEditText);
         rideListView = findViewById(R.id.getRide_rideListView);
 
+        //simply spinner which is used to sort rides
         sortListSpinner = findViewById(R.id.getRide_sortListSpinner);
-        String[] spinnerItems = new String[]{"Aika", "Hinta"};
-        spinnerAdapter = new ArrayAdapter<>(GetRideActivity.this, R.layout.support_simple_spinner_dropdown_item, spinnerItems);
+        spinnerAdapter = ArrayAdapter.createFromResource(GetRideActivity.this, R.array.getRideSpinnerItems, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sortListSpinner.setAdapter(spinnerAdapter);
 
+        //pre filled for testing
         startPointEditText.setText("Oulu");
         destinationEditText.setText("Helsinki");
 
@@ -100,7 +104,7 @@ public class GetRideActivity extends AppCompatActivity {
 
         //setting placeholder time in edit texts
         startDateEditText.setText(CalendarHelper.getDateTimeString(System.currentTimeMillis()));
-        estStartTimeEditText.setText(CalendarHelper.getHHMMString(System.currentTimeMillis()));
+        estStartTimeEditText.setText("00:00");
     }
 
     //Initialising two buttons, Search Rides and Back Arrow
@@ -131,8 +135,10 @@ public class GetRideActivity extends AppCompatActivity {
                     //show 0 data in list
                     getRideAdapter.notifyDataSetChanged();
 
+                    Log.d(TAG, "onClick: " + spinnerCase);
+
                     //calling findRides function where is db search with algorithm
-                    findRides(startPoint, destination, date1, date2);
+                    findRides(startPoint, destination, date1, date2, spinnerCase);
                 }
                 catch (Exception e)
                 {
@@ -154,17 +160,20 @@ public class GetRideActivity extends AppCompatActivity {
         mMonth = calendar.get(Calendar.MONTH);
         mDay = calendar.get(Calendar.DAY_OF_MONTH);
 
+        startDateDay = CalendarHelper.getDayString(System.currentTimeMillis());
+        startDateMonth = CalendarHelper.getMonthString(System.currentTimeMillis());
+        startDateYear = CalendarHelper.getYearString(System.currentTimeMillis());
+
         //when you press startDateEditText, it will open datePickerDialog where you can select date in dd/MM/yyyy
         startDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog datePickerDialog = new DatePickerDialog(GetRideActivity.this, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(GetRideActivity.this, AlertDialog.THEME_HOLO_LIGHT, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         calendar.set(year, month, dayOfMonth);
 
-                        //format the output of date
-                        startDateString = new SimpleDateFormat("dd.MM.yyyy").format(calendar.getTime());
+                        final String startDateString = new SimpleDateFormat("dd.MM.yyyy").format(calendar.getTime());
                         startDateEditText.setText(startDateString);
 
                         //place picked date into variables, so we can change the date into millis for algorithm
@@ -173,6 +182,7 @@ public class GetRideActivity extends AppCompatActivity {
                         startDateDay = calendar.get(Calendar.DAY_OF_MONTH);
                     }
                 }, mYear, mMonth, mDay);
+                //can't select yesterday
                 //datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
                 datePickerDialog.show();
             }
@@ -182,14 +192,14 @@ public class GetRideActivity extends AppCompatActivity {
         endDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog datePickerDialog = new DatePickerDialog(GetRideActivity.this, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(GetRideActivity.this, AlertDialog.THEME_HOLO_LIGHT, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         calendar.set(year, month, dayOfMonth);
 
                         //format the output of date
-                        String dateString = new SimpleDateFormat("dd.MM.yyyy").format(calendar.getTime());
-                        endDateEditText.setText(dateString);
+                        String endDateString = new SimpleDateFormat("dd.MM.yyyy").format(calendar.getTime());
+                        endDateEditText.setText(endDateString);
 
                         //place picked date into variables, so we can change the date into millis for algorithm
                         endDateYear = calendar.get(Calendar.YEAR);
@@ -197,6 +207,10 @@ public class GetRideActivity extends AppCompatActivity {
                         endDateDay = calendar.get(Calendar.DAY_OF_MONTH);
                     }
                 }, mYear, mMonth, mDay);
+
+                calendar.set(startDateYear, startDateMonth, startDateDay);
+                long minimumDate = calendar.getTimeInMillis();
+                datePickerDialog.getDatePicker().setMinDate(minimumDate);
                 datePickerDialog.show();
             }
         });
@@ -208,7 +222,7 @@ public class GetRideActivity extends AppCompatActivity {
         estStartTimeEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TimePickerDialog timePickerDialog = new TimePickerDialog(GetRideActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                TimePickerDialog timePickerDialog = new TimePickerDialog(GetRideActivity.this, AlertDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         //place picked time into variables, so we can change the date into millis for algorithm
@@ -223,6 +237,7 @@ public class GetRideActivity extends AppCompatActivity {
                         estStartTimeEditText.setText(estTime);
                     }
                 }, newHour, newMinute, true);
+
                 timePickerDialog.show();
             }
         });
@@ -231,7 +246,7 @@ public class GetRideActivity extends AppCompatActivity {
         estEndTimeEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TimePickerDialog timePickerDialog = new TimePickerDialog(GetRideActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                TimePickerDialog timePickerDialog = new TimePickerDialog(GetRideActivity.this, AlertDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         //place picked time into variables, so we can change the date into millis for algorithm
@@ -250,13 +265,22 @@ public class GetRideActivity extends AppCompatActivity {
             }
         });
 
+        //spinner, where you can sort data from arraylist
         sortListSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position)
                 {
                     case 0:
-                        //case 0 is when user select "aika"
+                        //default, when user haven't selected any sorting method
+                        spinnerCase = 0;
+                        getRideAdapter.notifyDataSetChanged();
+                        break;
+
+                    case 1:
+                        //case 1 is when user select "Aika"
+                        //prints time from lowest to highest
+                        spinnerCase = 1;
                         Collections.sort(rideUserArrayList, new Comparator<RideUser>() {
                             @Override
                             public int compare(RideUser o1, RideUser o2) {
@@ -268,12 +292,13 @@ public class GetRideActivity extends AppCompatActivity {
                         getRideAdapter.notifyDataSetChanged();
                         break;
 
-                    case 1:
-                        //case 1 is when user select "hinta"
+                    case 2:
+                        //case 2 is when user select "hinta"
+                        //prints price from lowers to highest
+                        spinnerCase = 2;
                         Collections.sort(rideUserArrayList, new Comparator<RideUser>() {
                             @Override
                             public int compare(RideUser o1, RideUser o2) {
-                                Log.d(TAG, "compare: " + o1.getRide().getPrice());
                                 String first = String.valueOf(o1.getRide().getPrice());
                                 String second = String.valueOf(o2.getRide().getPrice());
                                 return first.compareTo(second);
@@ -286,7 +311,7 @@ public class GetRideActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                //case 0 is happening of nothing is selected
             }
         });
     }
@@ -301,7 +326,7 @@ public class GetRideActivity extends AppCompatActivity {
     }
 
     //algorithm and db search
-    private void findRides(final String startPoint, final String destination, float date1, float date2)
+    private void findRides(final String startPoint, final String destination, float date1, float date2, final int spinnerCase)
     {
         //ThreadPoolExecutor with 2 threads for each processor on the device and a 5 second keep-alive time.
         int numOfCores = Runtime.getRuntime().availableProcessors();
@@ -312,6 +337,7 @@ public class GetRideActivity extends AppCompatActivity {
         Log.d(TAG, "findRides: ennen query");
 
         //making query, where ride time is between date1 and date2
+
         Query query = rideReference.whereGreaterThanOrEqualTo("leaveTime", date1).whereLessThanOrEqualTo("leaveTime", date2);
 
         //counter to check when all tasks are done
@@ -429,9 +455,8 @@ public class GetRideActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d(TAG, "run: " + myList);
+                                sortingAfterDbSearch(spinnerCase);
                                 progressDialog.dismiss();
-                                getRideAdapter.notifyDataSetChanged();
                             }
                         });
                     }
@@ -439,6 +464,45 @@ public class GetRideActivity extends AppCompatActivity {
             }
         });
         Log.d(TAG, "findRides: ollaan täällä");
+    }
+
+    //method, where the sorting happens after the array list is filled from database
+    //data will be sorted already (depends on spinners value) when displaying first time
+    private void sortingAfterDbSearch(int spinnerCase)
+    {
+        //when "järjestä" or nothing is selected in spinner
+        if(spinnerCase == 0)
+        {
+            getRideAdapter.notifyDataSetChanged();
+        }
+
+        //when "aika" is selected in spinner
+        else if(spinnerCase == 1)
+        {
+            Collections.sort(rideUserArrayList, new Comparator<RideUser>() {
+                @Override
+                public int compare(RideUser o1, RideUser o2) {
+                    String first = String.valueOf(o1.getRide().getLeaveTime());
+                    String second = String.valueOf(o2.getRide().getLeaveTime());
+                    return first.compareTo(second);
+                }
+            });
+            getRideAdapter.notifyDataSetChanged();
+        }
+
+        //when "hinta" is selected in spinner
+        else if(spinnerCase == 2)
+        {
+            Collections.sort(rideUserArrayList, new Comparator<RideUser>() {
+                @Override
+                public int compare(RideUser o1, RideUser o2) {
+                    String first = String.valueOf(o1.getRide().getPrice());
+                    String second = String.valueOf(o2.getRide().getPrice());
+                    return first.compareTo(second);
+                }
+            });
+            getRideAdapter.notifyDataSetChanged();
+        }
     }
 
     public static void hideKeyboard(Activity activity) {

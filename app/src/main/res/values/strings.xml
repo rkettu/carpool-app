@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Carpool App</string>
+
+    <string-array name="getRideSpinnerItems">
+        <item>Järjestä</item>
+        <item>Aika</item>
+        <item>Hinta</item>
+    </string-array>
+
 </resources>

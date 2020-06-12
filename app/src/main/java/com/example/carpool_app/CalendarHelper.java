@@ -39,6 +39,30 @@ public class CalendarHelper {
         return timeString;
     }
 
+    public static int getDayString(long timeInMillis)
+    {
+        Calendar c = new GregorianCalendar();
+        c.setTimeInMillis(timeInMillis);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        return day;
+    }
+
+    public static int getMonthString(long timeInMillis)
+    {
+        Calendar c= new GregorianCalendar();
+        c.setTimeInMillis(timeInMillis);
+        int month = c.get(Calendar.MONTH + 1);
+        return month;
+    }
+
+    public static int getYearString(long timeInMillis)
+    {
+        Calendar c = new GregorianCalendar();
+        c.setTimeInMillis(timeInMillis);
+        int year = c.get(Calendar.YEAR);
+        return year;
+    }
+
     // Time in millis
     public static String getTimeInMillis()
     {

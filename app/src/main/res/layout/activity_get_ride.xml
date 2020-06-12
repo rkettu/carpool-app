@@ -214,11 +214,12 @@
 
     <Spinner
         android:id="@+id/getRide_sortListSpinner"
-
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:entries="@array/getRideSpinnerItems"
         android:layout_marginTop="4dp"
         android:layout_marginStart="15dp"
+        android:layout_marginBottom="4dp"
         app:layout_constraintTop_toBottomOf="@id/getRide_destinationEditText"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toTopOf="@id/getRide_guideline"
