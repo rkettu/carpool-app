@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -62,10 +61,10 @@ public class GetRideActivity extends AppCompatActivity {
     private int mYear, mMonth, mDay, newHour, newMinute;
     private int startDateDay, startDateMonth, startDateYear, startTimeHour, startTimeMinute;
     private int endDateDay, endDateMonth, endDateYear, endTimeHour, endTimeMinute;
-    private String startDateString;
     private Calendar calendar;
     private List<HashMap<String, String>> points;
     private int spinnerCase = 0;
+    private float startLat, startLng, destinationLat, destinationLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,9 +123,9 @@ public class GetRideActivity extends AppCompatActivity {
 
                     //takes start and end date, change them to millis so we can search rides between those times
                     calendar.set(startDateYear, startDateMonth, startDateDay, startTimeHour, startTimeMinute);
-                    float date1 = calendar.getTimeInMillis();
+                    final float date1 = calendar.getTimeInMillis();
                     calendar.set(endDateYear, endDateMonth, endDateDay, endTimeHour, endTimeMinute);
-                    float date2 = calendar.getTimeInMillis();
+                    final float date2 = calendar.getTimeInMillis();
 
                     //show progress dialog when doing search and hide keyboard when pressing search button
                     showProgressDialog(GetRideActivity.this);
@@ -135,10 +134,21 @@ public class GetRideActivity extends AppCompatActivity {
                     //show 0 data in list
                     getRideAdapter.notifyDataSetChanged();
 
-                    Log.d(TAG, "onClick: " + spinnerCase);
+                    //Getting start and destination coordinates in async task
+                    GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
+                        @Override
+                        public void getCoordinates(GetCoordinatesUtility getRideUtility) {
+                            startLat = getRideUtility.getStartLat();
+                            startLng = getRideUtility.getStartLng();
+                            destinationLat = getRideUtility.getDestinationLat();
+                            destinationLng = getRideUtility.getDestinationLng();
 
-                    //calling findRides function where is db search with algorithm
-                    findRides(startPoint, destination, date1, date2, spinnerCase);
+                            //calling findRides function where is db search with algorithm
+                            findRides(startLat, startLng, destinationLat, destinationLng, date1, date2, spinnerCase);
+                        }
+                    }, GetRideActivity.this);
+                    getCoordinatesASync.execute(startPoint, destination);
+
                 }
                 catch (Exception e)
                 {
@@ -168,7 +178,7 @@ public class GetRideActivity extends AppCompatActivity {
         startDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog datePickerDialog = new DatePickerDialog(GetRideActivity.this, AlertDialog.THEME_HOLO_LIGHT, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(GetRideActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         calendar.set(year, month, dayOfMonth);
@@ -192,7 +202,7 @@ public class GetRideActivity extends AppCompatActivity {
         endDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog datePickerDialog = new DatePickerDialog(GetRideActivity.this, AlertDialog.THEME_HOLO_LIGHT, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(GetRideActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         calendar.set(year, month, dayOfMonth);
@@ -208,7 +218,7 @@ public class GetRideActivity extends AppCompatActivity {
                     }
                 }, mYear, mMonth, mDay);
 
-                calendar.set(startDateYear, startDateMonth, startDateDay);
+                calendar.set(startDateYear, startDateMonth , startDateDay);
                 long minimumDate = calendar.getTimeInMillis();
                 datePickerDialog.getDatePicker().setMinDate(minimumDate);
                 datePickerDialog.show();
@@ -326,9 +336,9 @@ public class GetRideActivity extends AppCompatActivity {
     }
 
     //algorithm and db search
-    private void findRides(final String startPoint, final String destination, float date1, float date2, final int spinnerCase)
+    private void findRides(final float startLat, final float startLng, final float destinationLat, final float destinationLng, float date1, float date2, final int spinnerCase)
     {
-        //ThreadPoolExecutor with 2 threads for each processor on the device and a 5 second keep-alive time.
+        //ThreadPoolExecutor with 2 threads for each available processor on the device and a 5 second keep-alive time.
         int numOfCores = Runtime.getRuntime().availableProcessors();
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(numOfCores * 2, numOfCores * 2, 5L, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>());
         //Log.d(TAG, "findRides: " + executor.toString());
@@ -337,11 +347,7 @@ public class GetRideActivity extends AppCompatActivity {
         Log.d(TAG, "findRides: ennen query");
 
         //making query, where ride time is between date1 and date2
-
         Query query = rideReference.whereGreaterThanOrEqualTo("leaveTime", date1).whereLessThanOrEqualTo("leaveTime", date2);
-
-        //counter to check when all tasks are done
-        final int[] counter = {0};
 
         //TODO when task is completed, exceptions and testing
         Log.d(TAG, "findRides: queryn jälkeen");
@@ -357,18 +363,11 @@ public class GetRideActivity extends AppCompatActivity {
                         {
                             //takes pickUpDistance and points from rides so we can use our algorithm to filter matching routes
                             float pickUpDistance = (long) rideDoc.get("pickUpDistance");
-                            points = (List) rideDoc.get("points");
-                            AppMath appMath = new AppMath();
-
-                            //Start point and destination coordinate points for algorithm
-                            float startLat = GeoCoderHelper.getCoordinates(startPoint, GetRideActivity.this).get(0);
-                            float startLng = GeoCoderHelper.getCoordinates(startPoint, GetRideActivity.this).get(1);
-                            float destinationLat = GeoCoderHelper.getCoordinates(destination, GetRideActivity.this).get(0);
-                            float destinationLng = GeoCoderHelper.getCoordinates(destination, GetRideActivity.this).get(1);
-
+                            points = (List<HashMap<String, String>>) rideDoc.get("points");
                             Log.d(TAG, "onComplete: ollaan ennen appmath if lausetta");
 
                             //algorithm (in appMath class)
+                            AppMath appMath = new AppMath();
                             if(appMath.isRouteInRange(pickUpDistance, startLat, startLng, destinationLat, destinationLng, points))
                             {
                                 //Adds data to ride class from database
@@ -377,7 +376,6 @@ public class GetRideActivity extends AppCompatActivity {
 
                                 if (ride.getUid() != null)
                                 {
-                                    counter[0]++;
                                     Log.d(TAG, "onComplete: ride.getUid() != null");
                                     Task<DocumentSnapshot> taskItem = userReference.document(ride.getUid()).get();
                                     //uses uid to get correct provider data from database
@@ -392,17 +390,12 @@ public class GetRideActivity extends AppCompatActivity {
                                                     final User user = userDoc.toObject(User.class);
                                                     rideUserArrayList.add(new RideUser(ride, user));
                                                     Log.d(TAG, "onComplete: laitettu listoihin objectit");
-                                                    counter[0]--;
-                                                    Log.d(TAG, "onComplete: " + counter[0]);
+                                                    sortingAfterDbSearch(spinnerCase);
                                                 }
                                                 catch (Exception e)
                                                 {
                                                     e.printStackTrace();
                                                 }
-                                                /*if (counter[0] == 0) {
-                                                    getRideAdapter.notifyDataSetChanged();
-                                                    progressDialog.dismiss();
-                                                }*/
                                             }
                                             else
                                             {
@@ -417,9 +410,7 @@ public class GetRideActivity extends AppCompatActivity {
                                 {
                                     //rideUid is null
                                     //we have to skip task, if rideUid is null
-                                    counter[0]--;
                                 }
-
                                 Log.d(TAG, "getUserData: route rangella funktion loppu" );
                             }
                             else
@@ -448,6 +439,7 @@ public class GetRideActivity extends AppCompatActivity {
                 Log.d(TAG, "onCompleten lopussa ollaan nyt");
 
                 //when all tasks are done, dismiss the progress dialog and refresh the adapter data
+                //TODO Last task doesn't count because it is still running in async
                 //both of them are running on ui thread, what why runOnUiThread()
                 Tasks.whenAll(myList).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -455,7 +447,6 @@ public class GetRideActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                sortingAfterDbSearch(spinnerCase);
                                 progressDialog.dismiss();
                             }
                         });

@@ -51,7 +51,7 @@ public class CalendarHelper {
     {
         Calendar c= new GregorianCalendar();
         c.setTimeInMillis(timeInMillis);
-        int month = c.get(Calendar.MONTH + 1);
+        int month = c.get(Calendar.MONTH)+1;
         return month;
     }
 
