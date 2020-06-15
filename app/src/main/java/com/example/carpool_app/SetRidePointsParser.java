@@ -79,7 +79,7 @@ public class SetRidePointsParser extends AsyncTask<String, Integer, List<Route>>
             // Adding all the points in the route to LineOptions
             lineOptions.addAll(points);
             Log.d("mytag", "onPostExecute: " + points);
-            lineOptions.width(20);
+            lineOptions.width(10);
             if(i == 0)
             {
                 // Google Maps returns best route first, so we color route at index 0 blue

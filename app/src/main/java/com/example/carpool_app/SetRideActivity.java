@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -76,6 +77,7 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
         sijaintiButton = findViewById(R.id.set_ride_sijaintiButton);
         sijaintiButton.setOnClickListener(this);
         findViewById(R.id.set_ride_haeButton).setOnClickListener(this);
+        findViewById(R.id.set_ride_nextBtn).setOnClickListener(this);
 
         //editorit
         lahtoEditori = (SearchView) findViewById(R.id.set_ride_lahtoEdit);
@@ -188,7 +190,7 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
 
                     mMap.addMarker(place1);
                     mMap.addMarker(place2);
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place1.getPosition(),10));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place2.getPosition(),8));
 
 
                 }catch (Exception e){
@@ -228,6 +230,27 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
                     }
                 });
             }
+        }
+        else if(v.getId() == R.id.set_ride_nextBtn)
+        {
+            Intent details = new Intent(this, SetRideDetailsActivity.class);
+
+            for(Polyline polyline : allPolylines)
+            {
+                // Tarkistaa mikä reiteistä on valittuna eli sininen ja asettaa sen id:n reitinvalinta muuttujaan.
+                if(polyline.getColor() == Color.BLUE)
+                {
+                    reitinValinta = polyline.getId();
+                    Log.d("mylog", "REITINVALINTA: " + reitinValinta);
+
+                }
+            }
+
+            //
+            details.putExtra("ALKUOSOITE", strLahto);
+            details.putExtra("LOPPUOSOITE", strLoppu);
+            details.putExtra("REITTI", reitinValinta);
+            startActivity(details);
         }
 
     }
