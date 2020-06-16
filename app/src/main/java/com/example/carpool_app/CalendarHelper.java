@@ -25,7 +25,10 @@ public class CalendarHelper {
     {
         Calendar c = new GregorianCalendar();
         c.setTimeInMillis(timeInMillis);
-        String timeString = c.get(Calendar.DAY_OF_MONTH)+"."+(c.get(Calendar.MONTH)+1)+"."+c.get(Calendar.YEAR);
+        String dayString = c.get(Calendar.DAY_OF_MONTH) < 10 ? ("0" + c.get(Calendar.DAY_OF_MONTH)) : Integer.toString(c.get(Calendar.DAY_OF_MONTH));
+        int month = c.get(Calendar.MONTH) + 1;
+        String monthString = month < 10 ? ("0" + month) : Integer.toString(month);
+        String timeString = dayString+"."+monthString+"."+c.get(Calendar.YEAR);
         return timeString;
     }
 
@@ -65,9 +68,9 @@ public class CalendarHelper {
 
     public static int getMonthString(long timeInMillis)
     {
-        Calendar c= new GregorianCalendar();
+        Calendar c = new GregorianCalendar();
         c.setTimeInMillis(timeInMillis);
-        int month = c.get(Calendar.MONTH)+1;
+        int month = c.get(Calendar.MONTH);
         return month;
     }
 

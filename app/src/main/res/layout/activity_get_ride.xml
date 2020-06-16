@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
+    android:orientation="vertical"
     tools:context=".GetRideActivity">
 
     <View
@@ -14,7 +14,7 @@
         android:layout_height="0dp"
         android:background="@drawable/background_login"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/getRide_guideline"
+        app:layout_constraintBottom_toBottomOf="@id/getRide_sortListSpinner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         />
@@ -23,54 +23,53 @@
         android:id="@+id/getRide_btnBack"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="6dp"
         android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
-        android:layout_marginStart="15dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/getRide_startTimeTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Lähtöaika välille"
         android:layout_gravity="center"
-        android:textSize="22sp"
-        android:textColor="@color/black"
-        android:fontFamily="@font/montserrat_medium"
-        android:layout_marginTop="8dp"
         android:layout_marginStart="15dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="15dp"
-        app:layout_constraintRight_toRightOf="parent"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="Lähtöaika välille"
+        android:textColor="@color/black"
+        android:textSize="22sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/getRide_btnBack"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/getRide_btnBack" />
 
 
-            <!--
+    <!--
             <ImageView
                 android:layout_width="43dp"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_today_black_24dp" />
                 -->
     <EditText
+        android:id="@+id/getRide_startDate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:hint="dd/mm/yyyy"
-        android:textSize="15sp"
-        android:id="@+id/getRide_startDate"
-        android:inputType="date"
-        android:textColor="@color/black"
+        android:layout_marginStart="15dp"
         android:backgroundTint="@color/black"
         android:focusableInTouchMode="false"
         android:fontFamily="@font/open_sans_semibold"
-        android:layout_marginStart="15dp"
-        app:layout_constraintTop_toBottomOf="@id/getRide_startTimeTextView"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:gravity="center"
+        android:hint="dd/mm/yyyy"
+        android:inputType="date"
+        android:textColor="@color/black"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@id/getRide_startPointEditText"
-        />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/getRide_startTimeTextView" />
 
-            <!--
+    <!--
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,39 +77,37 @@
                 -->
 
     <EditText
+        android:id="@+id/getRide_estimateStartTimeEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:hint="hh:mm"
-        android:textSize="15sp"
-        android:textColor="@color/black"
-        android:id="@+id/getRide_estimateStartTimeEditText"
         android:backgroundTint="@color/black"
         android:focusableInTouchMode="false"
         android:fontFamily="@font/open_sans_semibold"
-        app:layout_constraintTop_toBottomOf="@id/getRide_startTimeTextView"
-        app:layout_constraintLeft_toRightOf="@+id/getRide_startDate"
+        android:gravity="center"
+        android:hint="hh:mm"
+        android:textColor="@color/black"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@id/getRide_startPointEditText"
-        />
+        app:layout_constraintLeft_toRightOf="@+id/getRide_startDate"
+        app:layout_constraintTop_toBottomOf="@id/getRide_startTimeTextView" />
 
     <TextView
         android:id="@+id/getRide_andTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ja"
-        android:textSize="18sp"
-        android:paddingHorizontal="16dp"
-        android:textColor="@color/black"
         android:backgroundTint="@color/black"
         android:fontFamily="@font/montserrat_medium"
-        app:layout_constraintTop_toBottomOf="@id/getRide_startTimeTextView"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:paddingHorizontal="16dp"
+        android:text="ja"
+        android:textColor="@color/black"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@id/getRide_startPointEditText"
-        />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/getRide_startTimeTextView" />
 
 
-            <!--
+    <!--
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -118,24 +115,23 @@
                 -->
 
     <EditText
+        android:id="@+id/getRide_endDate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:hint="dd/mm/yyyy"
-        android:textSize="15sp"
-        android:textColor="@color/black"
-        android:id="@+id/getRide_endDate"
-        android:inputType="date"
+        android:layout_marginTop="12dp"
         android:backgroundTint="@color/black"
         android:focusableInTouchMode="false"
         android:fontFamily="@font/open_sans_semibold"
-        android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/getRide_startTimeTextView"
-        app:layout_constraintRight_toLeftOf="@+id/getRide_estimateEndTimeEditText"
+        android:gravity="center"
+        android:hint="dd/mm/yyyy"
+        android:inputType="date"
+        android:textColor="@color/black"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@id/getRide_startPointEditText"
-        />
+        app:layout_constraintRight_toLeftOf="@+id/getRide_estimateEndTimeEditText"
+        app:layout_constraintTop_toBottomOf="@id/getRide_startTimeTextView" />
 
-            <!--
+    <!--
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -143,193 +139,98 @@
                 -->
 
     <EditText
+        android:id="@+id/getRide_estimateEndTimeEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:hint="hh:mm"
-        android:textSize="15sp"
-        android:textColor="@color/black"
-        android:id="@+id/getRide_estimateEndTimeEditText"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="15dp"
         android:backgroundTint="@color/black"
         android:focusableInTouchMode="false"
         android:fontFamily="@font/open_sans_semibold"
-        android:layout_marginEnd="15dp"
-        android:layout_marginTop="3dp"
-        app:layout_constraintTop_toBottomOf="@+id/getRide_startTimeTextView"
-        app:layout_constraintRight_toRightOf="parent"
+        android:gravity="center"
+        android:hint="hh:mm"
+        android:textColor="@color/black"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@id/getRide_startPointEditText"
-        />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/getRide_startTimeTextView" />
 
 
     <EditText
         android:id="@+id/getRide_startPointEditText"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:hint="Aseta lähtöpiste"
-        android:backgroundTint="@color/black"
-        android:textColor="@color/black"
-        android:maxLines="1"
-        android:inputType="textCapWords"
-        android:fontFamily="@font/open_sans_semibold"
-        android:layout_marginTop="8dp"
         android:layout_marginStart="15dp"
-        app:layout_constraintTop_toBottomOf="@id/getRide_endDate"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/black"
+        android:fontFamily="@font/open_sans_semibold"
+        android:hint="Aseta lähtöpiste"
+        android:inputType="textCapWords"
+        android:maxLines="1"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@id/getRide_destinationEditText"
-        />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/getRide_endDate" />
 
     <EditText
         android:id="@+id/getRide_destinationEditText"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:hint="Aseta määränpää"
-        android:textColor="@color/black"
-        android:maxLines="1"
-        android:inputType="textCapWords"
+        android:layout_marginStart="15dp"
         android:backgroundTint="@color/black"
         android:fontFamily="@font/open_sans_semibold"
-        android:layout_marginStart="15dp"
-        app:layout_constraintTop_toBottomOf="@id/getRide_startPointEditText"
+        android:hint="Aseta määränpää"
+        android:inputType="textCapWords"
+        android:maxLines="1"
+        android:textColor="@color/black"
         app:layout_constraintLeft_toLeftOf="parent"
-        />
+        app:layout_constraintTop_toBottomOf="@id/getRide_startPointEditText" />
 
     <Button
         android:id="@+id/getRide_btnSearch"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="15dp"
         android:background="@drawable/custom_button1"
+        android:fontFamily="@font/montserrat_medium"
         android:text="Hae matka"
+        android:textColor="@color/pastelGreen"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:textColor="@color/pastelGreen"
-        android:fontFamily="@font/montserrat_medium"
-        android:layout_marginEnd="15dp"
-        android:layout_marginStart="15dp"
-        app:layout_constraintTop_toTopOf="@id/getRide_startPointEditText"
+        app:layout_constraintBottom_toBottomOf="@id/getRide_destinationEditText"
         app:layout_constraintLeft_toRightOf="@id/getRide_startPointEditText"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/getRide_destinationEditText"
-        />
+        app:layout_constraintTop_toTopOf="@id/getRide_startPointEditText" />
 
     <Spinner
         android:id="@+id/getRide_sortListSpinner"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:entries="@array/getRideSpinnerItems"
-        android:layout_marginTop="4dp"
         android:layout_marginStart="15dp"
+        android:layout_marginTop="4dp"
         android:layout_marginBottom="16dp"
-        app:layout_constraintTop_toBottomOf="@id/getRide_destinationEditText"
+        android:entries="@array/getRideSpinnerItems"
+        android:gravity="center"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/getRide_guideline_horizontal"
-        app:layout_constraintBottom_toTopOf="@id/getRide_guideline"
-        />
+        app:layout_constraintTop_toBottomOf="@id/getRide_destinationEditText" />
 
     <ListView
         android:id="@+id/getRide_rideListView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:divider="@android:color/transparent"
         android:dividerHeight="14dp"
         android:fontFamily="@font/montserrat_medium"
-        android:layout_marginTop="12dp"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
-        app:layout_constraintTop_toBottomOf="@id/getRide_guideline"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        />
-
-
-
-    <!--
-    <TextView
-        android:id="@+id/dateOfTraverTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="Date of travel"
-        android:gravity="center"
-        />
-
-    <EditText
-        android:id="@+id/dateEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:inputType="date"
-        android:gravity="center"
-        android:hint="dd-mm-yyyy"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:onClick="dateOfTimeClicked"
-        />
-
-    <TextView
-        android:id="@+id/estTimeTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="Time of departure"
-        android:gravity="center"
-        />
-
-    <EditText
-        android:id="@+id/estTimeEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:hint="hh:mm"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:onClick="estTimeClicked"
-        />
-        -->
-
-    <!--
-    <CheckBox
-        android:id="@+id/luggageCheckBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Matkatavaroita?"
-        android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/endPointEditText"
-        app:layout_constraintLeft_toLeftOf="@id/guideline_left"
-        app:layout_constraintRight_toRightOf="@id/guideline_middle"
-        />
-
-    <EditText
-        android:id="@+id/luggageEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/settings_dialog_background"
-        android:gravity="top"
-        android:hint="Write your items..."
-        android:textColorHint="@color/hintlog"
-        android:inputType="textMultiLine"
-        android:lines="5"
-        android:scrollbars="vertical"
-        android:scrollHorizontally="false"
-        app:layout_constraintLeft_toLeftOf="@id/guideline_left"
-        app:layout_constraintRight_toLeftOf="@id/btnSearch"
-        android:layout_marginRight="10dp"
-        app:layout_constraintTop_toBottomOf="@id/luggageCheckBox" />
-        -->
-
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/getRide_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="293dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/getRide_guideline_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.50" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/getRide_sortListSpinner" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

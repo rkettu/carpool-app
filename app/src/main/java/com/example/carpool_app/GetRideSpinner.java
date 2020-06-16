@@ -10,12 +10,12 @@ import android.widget.SpinnerAdapter;
 
 public class GetRideSpinner implements SpinnerAdapter, ListAdapter {
 
-    protected static final int getRideSpinnerExtra = 1;
-    protected SpinnerAdapter spinnerAdapter;
+    private static final int getRideSpinnerExtra = 1;
+    private SpinnerAdapter spinnerAdapter;
     protected Context context;
-    protected int nothingSelectedLayout;
-    protected int nothingSelectedDropdownLayout;
-    protected LayoutInflater layoutInflater;
+    private int nothingSelectedLayout;
+    private int nothingSelectedDropdownLayout;
+    private LayoutInflater layoutInflater;
 
     public GetRideSpinner(SpinnerAdapter spinnerAdapter, int nothingSelectedLayout, Context context)
     {

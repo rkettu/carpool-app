@@ -90,9 +90,9 @@ public class GetRideActivity extends AppCompatActivity {
         estStartTimeEditText = findViewById(R.id.getRide_estimateStartTimeEditText);
         estEndTimeEditText = findViewById(R.id.getRide_estimateEndTimeEditText);
         rideListView = findViewById(R.id.getRide_rideListView);
+        sortListSpinner = findViewById(R.id.getRide_sortListSpinner);
 
         //simply spinner which is used to sort rides
-        sortListSpinner = findViewById(R.id.getRide_sortListSpinner);
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(GetRideActivity.this, R.array.getRideSpinnerItems,
                 android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -110,7 +110,7 @@ public class GetRideActivity extends AppCompatActivity {
         startDateEditText.setText(CalendarHelper.getDateTimeString(systemTime));
         estStartTimeEditText.setText("00:00");
         endDateEditText.setText(CalendarHelper.getDateTimeString(systemTime + 604800000));
-        estEndTimeEditText.setText(CalendarHelper.getHourString(systemTime) + ":" + CalendarHelper.getMinuteString(systemTime));
+        estEndTimeEditText.setText(CalendarHelper.getHHMMString(systemTime));
     }
 
     //Initialising two buttons, Search Rides and Back Arrow
@@ -137,14 +137,17 @@ public class GetRideActivity extends AppCompatActivity {
                     getRideAdapter.notifyDataSetChanged();
 
                     //takes start and end date, change them to millis so we can search rides between those times
-                    calendar.set(startDateYear, startDateMonth, startDateDay, startTimeHour, startTimeMinute);
+                    calendar.set(startDateYear, startDateMonth-1, startDateDay, startTimeHour, startTimeMinute);
                     date1 = calendar.getTimeInMillis();
-                    calendar.set(endDateYear, endDateMonth, endDateDay, endTimeHour, endTimeMinute);
+                    calendar.set(endDateYear, endDateMonth-1, endDateDay, endTimeHour, endTimeMinute);
                     date2 = calendar.getTimeInMillis();
 
+                    Log.d(TAG, "onClick: " + startDateMonth);
+                    Log.d(TAG, "onClick: " + endDateMonth);
                     Log.d(TAG, "onClick: " + date1);
                     Log.d(TAG, "onClick: " + date2);
 
+                    //if end time is bigger or equal to start time
                     if(date2 >= date1)
                     {
                         //Getting start and destination coordinates in async task
@@ -162,6 +165,7 @@ public class GetRideActivity extends AppCompatActivity {
                         }, GetRideActivity.this);
                         getCoordinatesASync.execute(startPoint, destination);
                     }
+                    //if start time is bigger than end time which is not possible when searching rides
                     else
                     {
                         progressDialog.dismiss();
@@ -169,7 +173,7 @@ public class GetRideActivity extends AppCompatActivity {
                         endDateEditText.setTextColor(Color.parseColor("#B75272"));
                         estStartTimeEditText.setTextColor(Color.parseColor("#B75272"));
                         estEndTimeEditText.setTextColor(Color.parseColor("#B75272"));
-                        Toast.makeText(GetRideActivity.this, "Tarkista päivämäärät ja kellonajat", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GetRideActivity.this, "Tarkista päivämäärät ja kellonajat", Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -199,6 +203,18 @@ public class GetRideActivity extends AppCompatActivity {
         endDateDay = CalendarHelper.getDayString(systemTime + 604800000);
         endDateMonth = CalendarHelper.getMonthString(systemTime + 604800000);
         endDateYear = CalendarHelper.getYearString(systemTime + 604800000);
+        endTimeHour = CalendarHelper.getHourString(systemTime);
+        endTimeMinute = CalendarHelper.getMinuteString(systemTime);
+
+        Log.d(TAG, "initGetRideButtons: " + mYear);
+        Log.d(TAG, "initGetRideButtons: " + mMonth);
+        Log.d(TAG, "initGetRideButtons: " + startDateYear);
+        Log.d(TAG, "initGetRideButtons: " + startDateMonth);
+        Log.d(TAG, "initGetRideButtons: " + startDateDay);
+        Log.d(TAG, "initGetRideButtons: " + endDateYear);
+        Log.d(TAG, "initGetRideButtons: " + endDateMonth);
+        Log.d(TAG, "initGetRideButtons: " + endDateDay);
+
 
         //when you press startDateEditText, it will open datePickerDialog where you can select date in dd/MM/yyyy
         startDateEditText.setOnClickListener(new View.OnClickListener() {
@@ -208,7 +224,6 @@ public class GetRideActivity extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         calendar.set(year, month, dayOfMonth);
-
                         final String startDateString = new SimpleDateFormat("dd.MM.yyyy").format(calendar.getTime());
                         startDateEditText.setText(startDateString);
 
@@ -218,8 +233,10 @@ public class GetRideActivity extends AppCompatActivity {
                         startDateDay = calendar.get(Calendar.DAY_OF_MONTH);
                     }
                 }, mYear, mMonth, mDay);
-                //can't select yesterday
-                //datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+
+                calendar.set(endDateYear, endDateMonth, endDateDay);
+                long maximumDate = calendar.getTimeInMillis();
+                datePickerDialog.getDatePicker().setMaxDate(maximumDate);
                 datePickerDialog.show();
             }
         });
@@ -244,7 +261,7 @@ public class GetRideActivity extends AppCompatActivity {
                     }
                 }, mYear, mMonth, mDay);
 
-                calendar.set(startDateYear, startDateMonth , startDateDay);
+                calendar.set(startDateYear, startDateMonth, startDateDay);
                 long minimumDate = calendar.getTimeInMillis();
                 datePickerDialog.getDatePicker().setMinDate(minimumDate);
                 datePickerDialog.show();
@@ -416,7 +433,6 @@ public class GetRideActivity extends AppCompatActivity {
                                                     final User user = userDoc.toObject(User.class);
                                                     rideUserArrayList.add(new RideUser(ride, user));
                                                     Log.d(TAG, "onComplete: laitettu listoihin objectit");
-                                                    sortingAfterDbSearch(spinnerCase);
                                                 }
                                                 catch (Exception e)
                                                 {
@@ -470,18 +486,26 @@ public class GetRideActivity extends AppCompatActivity {
                 Tasks.whenAll(myList).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        runOnUiThread(new Runnable() {
+                        GetRideSorting sorting = new GetRideSorting(new GetRideSortingInterface() {
                             @Override
-                            public void run() {
-                                progressDialog.dismiss();
-
-                                //if there is no rides, use toast to indicate that
-                                if(rideUserArrayList.size() == 0)
-                                {
-                                    Toast.makeText(GetRideActivity.this, "Sopivia kyytejä ei löytynyt.", Toast.LENGTH_SHORT).show();
-                                }
+                            public void GetRideSorting(final ArrayList<RideUser> rideUserArrayList) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.d(TAG, "run: ollaan getridesortinging rajapinnassa");
+                                        getRideAdapter.notifyDataSetChanged();
+                                        progressDialog.dismiss();
+                                        //if there is no rides, use toast to indicate that
+                                        Log.d(TAG, "run: rajapinnan ui threadissa");
+                                        if(rideUserArrayList.size() == 0)
+                                        {
+                                            Toast.makeText(GetRideActivity.this, "Sopivia kyytejä ei löytynyt.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
                             }
-                        });
+                        }, GetRideActivity.this);
+                        sorting.execute(rideUserArrayList, spinnerCase);
                     }
                 });
             }
@@ -491,6 +515,8 @@ public class GetRideActivity extends AppCompatActivity {
 
     //method, where the sorting happens after the array list is filled from database
     //data will be sorted already (depends on spinners value) when displaying first time
+
+    /*
     private void sortingAfterDbSearch(int spinnerCase)
     {
         //when "järjestä" or nothing is selected in spinner
@@ -510,7 +536,12 @@ public class GetRideActivity extends AppCompatActivity {
                     return first.compareTo(second);
                 }
             });
-            getRideAdapter.notifyDataSetChanged();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getRideAdapter.notifyDataSetChanged();
+                }
+            });
         }
 
         //when "hinta" is selected in spinner
@@ -524,9 +555,14 @@ public class GetRideActivity extends AppCompatActivity {
                     return first.compareTo(second);
                 }
             });
-            getRideAdapter.notifyDataSetChanged();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getRideAdapter.notifyDataSetChanged();
+                }
+            });
         }
-    }
+    }*/
 
     public static void hideKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
