@@ -9,6 +9,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -61,10 +63,12 @@ public class GetRideActivity extends AppCompatActivity {
     private int mYear, mMonth, mDay, newHour, newMinute;
     private int startDateDay, startDateMonth, startDateYear, startTimeHour, startTimeMinute;
     private int endDateDay, endDateMonth, endDateYear, endTimeHour, endTimeMinute;
+    private long date1, date2;
     private Calendar calendar;
     private List<HashMap<String, String>> points;
     private int spinnerCase = 0;
     private float startLat, startLng, destinationLat, destinationLng;
+    private long systemTime = System.currentTimeMillis();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,9 +93,10 @@ public class GetRideActivity extends AppCompatActivity {
 
         //simply spinner which is used to sort rides
         sortListSpinner = findViewById(R.id.getRide_sortListSpinner);
-        spinnerAdapter = ArrayAdapter.createFromResource(GetRideActivity.this, R.array.getRideSpinnerItems, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(GetRideActivity.this, R.array.getRideSpinnerItems,
+                android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sortListSpinner.setAdapter(spinnerAdapter);
+        sortListSpinner.setAdapter(new GetRideSpinner(spinnerAdapter, R.layout.spinner_title_get_ride, GetRideActivity.this));
 
         //pre filled for testing
         startPointEditText.setText("Oulu");
@@ -102,8 +107,10 @@ public class GetRideActivity extends AppCompatActivity {
         rideListView.setAdapter(getRideAdapter);
 
         //setting placeholder time in edit texts
-        startDateEditText.setText(CalendarHelper.getDateTimeString(System.currentTimeMillis()));
+        startDateEditText.setText(CalendarHelper.getDateTimeString(systemTime));
         estStartTimeEditText.setText("00:00");
+        endDateEditText.setText(CalendarHelper.getDateTimeString(systemTime + 604800000));
+        estEndTimeEditText.setText(CalendarHelper.getHourString(systemTime) + ":" + CalendarHelper.getMinuteString(systemTime));
     }
 
     //Initialising two buttons, Search Rides and Back Arrow
@@ -121,11 +128,6 @@ public class GetRideActivity extends AppCompatActivity {
                     String startPoint = startPointEditText.getText().toString();
                     String destination = destinationEditText.getText().toString();
 
-                    //takes start and end date, change them to millis so we can search rides between those times
-                    calendar.set(startDateYear, startDateMonth, startDateDay, startTimeHour, startTimeMinute);
-                    final float date1 = calendar.getTimeInMillis();
-                    calendar.set(endDateYear, endDateMonth, endDateDay, endTimeHour, endTimeMinute);
-                    final float date2 = calendar.getTimeInMillis();
 
                     //show progress dialog when doing search and hide keyboard when pressing search button
                     showProgressDialog(GetRideActivity.this);
@@ -134,20 +136,41 @@ public class GetRideActivity extends AppCompatActivity {
                     //show 0 data in list
                     getRideAdapter.notifyDataSetChanged();
 
-                    //Getting start and destination coordinates in async task
-                    GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
-                        @Override
-                        public void getCoordinates(GetCoordinatesUtility getRideUtility) {
-                            startLat = getRideUtility.getStartLat();
-                            startLng = getRideUtility.getStartLng();
-                            destinationLat = getRideUtility.getDestinationLat();
-                            destinationLng = getRideUtility.getDestinationLng();
+                    //takes start and end date, change them to millis so we can search rides between those times
+                    calendar.set(startDateYear, startDateMonth, startDateDay, startTimeHour, startTimeMinute);
+                    date1 = calendar.getTimeInMillis();
+                    calendar.set(endDateYear, endDateMonth, endDateDay, endTimeHour, endTimeMinute);
+                    date2 = calendar.getTimeInMillis();
 
-                            //calling findRides function where is db search with algorithm
-                            findRides(startLat, startLng, destinationLat, destinationLng, date1, date2, spinnerCase);
-                        }
-                    }, GetRideActivity.this);
-                    getCoordinatesASync.execute(startPoint, destination);
+                    Log.d(TAG, "onClick: " + date1);
+                    Log.d(TAG, "onClick: " + date2);
+
+                    if(date2 >= date1)
+                    {
+                        //Getting start and destination coordinates in async task
+                        GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
+                            @Override
+                            public void getCoordinates(GetCoordinatesUtility getRideUtility) {
+                                startLat = getRideUtility.getStartLat();
+                                startLng = getRideUtility.getStartLng();
+                                destinationLat = getRideUtility.getDestinationLat();
+                                destinationLng = getRideUtility.getDestinationLng();
+
+                                //calling findRides function where is db search with algorithm
+                                findRides(startLat, startLng, destinationLat, destinationLng, date1, date2, spinnerCase);
+                            }
+                        }, GetRideActivity.this);
+                        getCoordinatesASync.execute(startPoint, destination);
+                    }
+                    else
+                    {
+                        progressDialog.dismiss();
+                        startDateEditText.setTextColor(Color.parseColor("#B75272"));
+                        endDateEditText.setTextColor(Color.parseColor("#B75272"));
+                        estStartTimeEditText.setTextColor(Color.parseColor("#B75272"));
+                        estEndTimeEditText.setTextColor(Color.parseColor("#B75272"));
+                        Toast.makeText(GetRideActivity.this, "Tarkista päivämäärät ja kellonajat", Toast.LENGTH_SHORT).show();
+                    }
 
                 }
                 catch (Exception e)
@@ -170,9 +193,12 @@ public class GetRideActivity extends AppCompatActivity {
         mMonth = calendar.get(Calendar.MONTH);
         mDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-        startDateDay = CalendarHelper.getDayString(System.currentTimeMillis());
-        startDateMonth = CalendarHelper.getMonthString(System.currentTimeMillis());
-        startDateYear = CalendarHelper.getYearString(System.currentTimeMillis());
+        startDateDay = CalendarHelper.getDayString(systemTime);
+        startDateMonth = CalendarHelper.getMonthString(systemTime);
+        startDateYear = CalendarHelper.getYearString(systemTime);
+        endDateDay = CalendarHelper.getDayString(systemTime + 604800000);
+        endDateMonth = CalendarHelper.getMonthString(systemTime + 604800000);
+        endDateYear = CalendarHelper.getYearString(systemTime + 604800000);
 
         //when you press startDateEditText, it will open datePickerDialog where you can select date in dd/MM/yyyy
         startDateEditText.setOnClickListener(new View.OnClickListener() {
@@ -448,6 +474,12 @@ public class GetRideActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 progressDialog.dismiss();
+
+                                //if there is no rides, use toast to indicate that
+                                if(rideUserArrayList.size() == 0)
+                                {
+                                    Toast.makeText(GetRideActivity.this, "Sopivia kyytejä ei löytynyt.", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
                     }

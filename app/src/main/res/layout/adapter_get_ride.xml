@@ -70,16 +70,64 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="14dp"
-        android:maxLines="2"
+        android:maxLines="1"
         android:gravity="left"
         android:layout_marginBottom="3dp"
         android:layout_marginTop="3dp"
         android:layout_marginStart="3dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/getRideAdapter_timeImageView"
+        app:layout_constraintBottom_toTopOf="@+id/getRideAdapter_priceTextView"
         app:layout_constraintRight_toLeftOf="@id/guideline_left"
         app:layout_constraintTop_toBottomOf="@id/getRideAdapter_dateTextView"
         />
+
+    <ImageView
+        android:background="@drawable/ic_clock_time__24dp"
+        android:backgroundTint="#FFB3B3B3"
+        android:id="@+id/getRideAdapter_timeImageView"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginStart="3dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/getRideAdapter_priceTextView"
+        app:layout_constraintRight_toLeftOf="@id/getRideAdapter_timeTextView"
+        app:layout_constraintTop_toBottomOf="@id/getRideAdapter_dateTextView"
+        />
+
+    <TextView
+        android:id="@+id/getRideAdapter_priceTextView"
+        android:textColor="@color/black"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="14dp"
+        android:maxLines="1"
+        android:gravity="left"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginStart="3dp"
+        app:layout_constraintLeft_toRightOf="@id/getRideAdapter_infoImageView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/guideline_left"
+        app:layout_constraintTop_toBottomOf="@id/getRideAdapter_timeTextView"
+        />
+
+    <ImageView
+        android:id="@+id/getRideAdapter_infoImageView"
+        android:background="@drawable/ic_info_outline_black_24dp"
+        android:backgroundTint="#B3B3B3"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="3dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/getRideAdapter_priceTextView"
+        app:layout_constraintTop_toBottomOf="@id/getRideAdapter_timeTextView"
+        />
+
 
     <TextView
         android:id="@+id/getRideAdapter_dateTextView"
@@ -88,11 +136,27 @@
         android:layout_height="wrap_content"
         android:textSize="14dp"
         android:gravity="left"
+        android:maxLines="1"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="3dp"
         android:layout_marginStart="3dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toLeftOf="@id/guideline_left"
+        app:layout_constraintLeft_toRightOf="@id/getRideAdapter_dateImageView"
+        app:layout_constraintBottom_toTopOf="@id/getRideAdapter_timeTextView"
+        />
+
+    <ImageView
+        android:id="@+id/getRideAdapter_dateImageView"
+        android:background="@drawable/ic_calendar_24dp"
+        android:backgroundTint="#B3B3B3"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginStart="3dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/getRideAdapter_dateTextView"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toTopOf="@id/getRideAdapter_timeTextView"
         />
@@ -128,14 +192,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.20"/>
+        app:layout_constraintGuide_percent="0.24"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.80"/>
+        app:layout_constraintGuide_percent="0.76"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_middle"
