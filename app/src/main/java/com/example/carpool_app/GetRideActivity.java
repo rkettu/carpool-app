@@ -488,7 +488,7 @@ public class GetRideActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         GetRideSorting sorting = new GetRideSorting(new GetRideSortingInterface() {
                             @Override
-                            public void GetRideSorting(final ArrayList<RideUser> rideUserArrayList) {
+                            public void GetRideSorting(final ArrayList<RideUser> sortedArrayList) {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -504,8 +504,8 @@ public class GetRideActivity extends AppCompatActivity {
                                     }
                                 });
                             }
-                        }, GetRideActivity.this);
-                        sorting.execute(rideUserArrayList, spinnerCase);
+                        }, GetRideActivity.this, spinnerCase, rideUserArrayList);
+                        sorting.execute();
                     }
                 });
             }

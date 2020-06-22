@@ -2,6 +2,7 @@ package com.example.carpool_app;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,24 +12,24 @@ interface GetRideSortingInterface{
     void GetRideSorting(ArrayList<RideUser> rideUserArrayList);
 }
 
-public class GetRideSorting extends AsyncTask<Object, Integer, ArrayList<RideUser>> {
+public class GetRideSorting extends AsyncTask<Void, Integer, ArrayList<RideUser>> {
 
-    private ArrayList<RideUser> rideUserArrayList;
-    private int sortingCase;
+    private ArrayList<RideUser> rideUserArrayList = new ArrayList<>();
+    private int sortingInteger;
     private GetRideSortingInterface getRideSortingInterface;
     private Context context;
 
-    public GetRideSorting(GetRideSortingInterface getRideSortingInterface, Context context) {
+    public GetRideSorting(GetRideSortingInterface getRideSortingInterface, Context context, int sortingInteger, ArrayList<RideUser> rideUserArrayList) {
         this.getRideSortingInterface = getRideSortingInterface;
         this.context = context;
+        this.sortingInteger = sortingInteger;
+        this.rideUserArrayList = rideUserArrayList;
     }
 
     @Override
-    protected ArrayList<RideUser> doInBackground(Object... objects) {
-        objects[0] = rideUserArrayList;
-        objects[1] = sortingCase;
+    protected ArrayList<RideUser> doInBackground(Void... objects) {
 
-        return timeSorting(rideUserArrayList, sortingCase);
+        return timeSorting(rideUserArrayList, sortingInteger);
     }
 
     @Override
@@ -42,6 +43,7 @@ public class GetRideSorting extends AsyncTask<Object, Integer, ArrayList<RideUse
     }
 
     private ArrayList<RideUser> timeSorting(ArrayList<RideUser> rideUserArrayList, int sortingCase) {
+        Log.d("GetRideSorting", "timeSorting: " + sortingCase);
         if (sortingCase == 1) {
             Collections.sort(rideUserArrayList, new Comparator<RideUser>() {
                 @Override
