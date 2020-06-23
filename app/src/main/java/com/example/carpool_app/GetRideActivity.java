@@ -46,6 +46,19 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * GetRideActivity is the activity, which is used in the app to find matching rides to user from database.
+ * First the activity initializes layout items and give some pre filled values in the time fields.
+ * There is onClickListeners to some of the layout items, where the user can change the values like startPoint
+ * or time frame.
+ * Activity uses many async tasks to prevent UI thread to skip frames.
+ * GetCoordinates is there startPoint and destination is changed to coordinate points for the algorithm.
+ * GetRideSorting is used to sort the ArrayList based on spinnerCase integer.
+ * GetRideAdapter is BaseAdapter used to show matching rides.
+ * GetRideSpinner is SpinnerAdapter used in sorting spinner.
+ * CalendarHelper is class where we get all the time related things.
+ */
+
 public class GetRideActivity extends AppCompatActivity {
 
     private Button searchRideButton;
@@ -76,6 +89,7 @@ public class GetRideActivity extends AppCompatActivity {
         setContentView(R.layout.activity_get_ride);
 
         initGetRideLayoutElements();
+        initCalendarTimes();
         initGetRideButtons();
     }
 
@@ -111,6 +125,26 @@ public class GetRideActivity extends AppCompatActivity {
         estStartTimeEditText.setText("00:00");
         endDateEditText.setText(CalendarHelper.getDateTimeString(systemTime + 604800000));
         estEndTimeEditText.setText(CalendarHelper.getHHMMString(systemTime));
+    }
+
+    private void initCalendarTimes()
+    {
+        calendar = Calendar.getInstance();
+        mYear = calendar.get(Calendar.YEAR);
+        mMonth = calendar.get(Calendar.MONTH);
+        mDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+        startDateDay = CalendarHelper.getDayString(systemTime);
+        startDateMonth = CalendarHelper.getMonthString(systemTime);
+        startDateYear = CalendarHelper.getYearString(systemTime);
+        endDateDay = CalendarHelper.getDayString(systemTime + 604800000);
+        endDateMonth = CalendarHelper.getMonthString(systemTime + 604800000);
+        endDateYear = CalendarHelper.getYearString(systemTime + 604800000);
+        endTimeHour = CalendarHelper.getHourString(systemTime);
+        endTimeMinute = CalendarHelper.getMinuteString(systemTime);
+
+        newHour = calendar.get(Calendar.HOUR_OF_DAY);
+        newMinute = calendar.get(Calendar.MINUTE);
     }
 
     //Initialising two buttons, Search Rides and Back Arrow
@@ -165,6 +199,7 @@ public class GetRideActivity extends AppCompatActivity {
                         }, GetRideActivity.this);
                         getCoordinatesASync.execute(startPoint, destination);
                     }
+
                     //if start time is bigger than end time which is not possible when searching rides
                     else
                     {
@@ -191,30 +226,6 @@ public class GetRideActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
-        calendar = Calendar.getInstance();
-        mYear = calendar.get(Calendar.YEAR);
-        mMonth = calendar.get(Calendar.MONTH);
-        mDay = calendar.get(Calendar.DAY_OF_MONTH);
-
-        startDateDay = CalendarHelper.getDayString(systemTime);
-        startDateMonth = CalendarHelper.getMonthString(systemTime);
-        startDateYear = CalendarHelper.getYearString(systemTime);
-        endDateDay = CalendarHelper.getDayString(systemTime + 604800000);
-        endDateMonth = CalendarHelper.getMonthString(systemTime + 604800000);
-        endDateYear = CalendarHelper.getYearString(systemTime + 604800000);
-        endTimeHour = CalendarHelper.getHourString(systemTime);
-        endTimeMinute = CalendarHelper.getMinuteString(systemTime);
-
-        Log.d(TAG, "initGetRideButtons: " + mYear);
-        Log.d(TAG, "initGetRideButtons: " + mMonth);
-        Log.d(TAG, "initGetRideButtons: " + startDateYear);
-        Log.d(TAG, "initGetRideButtons: " + startDateMonth);
-        Log.d(TAG, "initGetRideButtons: " + startDateDay);
-        Log.d(TAG, "initGetRideButtons: " + endDateYear);
-        Log.d(TAG, "initGetRideButtons: " + endDateMonth);
-        Log.d(TAG, "initGetRideButtons: " + endDateDay);
-
 
         //when you press startDateEditText, it will open datePickerDialog where you can select date in dd/MM/yyyy
         startDateEditText.setOnClickListener(new View.OnClickListener() {
@@ -268,9 +279,6 @@ public class GetRideActivity extends AppCompatActivity {
             }
         });
 
-        newHour = calendar.get(Calendar.HOUR_OF_DAY);
-        newMinute = calendar.get(Calendar.MINUTE);
-
         //when you click estStartTimeText, it will popup timePickerDialog, where you set hours and minutes
         estStartTimeEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -314,6 +322,7 @@ public class GetRideActivity extends AppCompatActivity {
                         estEndTimeEditText.setText(estTime);
                     }
                 }, newHour, newMinute, true);
+
                 timePickerDialog.show();
             }
         });
@@ -367,15 +376,6 @@ public class GetRideActivity extends AppCompatActivity {
                 //case 0 is happening of nothing is selected
             }
         });
-    }
-
-    //progress dialog. shows when called. used when app is finding matches
-    private void showProgressDialog(Context context)
-    {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Finding matching routes");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
     }
 
     //algorithm and db search
@@ -513,56 +513,14 @@ public class GetRideActivity extends AppCompatActivity {
         Log.d(TAG, "findRides: ollaan täällä");
     }
 
-    //method, where the sorting happens after the array list is filled from database
-    //data will be sorted already (depends on spinners value) when displaying first time
-
-    /*
-    private void sortingAfterDbSearch(int spinnerCase)
+    //progress dialog. shows when called. used when app is finding matches
+    private void showProgressDialog(Context context)
     {
-        //when "järjestä" or nothing is selected in spinner
-        if(spinnerCase == 0)
-        {
-            getRideAdapter.notifyDataSetChanged();
-        }
-
-        //when "aika" is selected in spinner
-        else if(spinnerCase == 1)
-        {
-            Collections.sort(rideUserArrayList, new Comparator<RideUser>() {
-                @Override
-                public int compare(RideUser o1, RideUser o2) {
-                    String first = String.valueOf(o1.getRide().getLeaveTime());
-                    String second = String.valueOf(o2.getRide().getLeaveTime());
-                    return first.compareTo(second);
-                }
-            });
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    getRideAdapter.notifyDataSetChanged();
-                }
-            });
-        }
-
-        //when "hinta" is selected in spinner
-        else if(spinnerCase == 2)
-        {
-            Collections.sort(rideUserArrayList, new Comparator<RideUser>() {
-                @Override
-                public int compare(RideUser o1, RideUser o2) {
-                    String first = String.valueOf(o1.getRide().getPrice());
-                    String second = String.valueOf(o2.getRide().getPrice());
-                    return first.compareTo(second);
-                }
-            });
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    getRideAdapter.notifyDataSetChanged();
-                }
-            });
-        }
-    }*/
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Finding matching routes");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
 
     public static void hideKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);

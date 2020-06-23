@@ -2,11 +2,17 @@ package com.example.carpool_app;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+/**
+ * This class is async task class, where you can sort data from array list.
+ * if you have the array list and an integer, which tells the sorting order.
+ * example GetRideActivity gives value to an integer when spinner is used.
+ * This integer is used to determine what kind of sorting we want to use.
+ */
 
 interface GetRideSortingInterface{
     void GetRideSorting(ArrayList<RideUser> rideUserArrayList);
@@ -42,8 +48,9 @@ public class GetRideSorting extends AsyncTask<Void, Integer, ArrayList<RideUser>
         }
     }
 
+    //method, where the sorting happens after the array list is filled from database
+    //data will be sorted already (depends on spinners value) when displaying first time
     private ArrayList<RideUser> timeSorting(ArrayList<RideUser> rideUserArrayList, int sortingCase) {
-        Log.d("GetRideSorting", "timeSorting: " + sortingCase);
         if (sortingCase == 1) {
             Collections.sort(rideUserArrayList, new Comparator<RideUser>() {
                 @Override
