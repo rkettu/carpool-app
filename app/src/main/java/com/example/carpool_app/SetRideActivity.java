@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -33,12 +34,13 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
-public class SetRideActivity extends AppCompatActivity implements OnMapReadyCallback, SetRideTaskLoadedCallback, View.OnClickListener, GoogleMap.OnPolylineClickListener {
+public class SetRideActivity extends AppCompatActivity implements Serializable, OnMapReadyCallback, SetRideTaskLoadedCallback, View.OnClickListener, GoogleMap.OnPolylineClickListener {
 
     private GoogleMap mMap;
 
@@ -249,7 +251,11 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
             //
             details.putExtra("ALKUOSOITE", strLahto);
             details.putExtra("LOPPUOSOITE", strLoppu);
-            details.putExtra("REITTI", reitinValinta);
+            details.putExtra("DISTANCE", polylineHashMap.get(reitinValinta).rideDistance);
+            details.putExtra("DURATION", polylineHashMap.get(reitinValinta).rideDuration);
+            details.putExtra("ALLPOINTS", (Serializable) polylineHashMap.get(reitinValinta).allPoints);
+            details.putExtra("POINTS", (Serializable) polylineHashMap.get(reitinValinta).selectPoints);
+
             startActivity(details);
         }
 

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,13 +12,11 @@ import java.util.List;
 // Class for holding information about a singular route (coordinate points, distance, duration...)
 // Routes are obtained from parsing Google Maps request result json data
 // As of 08/06/2020 json request returns 0-3 distinct routes
-public class Route {
+public class Route implements Serializable {
     List<HashMap<String, String>> allPoints;        // All coordinate points of a route
     List<HashMap<String, String>> selectPoints;    // Every 100th point
     String rideDistance;
     String rideDuration;
-
-
 
     PolylineOptions lineOptions;    // Must be set separately!
 
