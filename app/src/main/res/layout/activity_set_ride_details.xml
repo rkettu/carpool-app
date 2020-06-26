@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SetRideDetailsActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setRideDetails_textView_otsikko"
+        android:text="Kyydin tiedot"
+        android:textSize="30dp"
+        android:textAlignment="center"
+        android:fontFamily="@font/montserrat_medium"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toTopOf="parent">
+    </TextView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setRideDetails_textView_date"
+        android:text="Valitse lähtöaika:"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:fontFamily="@font/montserrat_medium"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_textView_otsikko">
+    </TextView>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setRideDetails_editText_date"
+        android:inputType="date"
+        android:hint="Lähtöpäivä"
+        android:textAlignment="center"
+        android:fontFamily="@font/open_sans_semibold"
+        android:drawableStart="@drawable/ic_calendar_24dp"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_textView_date"
+        android:layout_marginLeft="70dp"
+        android:layout_marginRight="90dp">
+    </EditText>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setRideDetails_editText_time"
+        android:inputType="time"
+        android:hint="Arvioitu lähtöaika"
+        android:textAlignment="center"
+        android:fontFamily="@font/open_sans_semibold"
+        android:drawableStart="@drawable/ic_clock_time__24dp"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_editText_date"
+        android:layout_marginLeft="70dp"
+        android:layout_marginRight="90dp">
+    </EditText>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setRideDetails_textView_aikaInfo"
+        android:clickable="true"
+        android:text="Lähtöaikani voi muuttua?"
+        android:textColor="@color/green"
+        android:textAlignment="center"
+        android:fontFamily="@font/montserrat_medium"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_editText_time"
+        android:layout_marginTop="10dp">
+
+    </TextView>
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setRideDetails_checkBox_aika"
+        android:text="Kyllä"
+        android:gravity="center"
+        android:layout_marginLeft="150dp"
+        android:layout_marginRight="150dp"
+        app:layout_constraintTop_toBottomOf="@+id/setRideDetails_textView_aikaInfo">
+    </CheckBox>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:id="@+id/setRideDetails_editText_sanallinenAika"
+        android:inputType="text"
+        android:hint="Sanallinen arvio lähtöajasta"
+        android:background="@drawable/bg_round"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_checkBox_aika"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:gravity="top"
+        android:padding="10dp"
+        android:visibility="gone">
+    </EditText>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="3dp"
+        android:id="@+id/setRideDetails_line_1"
+        android:background="#E4E0E0"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_editText_sanallinenAika">
+    </View>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setRideDetails_textView_matkustajat"
+        android:text="Matkustajat:"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:fontFamily="@font/montserrat_medium"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_line_1">
+    </TextView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setRideDetails_textView_vapaatPaikat"
+        android:text="Vapaat paikat:"
+        android:textSize="10dp"
+        android:textAlignment="center"
+        android:fontFamily="@font/montserrat_medium"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_textView_matkustajat">
+    </TextView>
+    <NumberPicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_textView_vapaatPaikat"
+        android:id="@+id/setRideDetails_numberPicker_passengers"
+
+        android:gravity="center">
+    </NumberPicker>
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setRideDetails_checkBox_lemmikit"
+        android:text="Lemmikit sallittu"
+        android:gravity="center"
+        android:layout_marginLeft="130dp"
+        android:layout_marginRight="130dp"
+        app:layout_constraintTop_toBottomOf="@+id/setRideDetails_numberPicker_passengers">
+    </CheckBox>
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setRideDetails_checkBox_matkatavarat"
+        android:text="Rajallinen tavaratila"
+        android:gravity="center"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        app:layout_constraintTop_toBottomOf="@+id/setRideDetails_checkBox_lemmikit">
+    </CheckBox>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:id="@+id/setRideDetails_editText_sanallinenTavaratila"
+        android:inputType="text"
+        android:hint="Sanallinen arvio matkatavaroista"
+        android:background="@drawable/bg_round"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_checkBox_matkatavarat"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:gravity="top"
+        android:padding="10dp"
+        android:visibility="gone">
+    </EditText>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="3dp"
+        android:id="@+id/setRideDetails_line_2"
+        android:background="#E4E0E0"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_editText_sanallinenTavaratila">
+    </View>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setRideDetails_textView_noutoEtaisyys"
+        android:text="Nouto etäisyys:"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:fontFamily="@font/montserrat_medium"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_line_2">
+    </TextView>
+
+    <SeekBar
+        android:id="@+id/setRideDetails_seekbar_nouto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:backgroundTint="@color/white"
+        android:progressDrawable="@drawable/custom_seekbar_progress"
+        android:thumb="@drawable/custom_seekbar_thumb"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_textView_noutoEtaisyys"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setRideDetails_textView_minmatka"
+        android:text="Kuljettava matka:"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:fontFamily="@font/montserrat_medium"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_seekbar_nouto">
+    </TextView>
+
+    <SeekBar
+        android:id="@+id/setRideDetails_seekbar_matka"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:backgroundTint="@color/white"
+        android:progressDrawable="@drawable/custom_seekbar_progress"
+        android:thumb="@drawable/custom_seekbar_thumb"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_textView_minmatka"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/setRideDetails_textView_hinta"
+        android:hint="Hinta:"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:fontFamily="@font/montserrat_medium"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_seekbar_matka">
+    </TextView>
+
+    <SeekBar
+        android:id="@+id/setRideDetails_seekbar_hinta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:backgroundTint="@color/white"
+        android:progressDrawable="@drawable/custom_seekbar_progress"
+        android:thumb="@drawable/custom_seekbar_thumb"
+        app:layout_constraintTop_toBottomOf="@id/setRideDetails_textView_hinta"
+        />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/setRideDetails_button_vahvista"
+            android:text="VAHVISTA"
+            app:layout_constraintTop_toBottomOf="@id/setRideDetails_seekbar_hinta"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

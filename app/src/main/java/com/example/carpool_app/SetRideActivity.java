@@ -6,12 +6,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -34,19 +34,20 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
-public class SetRideActivity extends AppCompatActivity implements OnMapReadyCallback, SetRideTaskLoadedCallback, View.OnClickListener {
+public class SetRideActivity extends AppCompatActivity implements Serializable, OnMapReadyCallback, SetRideTaskLoadedCallback, View.OnClickListener, GoogleMap.OnPolylineClickListener {
+
 
     private GoogleMap mMap;
 
     private SearchView lahtoEditori, loppuEditori;
 
-    //Muuttujat
-    private String strLahto, strLoppu;
+    private String strLahto, strLoppu, startCity, endCity;
 
     //Layoutin valikon animaation asetukset
     Animation ttbAnim, bttAnim;
@@ -56,12 +57,20 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     private ImageButton sijaintiButton;
     private boolean drawer_expand = true;
 
+    List<Polyline> allPolylines = new ArrayList<>(); // Contains all currently drawn polyline data, REMEMBER TO CLEAR
+
     //Oman sijainnin asetukset
-    private FusedLocationProviderClient fusedLocationClient;
+    FusedLocationProviderClient fusedLocationClient;
+    GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
 
     //Reitinhaun muuttujat
     MarkerOptions place1, place2;
-    Polyline currentPolyline;
+
+    private String reitinValinta;
+    private HashMap<String, Route> polylineHashMap = new HashMap<>(); // Contains polyline id and matching route info
+
+    private Route currentRoute;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +81,7 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
         sijaintiButton = findViewById(R.id.set_ride_sijaintiButton);
         sijaintiButton.setOnClickListener(this);
         findViewById(R.id.set_ride_haeButton).setOnClickListener(this);
+        findViewById(R.id.set_ride_nextBtn).setOnClickListener(this);
 
         //editorit
         lahtoEditori = (SearchView) findViewById(R.id.set_ride_lahtoEdit);
@@ -130,13 +140,24 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        Log.d("TESTI", "onMapReady: ");
 
         //Zoomaa kartan suomen kohdalle activityn aukaistessa
         LatLng suomi = new LatLng(65.55, 25.55);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(suomi));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(suomi, 5));
 
+        mMap.setOnPolylineClickListener(this);
+
+        //SetRidePolylineDatan tyhjennys. Ehkä turha?
+        /*if(mPolylinesData.size() > 0)
+        {
+            for(SetRidePolylineData polylineData: mPolylinesData)
+            {
+                polylineData.getPolyline().remove();
+            }
+            mPolylinesData.clear();
+            mPolylinesData = new ArrayList<>();
+        }*/
     }
 
 
@@ -144,6 +165,11 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
     public void onClick(View v) {
         if(v.getId() == R.id.set_ride_haeButton)
         {
+            mMap.clear();   // Clearing map markers and polylines
+            allPolylines.clear(); // Clearing list containing references to those polylines => frees their memory
+            polylineHashMap.clear();
+
+
             //Reitin haku napin toiminnallisuus
             strLahto = lahtoEditori.getQuery().toString();
             strLoppu = loppuEditori.getQuery().toString();
@@ -168,7 +194,7 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
 
                     mMap.addMarker(place1);
                     mMap.addMarker(place2);
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place1.getPosition(),10));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place2.getPosition(),8));
 
 
                 }catch (Exception e){
@@ -192,7 +218,6 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
                         if(location != null){
 
                             try {
-                                GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
                                 String geoAddress = geoCoderHelper.fullAddress(location, SetRideActivity.this);
                                 Log.d("TESTI", "Strin geoAddress: " + geoAddress);
                                 lahtoEditori.setQuery(geoAddress, false);
@@ -208,6 +233,45 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
                     }
                 });
             }
+        }
+        else if(v.getId() == R.id.set_ride_nextBtn)
+        {
+            Intent details = new Intent(this, SetRideDetailsActivity.class);
+
+            for(Polyline polyline : allPolylines)
+            {
+                // Tarkistaa mikä reiteistä on valittuna eli sininen ja asettaa sen id:n reitinvalinta muuttujaan.
+                if(polyline.getColor() == Color.BLUE)
+                {
+                    reitinValinta = polyline.getId();
+                    Log.d("mylog", "REITINVALINTA: " + reitinValinta);
+
+                }
+            }
+
+            //
+            try{
+                startCity = geoCoderHelper.getCity(strLahto, SetRideActivity.this);
+                endCity = geoCoderHelper.getCity(strLoppu, SetRideActivity.this);
+                Log.d("mylog", "startCity: " + startCity + " endCity: " + endCity);
+            }catch (Exception e){
+                Log.d("mylog", "getCity Failed: " );
+            }
+
+            try{
+                details.putExtra("ALKUOSOITE", strLahto);
+                details.putExtra("LOPPUOSOITE", strLoppu);
+                details.putExtra("STARTCITY" , startCity);
+                details.putExtra("ENDCITY", endCity);
+                details.putExtra("DISTANCE", polylineHashMap.get(reitinValinta).rideDistance);
+                details.putExtra("DURATION", polylineHashMap.get(reitinValinta).rideDuration);
+                details.putExtra("POINTS", (Serializable) polylineHashMap.get(reitinValinta).selectPoints);
+
+                startActivity(details);
+            }catch (Exception e){
+                //Log.d("mylog", "putExtra Failed: ");
+            }
+
         }
 
     }
@@ -233,16 +297,55 @@ public class SetRideActivity extends AppCompatActivity implements OnMapReadyCall
         // Output format
         String output = "json";
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.google_maps_key);
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&alternatives=true&key=" + getString(R.string.google_maps_key);
+
         return url;
     }
 
 
     //SetRideTaskLoadedCallbackin onTaskDone, piirtää reitin karttaan jos reitin haku onnistuu.
+    // This is called once for each polyline added
     @Override
     public void onTaskDone(Object... values) {
-        if(currentPolyline!=null)
-            currentPolyline.remove();
-        currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+        Route route = (Route) values[0];
+        Log.d("mylog", "onTaskDone: " + route.rideDistance + "km ride");
+
+        PolylineOptions polylineOptions = route.getLineOptions();
+
+        Polyline polyline = mMap.addPolyline(polylineOptions);
+        allPolylines.add(polyline); // Adding polyline to list of all polylines
+        polylineHashMap.put(polyline.getId(), route);
+
+        polyline.setClickable(true);
+    }
+
+    @Override
+    public void onPolylineClick(Polyline clickedPolyline) {
+
+        Log.d("mylog", "onPolylineClick: POLYLINE " + clickedPolyline.getId());
+
+        for(Polyline polyline : allPolylines)
+        {
+            // Checking for clicked polyline match in list
+            if(clickedPolyline.getId().equals(polyline.getId()))
+            {
+                polyline.setColor(Color.BLUE);
+                polyline.setZIndex(1);
+                currentRoute = polylineHashMap.get(polyline.getId());
+                Log.d("mylog", "ROUTEINFFOOOOOOOOOOOO: " + polyline.getId());
+                Log.d("Polylineclick!", "Clicked polyline with id: " + polyline.getId() + " and route distance: " + polylineHashMap.get(polyline.getId()).rideDistance);
+            }
+            else
+            {
+                polyline.setColor(Color.GRAY);
+                polyline.setZIndex(0);
+            }
+        }
+
+
+        //polyline.setColor(Color.BLUE);
+        //polylineHashMap.get(polyline.getId());
+        //Log.d("mylog", "onPolylineClick: " + polylineHashMap.get(polyline.getId()));
+
     }
 }
