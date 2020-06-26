@@ -72,7 +72,6 @@ public class SetRideDataParser {
                     int dist = totalDistance / 1000;
                     //SetRideConstant.DISTANCE = String.valueOf(dist);
 
-
                     //matka ajan määritys
                     int hours = (totalSeconds / 3600);
                     int minutes = ((totalSeconds - hours * 3600) / 60);

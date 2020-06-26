@@ -16,6 +16,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Calendar;
@@ -247,10 +249,23 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         }
         if(v.getId() == R.id.setRideDetails_button_vahvista)
         {
-            mC.set(pickedYear, pickedMonth, pickedDate, pickedHour, pickedMinute);
-            long leaveTime = mC.getTimeInMillis();
+            Log.d("mylog", "onClick VAHVISTA " + " selectedPoints.size: " + selectedPoints.size() + " Duration: " + duration + " Distance: " + distance + " startAdr: " + startAddress + " endAdr: " + endAddress + " startCity: " + startCity + " endCity: " + endCity + " Passengers: " + passengers  + " Hinta: " + price + " Noutomatka: " + pickUpDistance);
 
-            Log.d("mylog", "onClick VAHVISTA " + " selectedPoints.size: " + selectedPoints.size() + " Duration: " + duration + " Distance: " + distance + " startAdr: " + startAddress + " endAdr: " + endAddress + " startCity: " + startCity + " endCity: " + endCity + " Passengers: " + passengers + " LeaveTime: " + leaveTime + " Hinta: " + price + " Noutomatka: " + pickUpDistance);
+            if ( FirebaseHelper.loggedIn)
+            {
+
+                mC.set(pickedYear, pickedMonth, pickedDate, pickedHour, pickedMinute);
+                long leaveTime = mC.getTimeInMillis();
+
+                String uid = FirebaseHelper.getUid();
+                //Ride ride = new Route(uid, duration, leaveTime, startAddress, endAddress, passengers, price);
+            }
+            else
+            {
+                FirebaseHelper.GoToLogin(getApplicationContext());
+            }
+
+
 
         }
     }
