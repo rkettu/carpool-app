@@ -80,7 +80,7 @@ public class SetRideDataParser {
 
                     //Matkan pituuden määritys SetRidePolylineDataan. Hashmap = key "pl0, pl1, jne.."
                     duration =  String.valueOf(hours) + " h " + minutes + " min";
-                    distance = String.valueOf(dist) + " km";
+                    distance = String.valueOf(dist);
 
                     // Building route object from necessary data and adding to list
                     Route route = new Route(path, myList, distance, duration);

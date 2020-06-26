@@ -42,11 +42,12 @@ import java.util.List;
 
 public class SetRideActivity extends AppCompatActivity implements Serializable, OnMapReadyCallback, SetRideTaskLoadedCallback, View.OnClickListener, GoogleMap.OnPolylineClickListener {
 
+
     private GoogleMap mMap;
 
     private SearchView lahtoEditori, loppuEditori;
-    //Muuttujat
-    private String strLahto, strLoppu;
+
+    private String strLahto, strLoppu, startCity, endCity;
 
     //Layoutin valikon animaation asetukset
     Animation ttbAnim, bttAnim;
@@ -59,7 +60,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
     List<Polyline> allPolylines = new ArrayList<>(); // Contains all currently drawn polyline data, REMEMBER TO CLEAR
 
     //Oman sijainnin asetukset
-    private FusedLocationProviderClient fusedLocationClient;
+    FusedLocationProviderClient fusedLocationClient;
+    GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
 
     //Reitinhaun muuttujat
     MarkerOptions place1, place2;
@@ -216,7 +218,6 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                         if(location != null){
 
                             try {
-                                GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
                                 String geoAddress = geoCoderHelper.fullAddress(location, SetRideActivity.this);
                                 Log.d("TESTI", "Strin geoAddress: " + geoAddress);
                                 lahtoEditori.setQuery(geoAddress, false);
@@ -249,14 +250,28 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             }
 
             //
-            details.putExtra("ALKUOSOITE", strLahto);
-            details.putExtra("LOPPUOSOITE", strLoppu);
-            details.putExtra("DISTANCE", polylineHashMap.get(reitinValinta).rideDistance);
-            details.putExtra("DURATION", polylineHashMap.get(reitinValinta).rideDuration);
-            details.putExtra("ALLPOINTS", (Serializable) polylineHashMap.get(reitinValinta).allPoints);
-            details.putExtra("POINTS", (Serializable) polylineHashMap.get(reitinValinta).selectPoints);
+            try{
+                startCity = geoCoderHelper.getCity(strLahto, SetRideActivity.this);
+                endCity = geoCoderHelper.getCity(strLoppu, SetRideActivity.this);
+                Log.d("mylog", "startCity: " + startCity + " endCity: " + endCity);
+            }catch (Exception e){
+                Log.d("mylog", "getCity Failed: " );
+            }
 
-            startActivity(details);
+            try{
+                details.putExtra("ALKUOSOITE", strLahto);
+                details.putExtra("LOPPUOSOITE", strLoppu);
+                details.putExtra("STARTCITY" , startCity);
+                details.putExtra("ENDCITY", endCity);
+                details.putExtra("DISTANCE", polylineHashMap.get(reitinValinta).rideDistance);
+                details.putExtra("DURATION", polylineHashMap.get(reitinValinta).rideDuration);
+                details.putExtra("POINTS", (Serializable) polylineHashMap.get(reitinValinta).selectPoints);
+
+                startActivity(details);
+            }catch (Exception e){
+                //Log.d("mylog", "putExtra Failed: ");
+            }
+
         }
 
     }
