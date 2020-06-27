@@ -15,16 +15,18 @@ import java.util.List;
 public class Route implements Serializable {
     List<HashMap<String, String>> allPoints;        // All coordinate points of a route
     List<HashMap<String, String>> selectPoints;    // Every 100th point
+    HashMap<String, String> bounds;                  // Most northern, western etc coordinates, keys are as follows: "north", "south" etc
     String rideDistance;
     String rideDuration;
 
     PolylineOptions lineOptions;    // Must be set separately!
 
     Route(List<HashMap<String, String>> allPoints, List<HashMap<String, String>> selectPoints,
-                        String rideDistance, String rideDuration)
+                        HashMap<String, String> bounds, String rideDistance, String rideDuration)
     {
         this.allPoints = allPoints;
         this.selectPoints = selectPoints;
+        this.bounds = bounds;
         this.rideDistance = rideDistance;
         this.rideDuration = rideDuration;
     }
@@ -36,6 +38,8 @@ public class Route implements Serializable {
     public List<HashMap<String, String>> getSelectPoints() {
         return selectPoints;
     }
+
+
 
     public String getRideDistance() {
         return rideDistance;

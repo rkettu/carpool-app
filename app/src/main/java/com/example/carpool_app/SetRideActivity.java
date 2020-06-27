@@ -298,7 +298,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         String output = "json";
         // Building the url to the web service
         String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&alternatives=true&key=" + getString(R.string.google_maps_key);
-
+        Log.d("URL_HAKU", url);
         return url;
     }
 

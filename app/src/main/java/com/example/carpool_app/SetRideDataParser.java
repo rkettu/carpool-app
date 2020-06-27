@@ -26,12 +26,25 @@ public class SetRideDataParser {
         String duration;
 
         try {
+
+            // Getting routes
             jRoutes = jObject.getJSONArray("routes");
             /** Traversing all routes */
             for (int i = 0; i < jRoutes.length(); i++) {
+
                 int totalDistance = 0;
                 int totalSeconds = 0;
                 int myIndex = 0;
+
+                // Getting bounds
+                JSONObject jBounds = ((JSONObject)jRoutes.get(i)).getJSONObject("bounds");
+                HashMap<String, String> bounds = new HashMap<>();
+                bounds.put("north", ((JSONObject)jBounds.get("northeast")).getString("lat"));
+                bounds.put("east", ((JSONObject)jBounds.get("northeast")).getString("lng"));
+                bounds.put("south", ((JSONObject)jBounds.get("southwest")).getString("lat"));
+                bounds.put("west", ((JSONObject)jBounds.get("southwest")).getString("lng"));
+
+                // Getting legs
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
                 Log.d("mytag", "parse: " + jLegs);
                 List<HashMap<String,String>> path = new ArrayList<>();  // Holds all coordinate points of this route
@@ -83,8 +96,9 @@ public class SetRideDataParser {
                     distance = String.valueOf(dist);
 
                     // Building route object from necessary data and adding to list
-                    Route route = new Route(path, myList, distance, duration);
+                    Route route = new Route(path, myList, bounds, distance, duration);
                     routes.add(route);
+
                 }
 
             }
