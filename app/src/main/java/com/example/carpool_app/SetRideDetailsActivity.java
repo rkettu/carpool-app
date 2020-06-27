@@ -251,14 +251,13 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         {
             Log.d("mylog", "onClick VAHVISTA " + " selectedPoints.size: " + selectedPoints.size() + " Duration: " + duration + " Distance: " + distance + " startAdr: " + startAddress + " endAdr: " + endAddress + " startCity: " + startCity + " endCity: " + endCity + " Passengers: " + passengers  + " Hinta: " + price + " Noutomatka: " + pickUpDistance);
 
-            if ( FirebaseHelper.loggedIn)
+            if(FirebaseHelper.loggedIn)
             {
-
                 mC.set(pickedYear, pickedMonth, pickedDate, pickedHour, pickedMinute);
                 long leaveTime = mC.getTimeInMillis();
 
-                String uid = FirebaseHelper.getUid();
-                //Ride ride = new Route(uid, duration, leaveTime, startAddress, endAddress, passengers, price);
+                Ride ride = new Ride(FirebaseHelper.getUid(), duration, leaveTime, startAddress, endAddress, passengers, price,
+                        doubleDistance, selectedPoints, null, null, pickUpDistance, startCity, endCity);
             }
             else
             {
