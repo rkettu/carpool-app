@@ -265,6 +265,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 details.putExtra("ENDCITY", endCity);
                 details.putExtra("DISTANCE", polylineHashMap.get(reitinValinta).rideDistance);
                 details.putExtra("DURATION", polylineHashMap.get(reitinValinta).rideDuration);
+                details.putExtra("BOUNDS",   polylineHashMap.get(reitinValinta).bounds);
                 details.putExtra("POINTS", (Serializable) polylineHashMap.get(reitinValinta).selectPoints);
 
                 startActivity(details);

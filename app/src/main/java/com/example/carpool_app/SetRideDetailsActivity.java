@@ -1,5 +1,6 @@
 package com.example.carpool_app;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
@@ -15,17 +16,26 @@ import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 
 public class SetRideDetailsActivity extends AppCompatActivity implements Serializable, View.OnClickListener{
 
     //SetRideActivitystä siirretty data
-    private List<String> selectedPoints;
+    private List<HashMap<String,String>> selectedPoints;
     private String startAddress, endAddress, duration, distance, startCity, endCity;
 
     private Calendar mC;
@@ -41,6 +51,8 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
     int intDistance;
 
     private CheckBox checkBox_time, checkBox_luggage;
+
+    private HashMap<String,String> bounds;
 
 
     TextView priceTxt, exampleTxt, minRange, rangeValueTextView;
@@ -67,7 +79,8 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
                 endCity = extras.getString("ENDCITY");
                 distance = extras.getString("DISTANCE");
                 duration = extras.getString("DURATION");
-                selectedPoints = (List<String>) extras.getSerializable("POINTS");
+                selectedPoints = (List<HashMap<String,String>>) extras.getSerializable("POINTS");
+                bounds = (HashMap<String,String>) extras.getSerializable("BOUNDS");
             }
         }else {
             startAddress = (String) savedInstanceState.getSerializable ("ALKUOSOITE");
@@ -76,7 +89,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
             endCity = (String) savedInstanceState.getSerializable("ENDCITY");
             distance = (String) savedInstanceState.getSerializable ("DISTANCE");
             duration = (String) savedInstanceState.getSerializable ("DURATION");
-            selectedPoints = (List<String>) savedInstanceState.getSerializable("POINTS");
+            selectedPoints = (List<HashMap<String,String>>) savedInstanceState.getSerializable("POINTS");
         }
 
         //Muuttaa string distancen eri muuttujatyypeiksi
@@ -247,11 +260,36 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         }
         if(v.getId() == R.id.setRideDetails_button_vahvista)
         {
-            mC.set(pickedYear, pickedMonth, pickedDate, pickedHour, pickedMinute);
-            long leaveTime = mC.getTimeInMillis();
+            //mC.set(pickedYear, pickedMonth, pickedDate, pickedHour, pickedMinute);
+            //long leaveTime = mC.getTimeInMillis();
 
-            Log.d("mylog", "onClick VAHVISTA " + " selectedPoints.size: " + selectedPoints.size() + " Duration: " + duration + " Distance: " + distance + " startAdr: " + startAddress + " endAdr: " + endAddress + " startCity: " + startCity + " endCity: " + endCity + " Passengers: " + passengers + " LeaveTime: " + leaveTime + " Hinta: " + price + " Noutomatka: " + pickUpDistance);
-
+            //Log.d("mylog", "onClick VAHVISTA " + " selectedPoints.size: " + selectedPoints.size() + " Duration: " + duration + " Distance: " + distance + " startAdr: " + startAddress + " endAdr: " + endAddress + " startCity: " + startCity + " endCity: " + endCity + " Passengers: " + passengers + " LeaveTime: " + leaveTime + " Hinta: " + price + " Noutomatka: " + pickUpDistance);
+            CREATE_RIDE_DEMO();
         }
+    }
+
+    // TODO: DELETE THIS after proper implementation
+    // now only creates rides with proper points and user but otherwise random values
+    public void CREATE_RIDE_DEMO()
+    {
+        Ride r = new Ride(FirebaseHelper.getUid(), duration, (new GregorianCalendar().getTimeInMillis()+40*Constant.DayInMillis),
+                            startAddress, endAddress, 4, 50, Double.parseDouble(distance),
+                            selectedPoints, bounds, new ArrayList<String>(),
+                            new ArrayList<String>(), 5, startCity, endCity);
+        FirebaseFirestore.getInstance().collection("rides").add(r).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                if(task.isSuccessful())
+                {
+                    // Ride creation succesfull
+                    Toast.makeText(SetRideDetailsActivity.this, "RIDE CREATED", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    // Ride create failed
+                    Toast.makeText(SetRideDetailsActivity.this, "RIDE CREATE FAIL", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
 }
