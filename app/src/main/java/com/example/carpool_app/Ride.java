@@ -14,7 +14,7 @@ public class Ride implements Serializable {
     private String endAddress;
     private int freeSlots;
     private float price;
-    private List<HashMap<String,String>> points;
+    private List<String> points;
     private List<String> waypointAddresses;
     private List<String> participants;
     private double distance;
@@ -32,8 +32,10 @@ public class Ride implements Serializable {
     // Use when creating a ride
     public Ride(String uid, String duration, long leaveTime,
                  String startAddress, String endAddress, int freeSlots, float price, double distance,
-                 List<HashMap<String,String>> points, HashMap<String,String> bounds, List<String> waypointAddresses,
-                 List<String> participants, int pickUpDistance, String startCity, String endCity)
+
+    List<HashMap<String,String>> points, HashMap<String,String> bounds, List<String> waypointAddresses,
+
+    List<String> participants, int pickUpDistance, String startCity, String endCity)
     {
         this.uid = uid;
         this.duration = duration;
@@ -73,6 +75,7 @@ public class Ride implements Serializable {
     public double getDistance() { return distance; }
     public String getStartCity() { return startCity; }
     public String getEndCity() { return endCity; }
+
     public void removeFreeSlot() {
         this.freeSlots--;
     }

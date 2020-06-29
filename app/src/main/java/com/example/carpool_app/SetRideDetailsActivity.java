@@ -24,6 +24,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -260,8 +262,10 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         }
         if(v.getId() == R.id.setRideDetails_button_vahvista)
         {
+          
             //mC.set(pickedYear, pickedMonth, pickedDate, pickedHour, pickedMinute);
             //long leaveTime = mC.getTimeInMillis();
+
 
             //Log.d("mylog", "onClick VAHVISTA " + " selectedPoints.size: " + selectedPoints.size() + " Duration: " + duration + " Distance: " + distance + " startAdr: " + startAddress + " endAdr: " + endAddress + " startCity: " + startCity + " endCity: " + endCity + " Passengers: " + passengers + " LeaveTime: " + leaveTime + " Hinta: " + price + " Noutomatka: " + pickUpDistance);
             CREATE_RIDE_DEMO();
