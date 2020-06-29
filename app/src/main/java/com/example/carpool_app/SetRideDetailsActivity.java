@@ -277,7 +277,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
     public void CREATE_RIDE_DEMO()
     {
         Ride r = new Ride(FirebaseHelper.getUid(), duration, (new GregorianCalendar().getTimeInMillis()+40*Constant.DayInMillis),
-                            startAddress, endAddress, 4, 50, Double.parseDouble(distance),
+                            startAddress, endAddress, passengers, price, doubleDistance,
                             selectedPoints, bounds, new ArrayList<String>(),
                             new ArrayList<String>(), 5, startCity, endCity);
         FirebaseFirestore.getInstance().collection("rides").add(r).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
