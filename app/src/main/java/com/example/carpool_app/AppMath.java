@@ -22,6 +22,26 @@ public class AppMath {
         return c * 6371;
     }
 
+    // Function for checking if searched start and end coordinates are within the bounds of a ride
+    public static boolean areCoordinatesWithinBounds(double lat1, double lng1, double lat2, double lng2, HashMap<String,String> bounds)
+    {
+        try {
+            double northernBound = Double.parseDouble(bounds.get("north"));
+            double westernBound = Double.parseDouble(bounds.get("west"));
+            double southernBound = Double.parseDouble(bounds.get("south"));
+            double easternBound = Double.parseDouble(bounds.get("east"));
+
+            return ((lat1 < northernBound && lat2 < northernBound)
+                    && (lat1 > southernBound && lat2 > southernBound)
+                    && (lng1 < easternBound && lng2 < easternBound)
+                    && (lng1 > westernBound && lng2 > westernBound));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private boolean isRouteInRange(float pickupDist, double lat1, double lng1, double lat2, double lng2, List<HashMap<String,String>> points)
     {
         Log.d("HEREWEARE", "again");

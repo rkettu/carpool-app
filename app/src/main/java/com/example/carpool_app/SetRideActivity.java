@@ -265,6 +265,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 details.putExtra("ENDCITY", endCity);
                 details.putExtra("DISTANCE", polylineHashMap.get(reitinValinta).rideDistance);
                 details.putExtra("DURATION", polylineHashMap.get(reitinValinta).rideDuration);
+                details.putExtra("BOUNDS",   polylineHashMap.get(reitinValinta).bounds);
                 details.putExtra("POINTS", (Serializable) polylineHashMap.get(reitinValinta).selectPoints);
 
                 startActivity(details);
@@ -298,7 +299,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         String output = "json";
         // Building the url to the web service
         String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&alternatives=true&key=" + getString(R.string.google_maps_key);
-
+        Log.d("URL_HAKU", url);
         return url;
     }
 
