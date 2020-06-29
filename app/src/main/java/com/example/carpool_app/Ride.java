@@ -14,7 +14,7 @@ public class Ride implements Serializable {
     private String endAddress;
     private int freeSlots;
     private float price;
-    private List<String> points;
+    private List<HashMap<String,String>> points;
     private List<String> waypointAddresses;
     private List<String> participants;
     private double distance;
