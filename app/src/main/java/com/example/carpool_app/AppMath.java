@@ -42,7 +42,7 @@ public class AppMath {
         }
     }
 
-    private boolean isRouteInRange(float pickupDist, double lat1, double lng1, double lat2, double lng2, List<HashMap<String,String>> points)
+    public boolean isRouteInRange(float pickupDist, double lat1, double lng1, double lat2, double lng2, List<HashMap<String,String>> points)
     {
         Log.d("HEREWEARE", "again");
         double minDist1 = 10000000;

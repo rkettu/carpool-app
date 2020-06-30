@@ -18,13 +18,17 @@
         android:theme="@style/AppTheme">
         <activity android:name=".SetRideDetailsActivity"></activity>
 
+        <activity android:name=".SetRideActivity" />
+
+        <activity
+            android:name=".GetRideActivity"
+            android:windowSoftInputMode="adjustPan|stateVisible">
+        </activity>
 
         <activity android:name=".ProfileActivity"></activity>
         <activity android:name=".EditProfileActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".LogInActivity" />
-        <activity android:name=".SetRideActivity" />
-        <activity android:name=".GetRideActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

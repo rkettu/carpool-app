@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Carpool App</string>
+
+    <string-array name="getRideSpinnerItems">
+        <item>Aika</item>
+        <item>Hinta</item>
+    </string-array>
+
+    <string name ="GetRideSpinnerTitle">Järjestä</string>
+
+    <string name ="userReferenceString">users</string>
+    <string name ="rideReferenceString">rides</string>
+
 </resources>

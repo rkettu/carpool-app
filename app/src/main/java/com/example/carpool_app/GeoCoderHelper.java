@@ -13,7 +13,7 @@ import java.util.List;
 public class GeoCoderHelper {
     //Use this function to get coordinates for specific address
     //If you need latitude only use get(0), If you need longitude only use get(1)
-    public ArrayList<Float> getCoordinates(String address, Context context)
+    public static ArrayList<Float> getCoordinates(String address, Context context)
     {
         try{
             Geocoder geocoder = new Geocoder(context);
