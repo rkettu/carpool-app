@@ -17,8 +17,10 @@ public class User implements Serializable {
     private float rating;
     private int ratingAmount;
 
+
     //no-arg constructor so doc.toObject can deserialize
     public User(){ }
+
 
     // Constructor with all parameters - required for document<->object
     // Use when creating a user
@@ -58,6 +60,12 @@ public class User implements Serializable {
     public void setProfCreated(boolean value) {
         profileCreated = value;
     }
+
+    public void setFname(String fname) {this.fname = fname;}
+    public void setLname(String lname) {this.lname = lname;}
+    public void setEmail(String email) {this.email = email;}
+    public void setPhone(String phone) {this.phone = phone;}
+    public void setBio(String bio) {this.bio = bio;}
 
     public void setUid(String strUid) {
         uid = strUid;

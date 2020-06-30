@@ -21,6 +21,10 @@ public class Ride implements Serializable {
     private String startCity;
     private String endCity;
 
+
+
+    private HashMap<String,String> bounds;
+
     //no-arg constructor so doc.toObject can deserialize
     public Ride(){ }
 
@@ -28,8 +32,10 @@ public class Ride implements Serializable {
     // Use when creating a ride
     public Ride(String uid, String duration, long leaveTime,
                  String startAddress, String endAddress, int freeSlots, float price, double distance,
-                 List<HashMap<String,String>> points, List<String> waypointAddresses,
-                 List<String> participants, int pickUpDistance, String startCity, String endCity)
+
+    List<HashMap<String,String>> points, HashMap<String,String> bounds, List<String> waypointAddresses,
+
+    List<String> participants, int pickUpDistance, String startCity, String endCity)
     {
         this.uid = uid;
         this.duration = duration;
@@ -40,6 +46,7 @@ public class Ride implements Serializable {
         this.freeSlots = freeSlots;
         this.price = price;
         this.points = points;
+        this.bounds = bounds;
         this.waypointAddresses = waypointAddresses;
         this.participants = participants;
         this.distance = distance;
@@ -60,6 +67,9 @@ public class Ride implements Serializable {
     public int getFreeSlots() { return freeSlots; }
     public float getPrice() { return price; }
     public List<HashMap<String,String>> getPoints() { return points; }
+    public HashMap<String, String> getBounds() {
+        return bounds;
+    }
     public List<String> getWaypointAddresses() { return waypointAddresses; }
     public List<String> getParticipants() { return participants; }
     public double getDistance() { return distance; }

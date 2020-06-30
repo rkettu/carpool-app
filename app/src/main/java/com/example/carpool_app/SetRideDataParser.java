@@ -1,5 +1,7 @@
 package com.example.carpool_app;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -11,30 +13,50 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SetRideDataParser {
-    public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
-        List<List<HashMap<String, String>>> routes = new ArrayList<>();
+
+    public List<Route> parse(JSONObject jObject) {
+
+        List<Route> routes = new ArrayList<>();
         JSONArray jRoutes;
         JSONArray jLegs;
         JSONArray jSteps;
         JSONObject jDistance;
         JSONObject jDuration;
-        long totalDistance = 0;
-        int totalSeconds = 0;
-        int myIndex = 0;
-        List<HashMap<String, String>> myList = new ArrayList<>();
+        String distance;
+        String duration;
+
         try {
+
+            // Getting routes
             jRoutes = jObject.getJSONArray("routes");
             /** Traversing all routes */
             for (int i = 0; i < jRoutes.length(); i++) {
+
+                int totalDistance = 0;
+                int totalSeconds = 0;
+                int myIndex = 0;
+
+                // Getting bounds
+                JSONObject jBounds = ((JSONObject)jRoutes.get(i)).getJSONObject("bounds");
+                HashMap<String, String> bounds = new HashMap<>();
+                bounds.put("north", ((JSONObject)jBounds.get("northeast")).getString("lat"));
+                bounds.put("east", ((JSONObject)jBounds.get("northeast")).getString("lng"));
+                bounds.put("south", ((JSONObject)jBounds.get("southwest")).getString("lat"));
+                bounds.put("west", ((JSONObject)jBounds.get("southwest")).getString("lng"));
+
+                // Getting legs
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
-                List path = new ArrayList<>();
+                Log.d("mytag", "parse: " + jLegs);
+                List<HashMap<String,String>> path = new ArrayList<>();  // Holds all coordinate points of this route
+                List<HashMap<String, String>> myList = new ArrayList<>();   // Holds every 100th coordinate point of this route
                 /** Traversing all legs */
                 for (int j = 0; j < jLegs.length(); j++) {
                     jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
+                    Log.d("mytag", "jsteps: " + jSteps);
 
                     //Kokonaismatkan haku jsonista
                     jDistance = ((JSONObject) jLegs.get(j)).getJSONObject("distance");
-                    totalDistance = totalDistance + Long.parseLong(jDistance.getString("value"));
+                    totalDistance = totalDistance + Integer.parseInt(jDistance.getString("value"));
 
                     //Kokonaisajan haku jsonista
                     jDuration = ((JSONObject) jLegs.get(j)).getJSONObject("duration");
@@ -58,24 +80,34 @@ public class SetRideDataParser {
                             myIndex++;
                         }
                     }
-                    routes.add(path);
 
                     //matkan pituuden määritys
-                    double dist = totalDistance / 1000.0;
-                    SetRideConstant.DISTANCE = String.valueOf(dist);
+                    int dist = totalDistance / 1000;
+                    //SetRideConstant.DISTANCE = String.valueOf(dist);
 
                     //matka ajan määritys
                     int hours = (totalSeconds / 3600);
                     int minutes = ((totalSeconds - hours * 3600) / 60);
-                    SetRideConstant.DURATION = String.valueOf(hours + "h " + minutes + "min");
+                    //SetRideConstant.DURATION = String.valueOf(hours + "h " + minutes + "min");
+
+                    //Matkan pituuden määritys SetRidePolylineDataan. Hashmap = key "pl0, pl1, jne.."
+                    duration =  String.valueOf(hours) + " h " + minutes + " min";
+                    distance = String.valueOf(dist);
+
+                    // Building route object from necessary data and adding to list
+                    Route route = new Route(path, myList, bounds, distance, duration);
+                    routes.add(route);
+
                 }
+
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (Exception e) {
         }
-        SetRideConstant.pointsList = myList;
+
+        Log.d("TESTI", routes.toString());
         return routes;
     }
 
