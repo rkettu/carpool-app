@@ -76,6 +76,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
     private Route currentRoute;
 
+    double startLat, startLng, stopLat, stopLon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,20 +193,26 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             {
                 try
                 {
-                    double startLat = getCoordinates(strLahto).get(0);
-                    double startLon = getCoordinates(strLahto).get(1);
-                    double stopLat = getCoordinates(strLoppu).get(0);
-                    double stopLon = getCoordinates(strLoppu).get(1);
+                    //Getting start and destination coordinates in asynctask
+                    GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
+                        @Override
+                        public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility) {
+                            startLat = getCoordinatesUtility.getStartLat();
+                            startLng = getCoordinatesUtility.getStartLng();
+                            stopLat = getCoordinatesUtility.getDestinationLat();
+                            stopLon = getCoordinatesUtility.getDestinationLng();
 
-                    place1 = new MarkerOptions().position(new LatLng(startLat, startLon)).title("Location 1");
-                    place2 = new MarkerOptions().position(new LatLng(stopLat, stopLon)).title("Location 2");
-                    new SetRideFetchURL(SetRideActivity.this).execute(getUrl(place1.getPosition(), place2.getPosition(),"driving"), "driving");
-                    routeDetails.setVisibility(View.VISIBLE);
+                            place1 = new MarkerOptions().position(new LatLng(startLat, startLng)).title("Location 1");
+                            place2 = new MarkerOptions().position(new LatLng(stopLat, stopLon)).title("Location 2");
+                            new SetRideFetchURL(SetRideActivity.this).execute(getUrl(place1.getPosition(), place2.getPosition(),"driving"), "driving");
+                            routeDetails.setVisibility(View.VISIBLE);
 
-                    mMap.addMarker(place1);
-                    mMap.addMarker(place2);
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place2.getPosition(),8));
-
+                            mMap.addMarker(place1);
+                            mMap.addMarker(place2);
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place2.getPosition(),8));
+                        }
+                    }, SetRideActivity.this);
+                    getCoordinatesASync.execute(strLahto, strLoppu);
 
                 }catch (Exception e){
                     e.printStackTrace();
