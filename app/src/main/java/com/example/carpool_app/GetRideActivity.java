@@ -70,15 +70,13 @@ public class GetRideActivity extends AppCompatActivity {
     private ArrayList<RideUser> rideUserArrayList = new ArrayList<>();
     private GetRideAdapter getRideAdapter;
     private ArrayAdapter<CharSequence> spinnerAdapter;
-    private CollectionReference rideReference = FirebaseFirestore.getInstance().collection("rides");
-    private CollectionReference userReference = FirebaseFirestore.getInstance().collection("users");
     private ProgressDialog progressDialog;
     private int mYear, mMonth, mDay, newHour, newMinute;
     private int startDateDay, startDateMonth, startDateYear, startTimeHour, startTimeMinute;
     private int endDateDay, endDateMonth, endDateYear, endTimeHour, endTimeMinute;
+    private long queryLimit = 0;
     private long date1, date2;
     private Calendar calendar;
-    private List<HashMap<String, String>> points;
     private int spinnerCase = 0;
     private float startLat, startLng, destinationLat, destinationLng;
     private long systemTime = System.currentTimeMillis();
@@ -194,7 +192,22 @@ public class GetRideActivity extends AppCompatActivity {
                                 destinationLng = getRideUtility.getDestinationLng();
 
                                 //calling findRides function where is db search with algorithm
-                                findRides(startLat, startLng, destinationLat, destinationLng, date1, date2, spinnerCase);
+                                FindRides findRides = new FindRides(startLat, startLng, destinationLat, destinationLng, date1, date2, spinnerCase, new FindRidesInterface()
+                                {
+                                    @Override
+                                    public void FindRidesResult(ArrayList<RideUser> result) {
+                                        Log.d(TAG, "FindRidesResult: " + result.toString());
+                                        rideUserArrayList.addAll(result);
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                getRideAdapter.notifyDataSetChanged();
+                                                progressDialog.dismiss();
+                                            }
+                                        });
+                                    }
+                                });
+                                findRides.findRides();
                             }
                         }, GetRideActivity.this);
                         getCoordinatesASync.execute(startPoint, destination);
@@ -376,141 +389,6 @@ public class GetRideActivity extends AppCompatActivity {
                 //case 0 is happening of nothing is selected
             }
         });
-    }
-
-    //algorithm and db search
-    private void findRides(final float startLat, final float startLng, final float destinationLat, final float destinationLng, float date1, float date2, final int spinnerCase)
-    {
-        //ThreadPoolExecutor with 2 threads for each available processor on the device and a 5 second keep-alive time.
-        int numOfCores = Runtime.getRuntime().availableProcessors();
-        final ThreadPoolExecutor executor = new ThreadPoolExecutor(numOfCores * 2, numOfCores * 2, 5L, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>());
-        //Log.d(TAG, "findRides: " + executor.toString());
-        final List<Task<DocumentSnapshot>> myList = new ArrayList<>();
-
-        Log.d(TAG, "findRides: ennen query");
-
-        //making query, where ride time is between date1 and date2
-        Query query = rideReference.whereGreaterThanOrEqualTo("leaveTime", date1).whereLessThanOrEqualTo("leaveTime", date2);
-
-        //TODO when task is completed, exceptions and testing
-        Log.d(TAG, "findRides: queryn jälkeen");
-        query.get().addOnCompleteListener(executor, new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task)
-            {
-                if(task.isSuccessful())
-                {
-                    for(QueryDocumentSnapshot rideDoc : task.getResult())
-                    {
-                        try
-                        {
-                            //takes pickUpDistance and points from rides so we can use our algorithm to filter matching routes
-                            float pickUpDistance = (long) rideDoc.get("pickUpDistance");
-                            points = (List<HashMap<String, String>>) rideDoc.get("points");
-                            Log.d(TAG, "onComplete: ollaan ennen appmath if lausetta");
-
-                            //algorithm (in appMath class)
-                            AppMath appMath = new AppMath();
-                            if(appMath.isRouteInRange(pickUpDistance, startLat, startLng, destinationLat, destinationLng, points))
-                            {
-                                //Adds data to ride class from database
-                                final Ride ride = rideDoc.toObject(Ride.class);
-                                Log.d(TAG, "onComplete: ollaan ride objectia ");
-
-                                if (ride.getUid() != null)
-                                {
-                                    Log.d(TAG, "onComplete: ride.getUid() != null");
-                                    Task<DocumentSnapshot> taskItem = userReference.document(ride.getUid()).get();
-                                    //uses uid to get correct provider data from database
-                                    userReference.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                            if (task.isSuccessful())
-                                            {
-                                                DocumentSnapshot userDoc = task.getResult();
-                                                try
-                                                {
-                                                    final User user = userDoc.toObject(User.class);
-                                                    rideUserArrayList.add(new RideUser(ride, user));
-                                                    Log.d(TAG, "onComplete: laitettu listoihin objectit");
-                                                }
-                                                catch (Exception e)
-                                                {
-                                                    e.printStackTrace();
-                                                }
-                                            }
-                                            else
-                                            {
-                                                Exception exception = task.getException();
-                                                Log.d(TAG, "onComplete: " + exception);
-                                            }
-                                        }
-                                    });
-                                    myList.add(taskItem);
-                                }
-                                else
-                                {
-                                    //rideUid is null
-                                    //we have to skip task, if rideUid is null
-                                }
-                                Log.d(TAG, "getUserData: route rangella funktion loppu" );
-                            }
-                            else
-                            {
-                                //appMath failed
-                                Log.d(TAG, "appMath failed");
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            //missing points/pickUpDistance or GeoCoderHelper failed
-                            e.printStackTrace();
-                            Log.d(TAG, "rideReference" + e.toString());
-                        }
-                        Log.d(TAG, "onComplete: for lauseen lopussa");
-                    }
-                    Log.d(TAG, "onComplete: task is successful lopussa");
-                }
-                else
-                {
-                    Exception exception = task.getException();
-                    Log.d(TAG, "onComplete: task failed because: " + exception);
-                    //Task is not successful
-                    //TODO if task if not successful
-                }
-                Log.d(TAG, "onCompleten lopussa ollaan nyt");
-
-                //when all tasks are done, dismiss the progress dialog and refresh the adapter data
-                //TODO Last task doesn't count because it is still running in async
-                //both of them are running on ui thread, what why runOnUiThread()
-                Tasks.whenAll(myList).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        GetRideSorting sorting = new GetRideSorting(new GetRideSortingInterface() {
-                            @Override
-                            public void GetRideSorting(final ArrayList<RideUser> sortedArrayList) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Log.d(TAG, "run: ollaan getridesortinging rajapinnassa");
-                                        getRideAdapter.notifyDataSetChanged();
-                                        progressDialog.dismiss();
-                                        //if there is no rides, use toast to indicate that
-                                        Log.d(TAG, "run: rajapinnan ui threadissa");
-                                        if(rideUserArrayList.size() == 0)
-                                        {
-                                            Toast.makeText(GetRideActivity.this, "Sopivia kyytejä ei löytynyt.", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
-                            }
-                        }, GetRideActivity.this, spinnerCase, rideUserArrayList);
-                        sorting.execute();
-                    }
-                });
-            }
-        });
-        Log.d(TAG, "findRides: ollaan täällä");
     }
 
     //progress dialog. shows when called. used when app is finding matches

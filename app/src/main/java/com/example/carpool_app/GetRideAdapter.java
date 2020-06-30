@@ -1,22 +1,15 @@
 package com.example.carpool_app;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
-import java.util.List;
 
 public class GetRideAdapter extends BaseAdapter {
 
@@ -98,7 +91,7 @@ public class GetRideAdapter extends BaseAdapter {
         viewHolder.infoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Arvioitu summa 100km kohti.", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Arvioitu summa 100km kohti.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -106,7 +99,7 @@ public class GetRideAdapter extends BaseAdapter {
         viewHolder.dateImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Arvioitu lähtöpäivä.", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Arvioitu lähtöpäivä.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -114,7 +107,7 @@ public class GetRideAdapter extends BaseAdapter {
         viewHolder.timeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Arvioitu lähtöaika.", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Arvioitu lähtöaika.", Toast.LENGTH_SHORT).show();
             }
         });
 

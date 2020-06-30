@@ -8,4 +8,7 @@
 
     <string name ="GetRideSpinnerTitle">Järjestä</string>
 
+    <string name ="userReferenceString">users</string>
+    <string name ="rideReferenceString">rides</string>
+
 </resources>
