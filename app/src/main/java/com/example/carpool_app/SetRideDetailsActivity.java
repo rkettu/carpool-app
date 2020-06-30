@@ -59,6 +59,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
 
     TextView priceTxt, exampleTxt, minRange, rangeValueTextView;
     EditText txtDate, txtTime, lahtoaikaSanallinen, matkatavaraSanallinen;
+    private String departureTimeTxt, luggageTxt;
     NumberPicker numberPicker;
     SeekBar seekBar3, seekBar2, seekBar;
 
@@ -106,6 +107,9 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         checkBox_luggage.setOnClickListener(this);
         lahtoaikaSanallinen = (EditText)findViewById(R.id.setRideDetails_editText_sanallinenAika);
         matkatavaraSanallinen = (EditText)findViewById(R.id.setRideDetails_editText_sanallinenTavaratila);
+
+        departureTimeTxt = lahtoaikaSanallinen.getText().toString();
+        luggageTxt = matkatavaraSanallinen.getText().toString();
 
 
         final Button confirmBtn = (Button) findViewById(R.id.setRideDetails_button_vahvista);
@@ -268,7 +272,15 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
 
 
             //Log.d("mylog", "onClick VAHVISTA " + " selectedPoints.size: " + selectedPoints.size() + " Duration: " + duration + " Distance: " + distance + " startAdr: " + startAddress + " endAdr: " + endAddress + " startCity: " + startCity + " endCity: " + endCity + " Passengers: " + passengers + " LeaveTime: " + leaveTime + " Hinta: " + price + " Noutomatka: " + pickUpDistance);
-            CREATE_RIDE_DEMO();
+            if(FirebaseHelper.loggedIn)
+            {
+                CREATE_RIDE_DEMO();
+            }
+            else
+            {
+                FirebaseHelper.GoToLogin(getApplicationContext());
+            }
+
         }
     }
 
@@ -276,6 +288,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
     // now only creates rides with proper points and user but otherwise random values
     public void CREATE_RIDE_DEMO()
     {
+
         Ride r = new Ride(FirebaseHelper.getUid(), duration, (new GregorianCalendar().getTimeInMillis()+40*Constant.DayInMillis),
                             startAddress, endAddress, passengers, price, doubleDistance,
                             selectedPoints, bounds, new ArrayList<String>(),

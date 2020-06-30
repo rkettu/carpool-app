@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -16,10 +17,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -65,6 +68,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
     //Reitinhaun muuttujat
     MarkerOptions place1, place2;
+    TextView distance, duration;
+
 
     private String reitinValinta;
     private HashMap<String, Route> polylineHashMap = new HashMap<>(); // Contains polyline id and matching route info
@@ -98,6 +103,9 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         linearContainer = (LinearLayout) findViewById(R.id.set_ride_linearLayout);
         drawerButton = (Button) findViewById(R.id.set_ride_drawer_bottom);
         routeDetails = (ConstraintLayout) findViewById(R.id.set_ride_routeDetails);
+        distance = (TextView) findViewById(R.id.set_ride_infoTxt);
+        duration = (TextView) findViewById(R.id.set_ride_infoTxt2);
+
         bttAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -114,6 +122,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
             }
         });
+
 
         //Seuraava
 
@@ -168,7 +177,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             mMap.clear();   // Clearing map markers and polylines
             allPolylines.clear(); // Clearing list containing references to those polylines => frees their memory
             polylineHashMap.clear();
-
+            //Näppäimistön piilotus
+            hideKeyboard(SetRideActivity.this);
 
             //Reitin haku napin toiminnallisuus
             strLahto = lahtoEditori.getQuery().toString();
@@ -238,6 +248,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         {
             Intent details = new Intent(this, SetRideDetailsActivity.class);
 
+            /*
             for(Polyline polyline : allPolylines)
             {
                 // Tarkistaa mikä reiteistä on valittuna eli sininen ja asettaa sen id:n reitinvalinta muuttujaan.
@@ -247,7 +258,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                     Log.d("mylog", "REITINVALINTA: " + reitinValinta);
 
                 }
-            }
+            }*/
 
             //
             try{
@@ -263,10 +274,10 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 details.putExtra("LOPPUOSOITE", strLoppu);
                 details.putExtra("STARTCITY" , startCity);
                 details.putExtra("ENDCITY", endCity);
-                details.putExtra("DISTANCE", polylineHashMap.get(reitinValinta).rideDistance);
-                details.putExtra("DURATION", polylineHashMap.get(reitinValinta).rideDuration);
-                details.putExtra("BOUNDS",   polylineHashMap.get(reitinValinta).bounds);
-                details.putExtra("POINTS", (Serializable) polylineHashMap.get(reitinValinta).selectPoints);
+                details.putExtra("DISTANCE", currentRoute.rideDistance);
+                details.putExtra("DURATION", currentRoute.rideDuration);
+                details.putExtra("BOUNDS",   currentRoute.bounds);
+                details.putExtra("POINTS", (Serializable) currentRoute.selectPoints);
 
                 startActivity(details);
             }catch (Exception e){
@@ -308,6 +319,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
     // This is called once for each polyline added
     @Override
     public void onTaskDone(Object... values) {
+
         Route route = (Route) values[0];
         Log.d("mylog", "onTaskDone: " + route.rideDistance + "km ride");
 
@@ -316,6 +328,14 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         Polyline polyline = mMap.addPolyline(polylineOptions);
         allPolylines.add(polyline); // Adding polyline to list of all polylines
         polylineHashMap.put(polyline.getId(), route);
+
+        if(allPolylines.size() == 1)
+        {
+            currentRoute = route;
+            routeDetails.setVisibility(View.VISIBLE);
+            distance.setText(currentRoute.rideDistance + " km");
+            duration.setText(currentRoute.rideDuration);
+        }
 
         polyline.setClickable(true);
     }
@@ -333,6 +353,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 polyline.setColor(Color.BLUE);
                 polyline.setZIndex(1);
                 currentRoute = polylineHashMap.get(polyline.getId());
+                distance.setText(currentRoute.rideDistance + " km");
+                duration.setText(currentRoute.rideDuration);
                 Log.d("mylog", "ROUTEINFFOOOOOOOOOOOO: " + polyline.getId());
                 Log.d("Polylineclick!", "Clicked polyline with id: " + polyline.getId() + " and route distance: " + polylineHashMap.get(polyline.getId()).rideDistance);
             }
@@ -348,5 +370,11 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         //polylineHashMap.get(polyline.getId());
         //Log.d("mylog", "onPolylineClick: " + polylineHashMap.get(polyline.getId()));
 
+    }
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View v = activity.getCurrentFocus();
+        if (v == null) { v = new View(activity); }
+        inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 }
