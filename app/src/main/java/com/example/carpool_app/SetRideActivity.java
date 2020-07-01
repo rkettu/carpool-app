@@ -48,16 +48,16 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
     private GoogleMap mMap;
 
-    private SearchView lahtoEditori, loppuEditori;
+    private SearchView lahtoEditori, loppuEditori, waypointEditor1, waypointEditor2;
 
-    private String strLahto, strLoppu, startCity, endCity;
+    private String strLahto, strLoppu, startCity, endCity, strWaypoint1, strWaypoint2;
 
     //Layoutin valikon animaation asetukset
     Animation ttbAnim, bttAnim;
     private LinearLayout linearContainer;
     private ConstraintLayout routeDetails;
-    private Button drawerButton;
-    private ImageButton sijaintiButton;
+    private Button drawerButton, nextBtn;
+    private ImageButton sijaintiButton, waypointRemoveBtn1, waypointRemoveBtn2;
     private boolean drawer_expand = true;
 
     List<Polyline> allPolylines = new ArrayList<>(); // Contains all currently drawn polyline data, REMEMBER TO CLEAR
@@ -67,8 +67,9 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
     GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
 
     //Reitinhaun muuttujat
-    MarkerOptions place1, place2;
+    MarkerOptions place1, place2, wayPoint1, wayPoint2;
     TextView distance, duration;
+    private int lukitus = 0;
 
 
     private String reitinValinta;
@@ -76,7 +77,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
     private Route currentRoute;
 
-    double startLat, startLng, stopLat, stopLon;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,11 +88,20 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         sijaintiButton = findViewById(R.id.set_ride_sijaintiButton);
         sijaintiButton.setOnClickListener(this);
         findViewById(R.id.set_ride_haeButton).setOnClickListener(this);
-        findViewById(R.id.set_ride_nextBtn).setOnClickListener(this);
+        findViewById(R.id.set_ride_etappiBtn).setOnClickListener(this);
+        waypointRemoveBtn1 = (ImageButton)findViewById(R.id.set_ride_etappiRemoveBtn);
+        waypointRemoveBtn2 = (ImageButton)findViewById(R.id.set_ride_etappiRemoveBtn2);
+        waypointRemoveBtn1.setOnClickListener(this);
+        waypointRemoveBtn2.setOnClickListener(this);
+        nextBtn = (Button) findViewById(R.id.set_ride_nextBtn);
+        nextBtn.setOnClickListener(this);
+        nextBtn.setEnabled(false);
 
         //editorit
         lahtoEditori = (SearchView) findViewById(R.id.set_ride_lahtoEdit);
         loppuEditori = (SearchView) findViewById(R.id.set_ride_maaranpaaEdit);
+        waypointEditor1 = (SearchView) findViewById(R.id.set_ride_etappiEdit);
+        waypointEditor2 = (SearchView) findViewById(R.id.set_ride_etappiEdit2);
 
         //Kartan asetus set_ride_mapViewiin
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -173,17 +183,50 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.set_ride_haeButton)
+        if (v.getId() == R.id.set_ride_etappiBtn & lukitus == 0)
         {
+            waypointEditor1.setVisibility(View.VISIBLE);
+            waypointRemoveBtn1.setVisibility(View.VISIBLE);
+            lukitus = 1;
+
+        }
+        else if (v.getId() == R.id.set_ride_etappiBtn & lukitus == 1)
+        {
+            waypointEditor2.setVisibility(View.VISIBLE);
+            waypointRemoveBtn2.setVisibility(View.VISIBLE);
+        }
+        else if (v.getId() == R.id.set_ride_etappiRemoveBtn)
+        {
+            waypointEditor1.setVisibility(View.GONE);
+            waypointRemoveBtn1.setVisibility(View.GONE);
+            strWaypoint1 = "";
+            waypointEditor1.setQuery(strWaypoint1, true);
+            lukitus = 0;
+        }
+        else if (v.getId() == R.id.set_ride_etappiRemoveBtn2)
+        {
+            waypointEditor2.setVisibility(View.GONE);
+            waypointRemoveBtn2.setVisibility(View.GONE);
+            strWaypoint2 = "";
+            waypointEditor2.setQuery(strWaypoint2, true);
+        }
+        else if(v.getId() == R.id.set_ride_haeButton)
+        {
+            //Waypointtien tyhjennys, mikäli hakee reittiä uudelleen
+            wayPoint1 = null;
+            wayPoint2 = null;
+
+            //Reitin haku napin toiminnallisuus
             mMap.clear();   // Clearing map markers and polylines
             allPolylines.clear(); // Clearing list containing references to those polylines => frees their memory
             polylineHashMap.clear();
             //Näppäimistön piilotus
             hideKeyboard(SetRideActivity.this);
 
-            //Reitin haku napin toiminnallisuus
             strLahto = lahtoEditori.getQuery().toString();
             strLoppu = loppuEditori.getQuery().toString();
+            strWaypoint1 = waypointEditor1.getQuery().toString();
+            strWaypoint2 = waypointEditor2.getQuery().toString();
 
             if (strLahto.trim().equals("") || strLoppu.trim().equals(""))
             {
@@ -193,14 +236,36 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             {
                 try
                 {
+                    if(strWaypoint1 != null && !strWaypoint1.isEmpty())
+                    {
+
+                    }
+
+                        GetCoordinatesASync getCoordinatesASync1 = new GetCoordinatesASync(new GetCoordinatesInterface() {
+                            @Override
+                            public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility1) {
+                                double way1Lat = getCoordinatesUtility1.getStartLat();
+                                double way1Lng = getCoordinatesUtility1.getStartLng();
+                                double way2Lat = getCoordinatesUtility1.getDestinationLat();
+                                double way2Lng = getCoordinatesUtility1.getDestinationLng();
+                                Log.d("mylog", "getCoordinates: " + way1Lat + " " + way1Lng + " " + way2Lat);
+                                wayPoint1 = new MarkerOptions().position(new LatLng(way1Lat, way1Lng)).title("Pysähdys 1");
+                                wayPoint2 = new MarkerOptions().position(new LatLng(way2Lat, way2Lng)).title("Pysähdys 2");
+
+                            }
+                        }, SetRideActivity.this);
+                        getCoordinatesASync1.execute(strWaypoint1, strWaypoint2);
+
+
                     //Getting start and destination coordinates in asynctask
                     GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
                         @Override
                         public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility) {
-                            startLat = getCoordinatesUtility.getStartLat();
-                            startLng = getCoordinatesUtility.getStartLng();
-                            stopLat = getCoordinatesUtility.getDestinationLat();
-                            stopLon = getCoordinatesUtility.getDestinationLng();
+                            float startLat = getCoordinatesUtility.getStartLat();
+                            float startLng = getCoordinatesUtility.getStartLng();
+                            float stopLat = getCoordinatesUtility.getDestinationLat();
+                            float stopLon = getCoordinatesUtility.getDestinationLng();
+
 
                             place1 = new MarkerOptions().position(new LatLng(startLat, startLng)).title("Location 1");
                             place2 = new MarkerOptions().position(new LatLng(stopLat, stopLon)).title("Location 2");
@@ -213,6 +278,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                         }
                     }, SetRideActivity.this);
                     getCoordinatesASync.execute(strLahto, strLoppu);
+
 
                 }catch (Exception e){
                     e.printStackTrace();
@@ -310,9 +376,24 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         // Mode
         String mode = "mode=" + directionMode;
         // Building the parameters to the web service
-        String parameters = str_origin + "&" + str_dest + "&" + mode;
 
         //String parameters = str_origin + "&" + str_dest + 64.080600,%2024.533221" + "&" + mode;
+        String parameters = str_origin + "&" + str_dest + "&" + mode;
+
+        if(wayPoint1 != null)
+        {
+            parameters = str_origin + "&" + str_dest + "&waypoints=via:" + wayPoint1.getPosition().latitude + "," + wayPoint1.getPosition().longitude + "&" + mode;
+        }
+        if(wayPoint1 != null & wayPoint2 != null)
+        {
+            parameters = str_origin + "&" + str_dest + "&waypoints=via:" + wayPoint1.getPosition().latitude + "," +
+                    wayPoint1.getPosition().longitude + "|via:" + wayPoint2.getPosition().latitude + "," + wayPoint2.getPosition().longitude + "&" + mode;
+        }
+        if(wayPoint2 != null & wayPoint1 == null)
+        {
+            parameters = str_origin + "&" + str_dest + "&waypoints=via:" + wayPoint2.getPosition().latitude + "," + wayPoint2.getPosition().longitude + "&" + mode;
+        }
+
         // Output format
         String output = "json";
         // Building the url to the web service
@@ -342,6 +423,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             routeDetails.setVisibility(View.VISIBLE);
             distance.setText(currentRoute.rideDistance + " km");
             duration.setText(currentRoute.rideDuration);
+            nextBtn.setEnabled(true);
         }
 
         polyline.setClickable(true);
