@@ -22,7 +22,6 @@ import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -328,7 +327,6 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
             //Log.d("mylog", "onClick VAHVISTA " + " selectedPoints.size: " + selectedPoints.size() + " Duration: " + duration + " Distance: " + distance + " startAdr: " + startAddress + " endAdr: " + endAddress + " startCity: " + startCity + " endCity: " + endCity + " Passengers: " + passengers + " LeaveTime: " + leaveTime + " Hinta: " + price + " Noutomatka: " + pickUpDistance);
             if(FirebaseHelper.loggedIn)
             {
-
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(SetRideDetailsActivity.this);
                 builder1.setTitle("Tarkista tiedot ja vahvista");
                 builder1.setMessage("Lähöpäivä: " + strDate + "\nLähtöaika: " + strTime + "\nVapaat paikat: " + passengers + "\nNouto etäisyys: " + pickUpDistance + " km" +
@@ -360,23 +358,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
             {
                 FirebaseHelper.GoToLogin(getApplicationContext());
             }
-
-
         }
-    }
-
-    private void showCustomDialog() {
-        ViewGroup viewGroup =  findViewById(android.R.id.content);
-
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.my_alertdialog, viewGroup, false);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(dialogView);
-        AlertDialog alertDialog = builder.create();
-
-
-
-
-        alertDialog.show();
     }
 
     // TODO: DELETE THIS after proper implementation
@@ -394,14 +376,48 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
                 if(task.isSuccessful())
                 {
                     // Ride creation succesfull
-                    showCustomDialog();
+                    showCustomDialogSuccessful();
                 }
                 else {
                     // Ride create failed
-                    Toast.makeText(SetRideDetailsActivity.this, "RIDE CREATE FAIL", Toast.LENGTH_SHORT).show();
+                    showCustomDialogFailed();
                 }
             }
         });
 
+    }
+
+    private void showCustomDialogSuccessful() {
+        ViewGroup viewGroup =  findViewById(android.R.id.content);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.my_alertdialog, viewGroup, false);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        AlertDialog alertDialog = builder.create();
+        Button okBtn = (Button) dialogView.findViewById(R.id.my_alertdialog_buttonOk);
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
+        alertDialog.show();
+    }
+
+    private void showCustomDialogFailed() {
+        ViewGroup viewGroup2 =  findViewById(android.R.id.content);
+        View dialogView2 = LayoutInflater.from(this).inflate(R.layout.my_alertdialog2, viewGroup2, false);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView2);
+        AlertDialog alertDialog2 = builder.create();
+        Button okBtn2 = (Button) dialogView2.findViewById(R.id.my_alertdialog2_buttonOk);
+        okBtn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
+        alertDialog2.show();
     }
 }

@@ -71,13 +71,10 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
     TextView distance, duration;
     private int lukitus = 0;
 
-
     private String reitinValinta;
     private HashMap<String, Route> polylineHashMap = new HashMap<>(); // Contains polyline id and matching route info
 
     private Route currentRoute;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,10 +130,6 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
             }
         });
-
-
-        //Seuraava
-
     }
 
     //Layoutin valikon animaation toiminnot
@@ -222,6 +215,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             polylineHashMap.clear();
             //Näppäimistön piilotus
             hideKeyboard(SetRideActivity.this);
+            doAnimation(bttAnim);
 
             strLahto = lahtoEditori.getQuery().toString();
             strLoppu = loppuEditori.getQuery().toString();
