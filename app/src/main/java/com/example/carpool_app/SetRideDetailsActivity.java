@@ -3,11 +3,16 @@ package com.example.carpool_app;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -22,9 +27,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
@@ -46,8 +48,9 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
     private String strDate, strTime;
 
     private float price = 0.03f;
-    int pickUpDistance = 5;
+    int pickUpDistance = 10;
     int passengers = 1;
+    int minRangeInt = 20;
 
     Double doubleDistance;
     int intDistance;
@@ -57,12 +60,12 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
     private HashMap<String,String> bounds;
 
 
-    TextView priceTxt, exampleTxt, minRange, rangeValueTextView;
+    TextView priceTxt, examplePriceTxt, fetchRange, rangeValueTextView;
     EditText txtDate, txtTime, lahtoaikaSanallinen, matkatavaraSanallinen;
     private String departureTimeTxt, luggageTxt;
     NumberPicker numberPicker;
     SeekBar seekBar3, seekBar2, seekBar;
-
+    Button confirmBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,31 +104,79 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
             intDistance = Integer.valueOf(doubleDistance.intValue());
         }
 
+        //CheckBoxit
         checkBox_time = (CheckBox) findViewById(R.id.setRideDetails_checkBox_aika);
         checkBox_luggage = (CheckBox) findViewById(R.id.setRideDetails_checkBox_matkatavarat);
         checkBox_time.setOnClickListener(this);
         checkBox_luggage.setOnClickListener(this);
-        lahtoaikaSanallinen = (EditText)findViewById(R.id.setRideDetails_editText_sanallinenAika);
-        matkatavaraSanallinen = (EditText)findViewById(R.id.setRideDetails_editText_sanallinenTavaratila);
 
-        departureTimeTxt = lahtoaikaSanallinen.getText().toString();
-        luggageTxt = matkatavaraSanallinen.getText().toString();
-
-
-        final Button confirmBtn = (Button) findViewById(R.id.setRideDetails_button_vahvista);
+        confirmBtn = (Button) findViewById(R.id.setRideDetails_button_vahvista);
         confirmBtn.setOnClickListener(this);
+        confirmBtn.setEnabled(false);
 
+        //Editorit
         txtDate = (EditText) findViewById(R.id.setRideDetails_editText_date);
         txtTime = (EditText) findViewById(R.id.setRideDetails_editText_time);
+        lahtoaikaSanallinen = (EditText)findViewById(R.id.setRideDetails_editText_sanallinenAika);
+        matkatavaraSanallinen = (EditText)findViewById(R.id.setRideDetails_editText_sanallinenTavaratila);
+        departureTimeTxt = lahtoaikaSanallinen.getText().toString();
+        luggageTxt = matkatavaraSanallinen.getText().toString();
         txtDate.setOnClickListener(this);
         txtTime.setOnClickListener(this);
 
+        //TextWatcherit varmistaa että lähtöpäivä ja -aika on määritetty
+        txtDate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(!txtTime.getText().toString().equals(""))
+                {
+                    confirmBtn.setEnabled(true);
+                }else{
+                    confirmBtn.setEnabled(false);
+                }
+            }
+        });
+        txtTime.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(!txtDate.getText().toString().equals(""))
+                {
+                    confirmBtn.setEnabled(true);
+                }else{
+                    confirmBtn.setEnabled(false);
+                }
+            }
+        });
+
+        //TextViewit
         priceTxt = (TextView) findViewById(R.id.setRideDetails_textView_hinta);
-        //exampleTxt = (TextView) findViewById(R.id.setRideDetails_textView);
-        minRange = (TextView) findViewById(R.id.setRideDetails_textView_noutoEtaisyys);
-        minRange.setText("Nouto etäisyys: " + 5 + "km");
+        examplePriceTxt = (TextView) findViewById(R.id.setRideDetails_textView_examplePrice);
+        fetchRange = (TextView) findViewById(R.id.setRideDetails_textView_noutoEtaisyys);
         rangeValueTextView = (TextView) findViewById(R.id.setRideDetails_textView_minmatka);
-        //rangeValueTextView.setText("Kuljettava matka: " + intMatka + "km");
+        examplePriceTxt.setText("Example km: " + distance + " km \n" + "Price: " + String.format("%.2f", doubleDistance * 0.03) + " euroa");
+        rangeValueTextView.setText("Kuljettava matka: " + minRangeInt + "km");
+        fetchRange.setText("Nouto etäisyys: " + pickUpDistance + "km");
+        priceTxt.setText(String.format("Hinta: %.3f", price) + " per kilometri");
 
         //Number Picker matkustajien määritys
         numberPicker = findViewById(R.id.setRideDetails_numberPicker_passengers);
@@ -151,7 +202,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
                 float tempDist = ((50 / 100.00f) * progress);
                 pickUpDistance = (int) tempDist;
                 //Log.d("####matka3####", range + ", " + intMatka + ", " + progress + ", " + (intMatka / 100.00f) * progress);
-                minRange.setText("Nouto etäisyys: " + pickUpDistance + "km");
+                fetchRange.setText("Nouto etäisyys: " + pickUpDistance + "km");
             }
 
             @Override
@@ -168,9 +219,9 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         seekBar2.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                float testi = ((intDistance / 100.00f) * progress);
+                minRangeInt = (int) ((intDistance / 100.00f) * progress);
                 DecimalFormat df = new DecimalFormat("#.##");
-                rangeValueTextView.setText("Kuljettava matka: " + (int)testi + "km");
+                rangeValueTextView.setText("Kuljettava matka: " + minRangeInt + " km");
             }
 
             @Override
@@ -190,7 +241,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
                 price = ((float) progress / 1000);
                 priceTxt.setText(String.format("Hinta: %.3f", price) + " per kilometri");
                 //hintaTxt.setTextColor(Color.WHITE);
-                //exampleTxt.setText("Example km: " + newMatka + " km \n" + "Price: " + String.format("%.2f", doubleMatka * hinta) + " eur");
+                examplePriceTxt.setText("Esimerkki km: " + distance + " km \n" + "Hinta: " + String.format("%.2f", doubleDistance * price) + " euroa");
 
             }
 
@@ -274,7 +325,34 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
             //Log.d("mylog", "onClick VAHVISTA " + " selectedPoints.size: " + selectedPoints.size() + " Duration: " + duration + " Distance: " + distance + " startAdr: " + startAddress + " endAdr: " + endAddress + " startCity: " + startCity + " endCity: " + endCity + " Passengers: " + passengers + " LeaveTime: " + leaveTime + " Hinta: " + price + " Noutomatka: " + pickUpDistance);
             if(FirebaseHelper.loggedIn)
             {
-                CREATE_RIDE_DEMO();
+
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(SetRideDetailsActivity.this);
+                builder1.setTitle("Tarkista tiedot ja vahvista");
+                builder1.setMessage("Lähöpäivä: " + strDate + "\nLähtöaika: " + strTime + "\nVapaat paikat: " + passengers + "\nNouto etäisyys: " + pickUpDistance + " km" +
+                "\nKuljettava matka: " + minRangeInt + " km" + "\nHinta per km: " + price);
+                builder1.setCancelable(true);
+
+                builder1.setPositiveButton(
+                        "Yes",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                showCustomDialog();
+                                CREATE_RIDE_DEMO();
+                            }
+                        }
+                );
+                builder1.setNegativeButton(
+                        "No",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        }
+                );
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
             }
             else
             {
@@ -282,6 +360,16 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
             }
 
         }
+    }
+
+    private void showCustomDialog() {
+        ViewGroup viewGroup =  findViewById(android.R.id.content);
+
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.my_alertdialog, viewGroup, false);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     // TODO: DELETE THIS after proper implementation
