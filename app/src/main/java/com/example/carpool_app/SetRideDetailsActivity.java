@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -110,6 +111,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         checkBox_time.setOnClickListener(this);
         checkBox_luggage.setOnClickListener(this);
 
+        //Buttonit
         confirmBtn = (Button) findViewById(R.id.setRideDetails_button_vahvista);
         confirmBtn.setOnClickListener(this);
         confirmBtn.setEnabled(false);
@@ -255,6 +257,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
 
             }
         });
+
     }
 
     @Override
@@ -337,7 +340,6 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                showCustomDialog();
                                 CREATE_RIDE_DEMO();
                             }
                         }
@@ -359,6 +361,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
                 FirebaseHelper.GoToLogin(getApplicationContext());
             }
 
+
         }
     }
 
@@ -369,6 +372,10 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView);
         AlertDialog alertDialog = builder.create();
+
+
+
+
         alertDialog.show();
     }
 
@@ -387,7 +394,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
                 if(task.isSuccessful())
                 {
                     // Ride creation succesfull
-                    Toast.makeText(SetRideDetailsActivity.this, "RIDE CREATED", Toast.LENGTH_SHORT).show();
+                    showCustomDialog();
                 }
                 else {
                     // Ride create failed
