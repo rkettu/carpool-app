@@ -64,7 +64,7 @@ class FindRides
 
     public void findRides()
     {
-        Log.d(TAG, "findRides: " + date1 + " date2 " + date2);
+        Log.d(TAG, "findRides: " + date1 + "date2 " + date2);
         Log.d(TAG, "findRides: arraylist size " + rideUserArrayList.size());
         if (lastVisible == null || rideUserArrayList.size() == 0) {
             Log.d(TAG, "findRides: if " + rideUserArrayList.size());
@@ -239,10 +239,9 @@ class FindRideDone extends AsyncTask<Void, Void, Boolean>{
 
     @Override
     protected Boolean doInBackground(Void... voids) {
-
         Log.d(TAG, "doInBackground: " + rideUserArrayList.size());
         Log.d(TAG, "doInBackground: hahha");
-        if(rideUserArrayList.size() >= 50 || hasDone)
+        if(rideUserArrayList.size() >= 1 || hasDone)
         {
             Log.d(TAG, "doInBackground: " + rideUserArrayList.size());
             hasDone = true;
