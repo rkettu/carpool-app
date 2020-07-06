@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -25,17 +26,22 @@ interface FindRidesInterface{
 
 class FindRides
 {
-    private int spinnerCase;
-    private float startLat, startLng, destinationLat, destinationLng;
-    private long date1, date2;
+    private static int spinnerCase;
+    private static float startLat, startLng, destinationLat, destinationLng;
+    private static long date1, date2;
+    private static FindRidesInterface findRidesInterface;
     private CollectionReference rideReference = FirebaseFirestore.getInstance().collection("rides");
     private CollectionReference userReference = FirebaseFirestore.getInstance().collection("users");
     private ArrayList<RideUser> rideUserArrayList = new ArrayList<>();
     private List<HashMap<String, String>> points;
     private static String TAG = "FindRides";
-    private FindRidesInterface findRidesInterface;
     private int counter = 0;
     private DocumentSnapshot lastVisible;
+    private boolean foundRide = false;
+
+    public FindRides(){
+
+    }
 
     public FindRides(ArrayList<RideUser> rideUserArrayList, DocumentSnapshot lastVisible)
     {
@@ -46,47 +52,47 @@ class FindRides
     public FindRides(float startLat, float startLng, float destinationLat, float destinationLng,
                     long date1, long date2, int spinnerCase, FindRidesInterface findRidesInterface)
     {
-        this.startLat = startLat;
-        this.startLng = startLng;
-        this.destinationLat = destinationLat;
-        this.destinationLng = destinationLng;
-        this.date1 = date1;
-        this.date2 = date2;
-        this.spinnerCase = spinnerCase;
-        this.findRidesInterface = findRidesInterface;
-    }
-
-    private Query getFirstQuery(){
-        Query query = rideReference
-                .whereGreaterThanOrEqualTo("leaveTime", date1)
-                .whereLessThanOrEqualTo("leaveTime", date2)
-                .orderBy("leaveTime");
-        return query;
-    }
-
-    //TODO startAt and limit
-    private Query getNextQuery(final DocumentSnapshot lastVisiblee){
-        Query query = rideReference
-                .whereGreaterThanOrEqualTo("leaveTime", date1)
-                .whereLessThanOrEqualTo("leaveTime", date2)
-                .orderBy("leaveTime");
-        return query;
+        FindRides.startLat = startLat;
+        FindRides.startLng = startLng;
+        FindRides.destinationLat = destinationLat;
+        FindRides.destinationLng = destinationLng;
+        FindRides.date1 = date1;
+        FindRides.date2 = date2;
+        FindRides.spinnerCase = spinnerCase;
+        FindRides.findRidesInterface = findRidesInterface;
     }
 
     public void findRides()
     {
+        Log.d(TAG, "findRides: " + date1 + " date2 " + date2);
         Log.d(TAG, "findRides: arraylist size " + rideUserArrayList.size());
-        if (rideUserArrayList.size() == 0) {
-            Log.d(TAG, "findRides: " + rideUserArrayList.size());
+        if (lastVisible == null || rideUserArrayList.size() == 0) {
+            Log.d(TAG, "findRides: if " + rideUserArrayList.size());
             search(getFirstQuery());
-        } else {
-            Log.d(TAG, "findRides: " + rideUserArrayList.get(rideUserArrayList.size() - 1).getRide().getLeaveTime());
+        }
+        else {
             search(getNextQuery(lastVisible));
         }
     }
 
+    private Query getFirstQuery() {
+        return rideReference
+                .whereGreaterThanOrEqualTo("leaveTime", date1)
+                .whereLessThanOrEqualTo("leaveTime", date2)
+                .orderBy("leaveTime")
+                .limit(100);
+    }
 
-    private void search(Query query){
+    private Query getNextQuery(final DocumentSnapshot lastVisible) {
+        return rideReference
+                .whereGreaterThanOrEqualTo("leaveTime", date1)
+                .whereLessThanOrEqualTo("leaveTime", date2)
+                .orderBy("leaveTime")
+                .startAfter(lastVisible)
+                .limit(100);
+    }
+
+    private void search(final Query query){
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
         @Override
         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -108,10 +114,15 @@ class FindRides
 
                         //algorithm (in appMath class)
                         AppMath appMath = new AppMath();
+                        Log.d(TAG, "onComplete: " + startLat + " " + startLng);
                         if(appMath.isRouteInRange(pickUpDistance, startLat, startLng, destinationLat, destinationLng, points))
                         {
-                            counter += 1;
+                            Log.d(TAG, "onComplete: " + counter);
                             final Ride ride = rideDoc.toObject(Ride.class);
+                            foundRide = true;
+                            counter += 1;
+
+                            Log.d(TAG, "onComplete: rideuid == " + ride.getUid());
                             if(ride.getUid() != null)
                             {
                                 userReference.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -145,14 +156,11 @@ class FindRides
                                             //task is not successful
                                         }
                                         Log.d(TAG, "onComplete: task is successful jälkeen");
-                                    }
-                                }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        Log.d(TAG, "onComplete: finduser toinen oncomplete");
+                                        Log.d(TAG, "onComplete: " + counter + "counterin arvo ennen if lausetta" );
+
                                         if(counter == 0)
                                         {
-                                            FindRideDone findRideDone = new FindRideDone(rideUserArrayList, findRidesInterface, lastVisible);
+                                            FindRideDone findRideDone = new FindRideDone(rideUserArrayList, findRidesInterface, lastVisible, spinnerCase, false);
                                             findRideDone.execute();
                                         }
                                     }
@@ -161,6 +169,7 @@ class FindRides
                             else
                             {
                                 //rideUid is null
+                                counter -= 1;
                             }
                         }
                     }
@@ -185,29 +194,47 @@ class FindRides
         @Override
         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
             Log.d(TAG, "onSuccess: " + queryDocumentSnapshots.size());
-            Log.d(TAG, "onSuccess: " + queryDocumentSnapshots.getQuery());
-            Log.d(TAG, "onSuccess: " + queryDocumentSnapshots.getDocumentChanges());
-            lastVisible = queryDocumentSnapshots.getDocuments().get(queryDocumentSnapshots.size() - 1);
-            Log.d(TAG, "onSuccess: " + lastVisible.toString());
+            if(queryDocumentSnapshots.size() == 0)
+            {
+                FindRideDone findRideDone = new FindRideDone(rideUserArrayList, findRidesInterface, lastVisible, spinnerCase, true);
+                findRideDone.execute();
+            }
+            else
+            {
+                lastVisible = queryDocumentSnapshots.getDocuments().get(queryDocumentSnapshots.size() - 1);
+                if(!foundRide)
+                {
+                    Log.d(TAG, "onSuccess: !foundRide ");
+                    FindRides findRides = new FindRides(rideUserArrayList, lastVisible);
+                    findRides.findRides();
+                }
+            }
         }
-    });
+    }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 }
 
 class FindRideDone extends AsyncTask<Void, Void, Boolean>{
 
-    private int spinnerCase;
-    private ArrayList<RideUser> rideUserArrayList = new ArrayList<>();
+    private ArrayList<RideUser> rideUserArrayList;
     private static String TAG = "FindRideDone";
-    private Boolean hasDone = false;
+    private Boolean hasDone;
     private FindRidesInterface findRidesInterface;
     private DocumentSnapshot lastVisible;
+    private int spinnerCase;
 
-    public FindRideDone(ArrayList<RideUser> rideUserArrayList, FindRidesInterface findRidesInterface, DocumentSnapshot lastVisible)
+    public FindRideDone(ArrayList<RideUser> rideUserArrayList, FindRidesInterface findRidesInterface, DocumentSnapshot lastVisible, int spinnerCase, boolean hasDone)
     {
+        this.hasDone = hasDone;
         this.rideUserArrayList = rideUserArrayList;
         this.findRidesInterface = findRidesInterface;
         this.lastVisible = lastVisible;
+        this.spinnerCase = spinnerCase;
     }
 
     @Override
@@ -215,13 +242,14 @@ class FindRideDone extends AsyncTask<Void, Void, Boolean>{
 
         Log.d(TAG, "doInBackground: " + rideUserArrayList.size());
         Log.d(TAG, "doInBackground: hahha");
-        if(rideUserArrayList.size() >= 3)
+        if(rideUserArrayList.size() >= 50 || hasDone)
         {
             Log.d(TAG, "doInBackground: " + rideUserArrayList.size());
             hasDone = true;
         }
         else
         {
+            Log.d(TAG, "doInBackground: hidjfiuhgd< h");
             FindRides findRides = new FindRides(rideUserArrayList, lastVisible);
             findRides.findRides();
         }
@@ -236,9 +264,11 @@ class FindRideDone extends AsyncTask<Void, Void, Boolean>{
         super.onPostExecute(result);
         if(result)
         {
+            FindRides findRides = new FindRides();
             Log.d(TAG, "onPostExecute: pääsenkö tänne?");
             if(findRidesInterface != null)
             {
+                Log.d(TAG, "onPostExecute: entä tänne?");
                 findRidesInterface.FindRidesResult(rideUserArrayList);
             }
         }
