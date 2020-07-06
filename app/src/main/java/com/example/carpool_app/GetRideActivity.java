@@ -191,24 +191,40 @@ public class GetRideActivity extends AppCompatActivity {
                                 destinationLat = getRideUtility.getDestinationLat();
                                 destinationLng = getRideUtility.getDestinationLng();
 
-                                //calling findRides function where is db search with algorithm
-                                FindRides findRides = new FindRides(startLat, startLng, destinationLat, destinationLng, date1, date2, spinnerCase, new FindRidesInterface()
+                                if(startLat == destinationLat && startLng == destinationLng)
                                 {
-                                    @Override
-                                    public void FindRidesResult(ArrayList<RideUser> result) {
-                                        Log.d(TAG, "FindRidesResult: " + result.toString());
-                                        rideUserArrayList.addAll(result);
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                getRideAdapter.notifyDataSetChanged();
-                                                progressDialog.dismiss();
-                                            }
-                                        });
+                                    progressDialog.dismiss();
+                                    startPointEditText.setTextColor(Color.parseColor("#B75272"));
+                                    destinationEditText.setTextColor(Color.parseColor("#B75272"));
+                                    Toast.makeText(getApplicationContext(), "Tarkista Aloituspaikka ja määränpää.", Toast.LENGTH_LONG).show();
+                                }
+                                else
+                                {
+                                    //calling findRides function where is db search with algorithm
+                                    FindRides findRides = new FindRides(startLat, startLng, destinationLat, destinationLng, date1, date2, spinnerCase, new FindRidesInterface()
+                                    {
+                                        @Override
+                                        public void FindRidesResult(ArrayList<RideUser> result) {
+                                            rideUserArrayList.addAll(result);
+                                            GetRideSorting getRideSorting = new GetRideSorting(new GetRideSortingInterface() {
+                                                @Override
+                                                public void GetRideSorting(ArrayList<RideUser> rideUserArrayList) {
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            getRideAdapter.notifyDataSetChanged();
+                                                            progressDialog.dismiss();
+                                                        }
+                                                    });
+                                                }
+                                            }, getApplicationContext(), spinnerCase, rideUserArrayList);
+                                            getRideSorting.execute();
+                                        }
+                                    });
+
+                                    findRides.findRides();
                                     }
-                                });
-                                findRides.findRides();
-                            }
+                                }
                         }, GetRideActivity.this);
                         getCoordinatesASync.execute(startPoint, destination);
                     }
