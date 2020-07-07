@@ -74,6 +74,7 @@ public class GetRideSorting extends AsyncTask<Void, Integer, ArrayList<RideUser>
         else
         {
             //do nothing
+            return null;
         }
         return rideUserArrayList;
     }

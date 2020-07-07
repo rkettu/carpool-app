@@ -44,7 +44,7 @@ public class AppMath {
 
     public boolean isRouteInRange(float pickupDist, double lat1, double lng1, double lat2, double lng2, List<HashMap<String,String>> points)
     {
-        Log.d("HEREWEARE", "again");
+        Log.d("appMath", "isRouteInRange");
         double minDist1 = 10000000;
         double minDist2 = 10000000;
         int index1 = -1;
@@ -70,7 +70,6 @@ public class AppMath {
             }
         }
 
-        Log.d("HEIHEIHEI", (minDist1 + " " + minDist2 + " " + pickupDist + " " + index1 + " " +index2));
         // If start coordinate is matched before end coordinate route is going the right way...
         if(index1 < index2)
         {

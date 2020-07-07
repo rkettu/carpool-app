@@ -1,9 +1,7 @@
 package com.example.carpool_app;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
@@ -13,7 +11,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -25,26 +22,11 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * GetRideActivity is the activity, which is used in the app to find matching rides to user from database.
@@ -160,10 +142,9 @@ public class GetRideActivity extends AppCompatActivity {
                     String startPoint = startPointEditText.getText().toString();
                     String destination = destinationEditText.getText().toString();
 
-
-                    //show progress dialog when doing search and hide keyboard when pressing search button
+                    //shoW progress dialog when doing search and hide keyboard when pressing search button
                     showProgressDialog(GetRideActivity.this);
-                    hideKeyboard(GetRideActivity.this);
+                    Constant.hideKeyboard(GetRideActivity.this);
 
                     //show 0 data in list
                     getRideAdapter.notifyDataSetChanged();
@@ -174,59 +155,87 @@ public class GetRideActivity extends AppCompatActivity {
                     calendar.set(endDateYear, endDateMonth-1, endDateDay, endTimeHour, endTimeMinute);
                     date2 = calendar.getTimeInMillis();
 
-                    Log.d(TAG, "onClick: " + startDateMonth);
-                    Log.d(TAG, "onClick: " + endDateMonth);
-                    Log.d(TAG, "onClick: " + date1);
-                    Log.d(TAG, "onClick: " + date2);
-
                     //if end time is bigger or equal to start time
                     if(date2 >= date1)
                     {
-                        //Getting start and destination coordinates in async task
-                        GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
-                            @Override
-                            public void getCoordinates(GetCoordinatesUtility getRideUtility) {
-                                startLat = getRideUtility.getStartLat();
-                                startLng = getRideUtility.getStartLng();
-                                destinationLat = getRideUtility.getDestinationLat();
-                                destinationLng = getRideUtility.getDestinationLng();
+                        if(Constant.isNetworkConnected(getApplicationContext()))
+                        {
+                            //Getting start and destination coordinates in async task
+                            GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
+                                @Override
+                                public void getCoordinates(GetCoordinatesUtility getRideUtility) {
+                                    startLat = getRideUtility.getStartLat();
+                                    startLng = getRideUtility.getStartLng();
+                                    destinationLat = getRideUtility.getDestinationLat();
+                                    destinationLng = getRideUtility.getDestinationLng();
 
-                                if(startLat == destinationLat && startLng == destinationLng)
-                                {
-                                    progressDialog.dismiss();
-                                    startPointEditText.setTextColor(Color.parseColor("#B75272"));
-                                    destinationEditText.setTextColor(Color.parseColor("#B75272"));
-                                    Toast.makeText(getApplicationContext(), "Tarkista Aloituspaikka ja määränpää.", Toast.LENGTH_LONG).show();
-                                }
-                                else
-                                {
-                                    //calling findRides function where is db search with algorithm
-                                    FindRides findRides = new FindRides(startLat, startLng, destinationLat, destinationLng, date1, date2, spinnerCase, new FindRidesInterface()
+                                    if(startLat == destinationLat && startLng == destinationLng)
                                     {
-                                        @Override
-                                        public void FindRidesResult(ArrayList<RideUser> result) {
-                                            rideUserArrayList.addAll(result);
-                                            GetRideSorting getRideSorting = new GetRideSorting(new GetRideSortingInterface() {
-                                                @Override
-                                                public void GetRideSorting(ArrayList<RideUser> rideUserArrayList) {
+                                        progressDialog.dismiss();
+                                        startPointEditText.setTextColor(Color.parseColor("#B75272"));
+                                        destinationEditText.setTextColor(Color.parseColor("#B75272"));
+                                        Toast.makeText(getApplicationContext(), "Tarkista Aloituspaikka ja määränpää.", Toast.LENGTH_LONG).show();
+                                    }
+                                    else
+                                    {
+                                        //calling findRides function where is db search with algorithm
+                                        FindRides findRides = new FindRides(startLat, startLng, destinationLat, destinationLng, date1, date2, new FindRidesInterface()
+                                        {
+                                            @Override
+                                            public void FindRidesResult(ArrayList<RideUser> result) {
+                                                rideUserArrayList.addAll(result);
+                                                if(rideUserArrayList.size() != 0)
+                                                {
+                                                    GetRideSorting getRideSorting = new GetRideSorting(new GetRideSortingInterface() {
+                                                        @Override
+                                                        public void GetRideSorting(ArrayList<RideUser> rideUserArrayList) {
+                                                            runOnUiThread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    getRideAdapter.notifyDataSetChanged();
+                                                                    progressDialog.dismiss();
+                                                                }
+                                                            });
+                                                        }
+                                                    }, getApplicationContext(), spinnerCase, rideUserArrayList);
+                                                    getRideSorting.execute();
+                                                }
+                                                else
+                                                {
                                                     runOnUiThread(new Runnable() {
                                                         @Override
                                                         public void run() {
-                                                            getRideAdapter.notifyDataSetChanged();
                                                             progressDialog.dismiss();
+                                                            Toast.makeText(getApplicationContext(), "Kyytejä ei löytynyt.", Toast.LENGTH_LONG).show();
                                                         }
                                                     });
                                                 }
-                                            }, getApplicationContext(), spinnerCase, rideUserArrayList);
-                                            getRideSorting.execute();
-                                        }
-                                    });
+                                            }
 
-                                    findRides.findRides();
+                                            @Override
+                                            public void FindRidesFailed(final String report) {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        progressDialog.dismiss();
+                                                        Toast.makeText(getApplicationContext(), report, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            }
+                                        });
+
+                                        findRides.findRides();
                                     }
                                 }
-                        }, GetRideActivity.this);
-                        getCoordinatesASync.execute(startPoint, destination);
+                            }, GetRideActivity.this);
+                            getCoordinatesASync.execute(startPoint, destination);
+                        }
+                        //network is not connected
+                        else
+                        {
+                            progressDialog.dismiss();
+                            Toast.makeText(getApplicationContext(), "Ei internet yhteyttä.", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     //if start time is bigger than end time which is not possible when searching rides
@@ -239,11 +248,10 @@ public class GetRideActivity extends AppCompatActivity {
                         estEndTimeEditText.setTextColor(Color.parseColor("#B75272"));
                         Toast.makeText(GetRideActivity.this, "Tarkista päivämäärät ja kellonajat", Toast.LENGTH_LONG).show();
                     }
-
                 }
                 catch (Exception e)
                 {
-                    //missing important data from editTexts
+                    //missing important data from editText
                 }
             }
         });
@@ -414,15 +422,5 @@ public class GetRideActivity extends AppCompatActivity {
         progressDialog.setMessage("Finding matching routes");
         progressDialog.setCancelable(false);
         progressDialog.show();
-    }
-
-    public static void hideKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        View v = activity.getCurrentFocus();
-        if (v == null)
-        {
-            v = new View(activity);
-        }
-        inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 }
