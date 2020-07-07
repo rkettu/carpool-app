@@ -9,6 +9,7 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -66,6 +68,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
     NumberPicker numberPicker;
     SeekBar seekBar3, seekBar2, seekBar;
     Button confirmBtn;
+    ImageButton timeBtn, luggageBtn, picUpBtn, rangeBtn, priceBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +117,18 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         confirmBtn = (Button) findViewById(R.id.setRideDetails_button_vahvista);
         confirmBtn.setOnClickListener(this);
         confirmBtn.setEnabled(false);
+
+        //ImageButtonit
+        timeBtn = (ImageButton) findViewById(R.id.setRideDetails_imageBtn_lahtoaika);
+        luggageBtn = (ImageButton) findViewById(R.id.setRideDetails_imageBtn_tavaratila);
+        picUpBtn = (ImageButton) findViewById(R.id.setRideDetails_imageBtn_nouto);
+        rangeBtn = (ImageButton) findViewById(R.id.setRideDetails_imageBtn_matka);
+        priceBtn = (ImageButton) findViewById(R.id.setRideDetails_imageBtn_hinta);
+        timeBtn.setOnClickListener(this);
+        luggageBtn.setOnClickListener(this);
+        picUpBtn.setOnClickListener(this);
+        rangeBtn.setOnClickListener(this);
+        priceBtn.setOnClickListener(this);
 
         //Editorit
         txtDate = (EditText) findViewById(R.id.setRideDetails_editText_date);
@@ -300,6 +315,101 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
 
             timePickerDialog.show();
         }
+        else if (v == timeBtn)
+        {
+            AlertDialog.Builder time = new AlertDialog.Builder(SetRideDetailsActivity.this);
+            time.setTitle("Lähtöaikani voi muuttua:");
+            time.setMessage("Etkö tiedä lähtöaikaasi, ei hätää! Voit merkata lähtöaika kenttään karkean arvion lähtöajastasi ja kirjoittaa huomio kenttään viestin, mikä näkyy matkustajille kyytejä etsiessä");
+            time.setCancelable(true);
+
+            time.setNeutralButton(
+                    "OK",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    }
+            );
+            AlertDialog alert11 = time.create();
+            alert11.show();
+        }
+        else if (v == luggageBtn)
+        {
+            AlertDialog.Builder luggage = new AlertDialog.Builder(SetRideDetailsActivity.this);
+            luggage.setTitle("Rajallinen tavaratila:");
+            luggage.setMessage("Mikäli tavaratilasi on rajallinen, voit kirjoittaa kenttään viestin kyytejä varaaville, esimerkiksi: Kyytiin mahtuu vain sylissä kuljetettavat matkatavarat");
+            luggage.setCancelable(true);
+
+            luggage.setNeutralButton(
+                    "OK",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    }
+            );
+            AlertDialog alert11 = luggage.create();
+            alert11.show();
+        }
+        else if (v == picUpBtn)
+        {
+            AlertDialog.Builder time = new AlertDialog.Builder(SetRideDetailsActivity.this);
+            time.setTitle("Nouto etäisyys:");
+            time.setMessage("Valitse kuinka paljon voit poiketa reitiltä noutaessasi matkustajaa.");
+            time.setCancelable(true);
+
+            time.setNeutralButton(
+                    "OK",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    }
+            );
+            AlertDialog alert11 = time.create();
+            alert11.show();
+        }
+        else if (v == rangeBtn)
+        {
+            AlertDialog.Builder range = new AlertDialog.Builder(SetRideDetailsActivity.this);
+            range.setTitle("Kuljettava matka:");
+            range.setMessage("Voit asettaa kilometrirajan minkä kyytiläisen tulee vähintään matkustaa kyydissäsi.");
+            range.setCancelable(true);
+
+            range.setNeutralButton(
+                    "OK",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    }
+            );
+            AlertDialog alert11 = range.create();
+            alert11.show();
+        }
+        else if (v == priceBtn)
+        {
+            AlertDialog.Builder price = new AlertDialog.Builder(SetRideDetailsActivity.this);
+            price.setTitle("Hinta per kilometri");
+            price.setMessage("Määritä haluamasi kilometrihinta. Matkan kokonaishinta määräytyy kyytiläisen matkan pituuden ja kilometrihinnan mukaan. Esimerkki laatikosta näet paljonko yhden kyytiläisen matka maksaisi koko ilmoittamasi matkan pituudella. HUOM! Määritäthän hinnan vain polttoaineiden jakamista varten.");
+            price.setCancelable(true);
+
+            price.setNeutralButton(
+                    "OK",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    }
+            );
+            AlertDialog alert11 = price.create();
+            alert11.show();
+        }
 
         if(checkBox_time.isChecked())
         {
@@ -327,13 +437,13 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
             //Log.d("mylog", "onClick VAHVISTA " + " selectedPoints.size: " + selectedPoints.size() + " Duration: " + duration + " Distance: " + distance + " startAdr: " + startAddress + " endAdr: " + endAddress + " startCity: " + startCity + " endCity: " + endCity + " Passengers: " + passengers + " LeaveTime: " + leaveTime + " Hinta: " + price + " Noutomatka: " + pickUpDistance);
             if(FirebaseHelper.loggedIn)
             {
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(SetRideDetailsActivity.this);
-                builder1.setTitle("Tarkista tiedot ja vahvista");
-                builder1.setMessage("Lähöpäivä: " + strDate + "\nLähtöaika: " + strTime + "\nVapaat paikat: " + passengers + "\nNouto etäisyys: " + pickUpDistance + " km" +
+                AlertDialog.Builder confirm = new AlertDialog.Builder(SetRideDetailsActivity.this);
+                confirm.setTitle("Tarkista tiedot ja vahvista");
+                confirm.setMessage("Lähöpäivä: " + strDate + "\nLähtöaika: " + strTime + "\nVapaat paikat: " + passengers + "\nNouto etäisyys: " + pickUpDistance + " km" +
                 "\nKuljettava matka: " + minRangeInt + " km" + "\nHinta per km: " + price);
-                builder1.setCancelable(true);
+                confirm.setCancelable(true);
 
-                builder1.setPositiveButton(
+                confirm.setPositiveButton(
                         "Yes",
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -342,7 +452,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
                             }
                         }
                 );
-                builder1.setNegativeButton(
+                confirm.setNegativeButton(
                         "No",
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -351,7 +461,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
                             }
                         }
                 );
-                AlertDialog alert11 = builder1.create();
+                AlertDialog alert11 = confirm.create();
                 alert11.show();
             }
             else
