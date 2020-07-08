@@ -71,7 +71,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
     TextView distance, duration;
     private int lukitus = 0;
 
-    private String reitinValinta;
+    private String fastestRoute;
     private HashMap<String, Route> polylineHashMap = new HashMap<>(); // Contains polyline id and matching route info
 
     private Route currentRoute;
@@ -414,7 +414,9 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         if(allPolylines.size() == 1)
         {
             currentRoute = route;
+            fastestRoute = allPolylines.get(0).getId();
             routeDetails.setVisibility(View.VISIBLE);
+            duration.setTextColor(Color.GREEN);
             distance.setText(currentRoute.rideDistance + " km");
             duration.setText(currentRoute.rideDuration);
             nextBtn.setEnabled(true);
@@ -433,13 +435,17 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             // Checking for clicked polyline match in list
             if(clickedPolyline.getId().equals(polyline.getId()))
             {
+                //Vaihtaa durationin vihreäksi jos klikattu reitti on nopein
+                if(clickedPolyline.getId().equals(fastestRoute)) {
+                    duration.setTextColor(Color.GREEN);
+                }else{
+                    duration.setTextColor(Color.GRAY);
+                }
                 polyline.setColor(Color.BLUE);
                 polyline.setZIndex(1);
                 currentRoute = polylineHashMap.get(polyline.getId());
                 distance.setText(currentRoute.rideDistance + " km");
                 duration.setText(currentRoute.rideDuration);
-                Log.d("mylog", "ROUTEINFFOOOOOOOOOOOO: " + polyline.getId());
-                Log.d("Polylineclick!", "Clicked polyline with id: " + polyline.getId() + " and route distance: " + polylineHashMap.get(polyline.getId()).rideDistance);
             }
             else
             {
@@ -447,11 +453,6 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 polyline.setZIndex(0);
             }
         }
-
-
-        //polyline.setColor(Color.BLUE);
-        //polylineHashMap.get(polyline.getId());
-        //Log.d("mylog", "onPolylineClick: " + polylineHashMap.get(polyline.getId()));
 
     }
     public static void hideKeyboard(Activity activity) {
