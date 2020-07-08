@@ -35,7 +35,7 @@ class FindRides
     private ArrayList<RideUser> rideUserArrayList = new ArrayList<>();
     private List<HashMap<String, String>> points;
     private static String TAG = "FindRides";
-    private static int queryLimit = 100;
+    private static int queryLimit = 10;
     private int counter = 0;
     private DocumentSnapshot lastVisible;
     private boolean foundRide = false;
@@ -82,11 +82,11 @@ class FindRides
     //function called when using the db search
     void findRides()
     {
-        if (lastVisible == null || rideUserArrayList.size() == 0) {
-            search(getFirstQuery());
+        if (lastVisible != null || rideUserArrayList.size() != 0) {
+            search(getNextQuery(lastVisible));
         }
         else {
-            search(getNextQuery(lastVisible));
+            search(getFirstQuery());
         }
     }
 
@@ -180,10 +180,13 @@ class FindRides
                                     }
                                 });
                             }
+                            else if(rideDoc.get("uid") == FirebaseHelper.getUid())
+                            {
+                                //if ride is current users ride
+                            }
                             else
                             {
                                 //if ride doesn't have uid
-                                counter -= 1;
                             }
                         }
                     }
@@ -217,7 +220,7 @@ class FindRides
                 if(!foundRide)
                 {
                     //if foundRide is false (it is true if one ride passes algorithm) so we run search() with new query using lastVisible.
-                    Log.d(TAG, "onSuccess: !foundRide ");
+                    Log.d(TAG, "onSuccess: !foundRide " + lastVisible);
                     FindRides findRides = new FindRides(rideUserArrayList, lastVisible);
                     findRides.findRides();
                 }
@@ -246,7 +249,7 @@ class FindRideDone extends AsyncTask<Void, Void, Boolean>{
     private DocumentSnapshot lastVisible;
 
     /** Use the arrayListMaxSize integer for the minimum array list size.*/
-    private int arrayListMinSize = 1;
+    private int arrayListMinSize = 20;
 
     FindRideDone(ArrayList<RideUser> rideUserArrayList, FindRidesInterface findRidesInterface, DocumentSnapshot lastVisible, boolean hasDone)
     {

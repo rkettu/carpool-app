@@ -1,10 +1,14 @@
 package com.example.carpool_app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -39,5 +43,25 @@ public class Constant {
         {
             return false;
         }
+    }
+
+    private AlertDialog loadingDialog;
+
+    public void startLoadingDialog(Context context)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = LayoutInflater.from(context);
+        builder.setView(inflater.inflate(R.layout.progressbar_loading, null));
+        builder.setCancelable(false);
+
+        loadingDialog = builder.create();
+        loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        loadingDialog.show();
+    }
+
+    public void dismissLoadingDialog()
+    {
+        loadingDialog.dismiss();
     }
 }

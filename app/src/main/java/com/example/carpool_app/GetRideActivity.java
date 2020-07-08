@@ -1,15 +1,17 @@
 package com.example.carpool_app;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -97,7 +99,7 @@ public class GetRideActivity extends AppCompatActivity {
         destinationEditText.setText("Helsinki");
 
         //sets arrayLists to adapter
-        getRideAdapter = new GetRideAdapter(this, rideUserArrayList);
+        getRideAdapter = new GetRideAdapter(GetRideActivity.this, rideUserArrayList);
         rideListView.setAdapter(getRideAdapter);
 
         //setting placeholder time in edit texts
@@ -134,8 +136,7 @@ public class GetRideActivity extends AppCompatActivity {
         searchRideButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //clearing array lists, if you press button twice
-                rideUserArrayList.clear();
+                //clearing array list
                 try
                 {
                     //takes start point and destination to String, so we can use them on search
@@ -158,8 +159,11 @@ public class GetRideActivity extends AppCompatActivity {
                     //if end time is bigger or equal to start time
                     if(date2 >= date1)
                     {
+                        //checks is device connected to internet
                         if(Constant.isNetworkConnected(getApplicationContext()))
                         {
+                            //clearing array lists old information
+                            rideUserArrayList.clear();
                             //Getting start and destination coordinates in async task
                             GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
                                 @Override
@@ -184,6 +188,7 @@ public class GetRideActivity extends AppCompatActivity {
                                             @Override
                                             public void FindRidesResult(ArrayList<RideUser> result) {
                                                 rideUserArrayList.addAll(result);
+                                                //if else to check does the array list contains any rides
                                                 if(rideUserArrayList.size() != 0)
                                                 {
                                                     GetRideSorting getRideSorting = new GetRideSorting(new GetRideSortingInterface() {
@@ -212,6 +217,7 @@ public class GetRideActivity extends AppCompatActivity {
                                                 }
                                             }
 
+                                            //if there is failure onSuccess listener in FindRides.java
                                             @Override
                                             public void FindRidesFailed(final String report) {
                                                 runOnUiThread(new Runnable() {
@@ -252,15 +258,8 @@ public class GetRideActivity extends AppCompatActivity {
                 catch (Exception e)
                 {
                     //missing important data from editText
+                    progressDialog.dismiss();
                 }
-            }
-        });
-
-        //if you press Back Arrow on top of activity
-        backButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                onBackPressed();
             }
         });
 
@@ -364,7 +363,7 @@ public class GetRideActivity extends AppCompatActivity {
             }
         });
 
-        //spinner, where you can sort data from arraylist
+        //spinner, where you can sort data from array list
         sortListSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -380,37 +379,71 @@ public class GetRideActivity extends AppCompatActivity {
                         //case 1 is when user select "Aika"
                         //prints time from lowest to highest
                         spinnerCase = 1;
-                        Collections.sort(rideUserArrayList, new Comparator<RideUser>() {
+                        final GetRideSorting getRideSorting;
+                        getRideSorting = new GetRideSorting(new GetRideSortingInterface() {
                             @Override
-                            public int compare(RideUser o1, RideUser o2) {
-                                String first = String.valueOf(o1.getRide().getLeaveTime());
-                                String second = String.valueOf(o2.getRide().getLeaveTime());
-                                return first.compareTo(second);
+                            public void GetRideSorting(ArrayList<RideUser> rideUserArrayList) {
+                                getRideAdapter.notifyDataSetChanged();
                             }
-                        });
-                        getRideAdapter.notifyDataSetChanged();
+                        }, getApplicationContext(), spinnerCase, rideUserArrayList);
+                        getRideSorting.execute();
                         break;
 
                     case 2:
-                        //case 2 is when user select "hinta"
-                        //prints price from lowers to highest
+                        //case 2 is when user select "Aika (nouseva)
+                        //prints time from highest to lowest
                         spinnerCase = 2;
-                        Collections.sort(rideUserArrayList, new Comparator<RideUser>() {
+                        getRideSorting = new GetRideSorting(new GetRideSortingInterface() {
                             @Override
-                            public int compare(RideUser o1, RideUser o2) {
-                                String first = String.valueOf(o1.getRide().getPrice());
-                                String second = String.valueOf(o2.getRide().getPrice());
-                                return first.compareTo(second);
+                            public void GetRideSorting(ArrayList<RideUser> rideUserArrayList) {
+                                getRideAdapter.notifyDataSetChanged();
                             }
-                        });
-                        getRideAdapter.notifyDataSetChanged();
+                        }, getApplicationContext(), spinnerCase, rideUserArrayList);
+                        getRideSorting.execute();
                         break;
+
+                    case 3:
+                        //case 3 is when user select "hinta"
+                        //prints price from lowers to highest
+                        spinnerCase = 3;
+                        getRideSorting = new GetRideSorting(new GetRideSortingInterface() {
+                            @Override
+                            public void GetRideSorting(ArrayList<RideUser> rideUserArrayList) {
+                                getRideAdapter.notifyDataSetChanged();
+                            }
+                        }, getApplicationContext(), spinnerCase, rideUserArrayList);
+                        getRideSorting.execute();
+                        break;
+
+                    case 4:
+                        //case 4 is when user select "hinta(nouseva)"
+                        //prints price from highest to lowest
+                        spinnerCase = 4;
+                        getRideSorting = new GetRideSorting(new GetRideSortingInterface() {
+                            @Override
+                            public void GetRideSorting(ArrayList<RideUser> rideUserArrayList) {
+                                getRideAdapter.notifyDataSetChanged();
+                            }
+                        }, getApplicationContext(), spinnerCase, rideUserArrayList);
+                        getRideSorting.execute();
+                        break;
+
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + position);
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 //case 0 is happening of nothing is selected
+            }
+        });
+
+        //if you press Back Arrow on top of activity
+        backButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                onBackPressed();
             }
         });
     }
@@ -421,6 +454,12 @@ public class GetRideActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Finding matching routes");
         progressDialog.setCancelable(false);
+        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Sulje", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                progressDialog.dismiss();
+            }
+        });
         progressDialog.show();
     }
 }

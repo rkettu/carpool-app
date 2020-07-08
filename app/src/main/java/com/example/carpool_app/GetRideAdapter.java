@@ -1,5 +1,6 @@
 package com.example.carpool_app;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ public class GetRideAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater inflater;
     public static final String TAG = "GetRideAdapter";
+    private Constant constant;
 
     public GetRideAdapter(){
         //Needs constructor for notifyDataSetChanges function
@@ -111,16 +113,21 @@ public class GetRideAdapter extends BaseAdapter {
             }
         });
 
-
+        constant = new Constant();
         //Setting onClickListener to elements -> you can go to new activity for more info example
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO go new activity for more info
-                //putExtra elements from rideArrayList and userArrayList from their position in list view
+                constant.startLoadingDialog(context);
+                FindRideDetails findRideDetails = new FindRideDetails(context, new RideDetailsInterface() {
+                    @Override
+                    public void showDialog(AlertDialog alertDialog) {
+                        constant.dismissLoadingDialog();
+                    }
+                }, rideUserArrayList, position);
+                findRideDetails.execute();
             }
         });
-
         return view;
     }
 }

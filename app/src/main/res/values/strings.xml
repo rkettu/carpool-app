@@ -2,8 +2,10 @@
     <string name="app_name">Carpool App</string>
 
     <string-array name="getRideSpinnerItems">
-        <item>Aika</item>
-        <item>Hinta</item>
+        <item>Aika (laskeva)</item>
+        <item>Aika (nouseva)</item>
+        <item>Hinta (laskeva)</item>
+        <item>Hinta (nouseva)</item>
     </string-array>
 
     <string name ="GetRideSpinnerTitle">Järjestä</string>
