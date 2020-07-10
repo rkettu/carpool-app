@@ -282,6 +282,9 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         //Sijainti napin toiminnallisuus
         else if(v.getId() == R.id.set_ride_sijaintiButton)
         {
+            Intent intent = new Intent(this, StartIntroActivity.class);
+            startActivity(intent);
+            /*
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
             if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             {
@@ -309,7 +312,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                         }
                     }
                 });
-            }
+            }*/
         }
         else if(v.getId() == R.id.set_ride_nextBtn)
         {
