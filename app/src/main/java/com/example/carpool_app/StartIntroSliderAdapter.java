@@ -1,7 +1,6 @@
 package com.example.carpool_app;
 
 import android.content.Context;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +11,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
-public class SliderAdapter extends PagerAdapter {
+public class StartIntroSliderAdapter extends PagerAdapter {
 
     Context context;
     LayoutInflater layoutInflater;
 
-    public SliderAdapter(Context context) {
+    public StartIntroSliderAdapter(Context context) {
         this.context = context;
     }
 
@@ -52,9 +51,9 @@ public class SliderAdapter extends PagerAdapter {
         layoutInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.slide_layout, container, false);
 
-        ImageView slideImageView = (ImageView) view.findViewById(R.id.slide_image);
-        TextView slideHeading = (TextView) view.findViewById(R.id.slide_heading);
-        TextView slideDescription = (TextView) view.findViewById(R.id.slide_desc);
+        ImageView slideImageView = (ImageView) view.findViewById(R.id.startIntro_slide_image);
+        TextView slideHeading = (TextView) view.findViewById(R.id.startIntro_slide_heading);
+        TextView slideDescription = (TextView) view.findViewById(R.id.startIntro_slide_desc);
 
         slideImageView.setImageResource(slide_images[position]);
         slideHeading.setText(slide_headings[position]);

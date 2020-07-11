@@ -20,6 +20,9 @@ public class Ride implements Serializable {
     private double distance;
     private String startCity;
     private String endCity;
+    private String departureTxt;
+    private String luggageTxt;
+    private Boolean pets;
 
 
 
@@ -35,7 +38,7 @@ public class Ride implements Serializable {
 
     List<HashMap<String,String>> points, HashMap<String,String> bounds, List<String> waypointAddresses,
 
-    List<String> participants, int pickUpDistance, String startCity, String endCity)
+    List<String> participants, int pickUpDistance, String startCity, String endCity, String departureTxt, String luggageTxt, Boolean pets)
     {
         this.uid = uid;
         this.duration = duration;
@@ -52,6 +55,9 @@ public class Ride implements Serializable {
         this.distance = distance;
         this.startCity = startCity;
         this.endCity = endCity;
+        this.departureTxt = departureTxt;
+        this.luggageTxt = luggageTxt;
+        this.pets = pets;
     }
 
     // Getters for all fields - required for document<->object
@@ -75,6 +81,9 @@ public class Ride implements Serializable {
     public double getDistance() { return distance; }
     public String getStartCity() { return startCity; }
     public String getEndCity() { return endCity; }
+    public String getDepartureTxt() { return departureTxt; }
+    public String getLuggageTxt() { return luggageTxt; }
+    public Boolean getPets() { return pets; }
 
     public void removeFreeSlot() {
         this.freeSlots--;

@@ -110,15 +110,17 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:id="@+id/setRideDetails_editText_sanallinenAika"
-        android:inputType="text"
+        android:inputType="textMultiLine"
         android:hint="Sanallinen arvio lähtöajasta. Esimerkiksi: Lähtöaikani on aikavälillä 12-18"
+        android:scrollbars="vertical"
         android:background="@drawable/bg_round"
         app:layout_constraintTop_toBottomOf="@id/setRideDetails_checkBox_aika"
         android:layout_marginLeft="60dp"
         android:layout_marginRight="60dp"
         android:gravity="top"
         android:padding="10dp"
-        android:visibility="gone">
+        android:visibility="gone"
+        >
     </EditText>
 
     <View
@@ -155,6 +157,7 @@
         android:layout_marginTop="10dp"
         app:layout_constraintTop_toBottomOf="@id/setRideDetails_textView_matkustajat">
     </TextView>
+
     <NumberPicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -209,9 +212,10 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:id="@+id/setRideDetails_editText_sanallinenTavaratila"
-        android:inputType="text"
+        android:inputType="textMultiLine"
         android:hint="Sanallinen arvio matkatavaroista. Esimerkiksi: Kyytiin mahtuu vain sylissä kannettavia matkatavaroita."
         android:background="@drawable/bg_round"
+        android:scrollbars="vertical"
         app:layout_constraintTop_toBottomOf="@id/setRideDetails_checkBox_matkatavarat"
         android:layout_marginLeft="60dp"
         android:layout_marginRight="60dp"

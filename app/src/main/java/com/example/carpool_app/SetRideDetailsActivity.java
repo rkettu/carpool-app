@@ -57,7 +57,8 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
     Double doubleDistance;
     int intDistance;
 
-    private CheckBox checkBox_time, checkBox_luggage;
+    private CheckBox checkBox_time, checkBox_luggage, checkBox_pets;
+    private Boolean pets;
 
     private HashMap<String,String> bounds;
 
@@ -110,8 +111,10 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         //CheckBoxit
         checkBox_time = (CheckBox) findViewById(R.id.setRideDetails_checkBox_aika);
         checkBox_luggage = (CheckBox) findViewById(R.id.setRideDetails_checkBox_matkatavarat);
+        checkBox_pets = (CheckBox) findViewById(R.id.setRideDetails_checkBox_lemmikit);
         checkBox_time.setOnClickListener(this);
         checkBox_luggage.setOnClickListener(this);
+        checkBox_pets.setOnClickListener(this);
 
         //Buttonit
         confirmBtn = (Button) findViewById(R.id.setRideDetails_button_vahvista);
@@ -135,8 +138,6 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         txtTime = (EditText) findViewById(R.id.setRideDetails_editText_time);
         lahtoaikaSanallinen = (EditText)findViewById(R.id.setRideDetails_editText_sanallinenAika);
         matkatavaraSanallinen = (EditText)findViewById(R.id.setRideDetails_editText_sanallinenTavaratila);
-        departureTimeTxt = lahtoaikaSanallinen.getText().toString();
-        luggageTxt = matkatavaraSanallinen.getText().toString();
         txtDate.setOnClickListener(this);
         txtTime.setOnClickListener(this);
 
@@ -411,21 +412,24 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
             alert11.show();
         }
 
-        if(checkBox_time.isChecked())
-        {
+        if(checkBox_time.isChecked()) {
             lahtoaikaSanallinen.setVisibility(View.VISIBLE);
-        }
-        else
-        {
+        } else {
             lahtoaikaSanallinen.setVisibility(View.GONE);
+            lahtoaikaSanallinen.setText("");
+            departureTimeTxt = "";
         }
-        if(checkBox_luggage.isChecked())
-        {
+        if(checkBox_luggage.isChecked()) {
             matkatavaraSanallinen.setVisibility(View.VISIBLE);
-        }
-        else
-        {
+        } else {
             matkatavaraSanallinen.setVisibility(View.GONE);
+            matkatavaraSanallinen.setText("");
+            luggageTxt = "";
+        }
+        if(checkBox_pets.isChecked()) {
+            pets = true;
+        } else {
+            pets = false;
         }
         if(v.getId() == R.id.setRideDetails_button_vahvista)
         {
@@ -433,18 +437,34 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
             //mC.set(pickedYear, pickedMonth, pickedDate, pickedHour, pickedMinute);
             //long leaveTime = mC.getTimeInMillis();
 
+            departureTimeTxt = lahtoaikaSanallinen.getText().toString();
+            luggageTxt = matkatavaraSanallinen.getText().toString();
 
-            //Log.d("mylog", "onClick VAHVISTA " + " selectedPoints.size: " + selectedPoints.size() + " Duration: " + duration + " Distance: " + distance + " startAdr: " + startAddress + " endAdr: " + endAddress + " startCity: " + startCity + " endCity: " + endCity + " Passengers: " + passengers + " LeaveTime: " + leaveTime + " Hinta: " + price + " Noutomatka: " + pickUpDistance);
+            String departure = "";
+            String luggage = "";
+            String sPets = "";
+            if(departureTimeTxt.length() == 0){ departureTimeTxt = null; }else {
+                departure = "Lähtöaika viesti: " + departureTimeTxt;
+            }
+            if(luggageTxt.length() == 0) { luggageTxt = null; }else {
+                luggage = "Matkatavara viesti: " + luggageTxt;
+            }
+            if(pets == true){
+                sPets = "Sallittu";
+            }else{
+                sPets = "Ei sallittu";
+            }
+
             if(FirebaseHelper.loggedIn)
             {
                 AlertDialog.Builder confirm = new AlertDialog.Builder(SetRideDetailsActivity.this);
                 confirm.setTitle("Tarkista tiedot ja vahvista");
                 confirm.setMessage("Lähöpäivä: " + strDate + "\nLähtöaika: " + strTime + "\nVapaat paikat: " + passengers + "\nNouto etäisyys: " + pickUpDistance + " km" +
-                "\nKuljettava matka: " + minRangeInt + " km" + "\nHinta per km: " + price);
+                "\nKuljettava matka: " + minRangeInt + " km" + "\nHinta per km: " + price + "\nLemmikit: " + sPets + "\n" + departure + "\n" + luggage + "\n\nOvatko tiedot oikein? " );
                 confirm.setCancelable(true);
 
                 confirm.setPositiveButton(
-                        "Yes",
+                        "Kyllä",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -453,7 +473,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
                         }
                 );
                 confirm.setNegativeButton(
-                        "No",
+                        "Ei",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -479,7 +499,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         Ride r = new Ride(FirebaseHelper.getUid(), duration, (new GregorianCalendar().getTimeInMillis()+40*Constant.DayInMillis),
                             startAddress, endAddress, passengers, price, doubleDistance,
                             selectedPoints, bounds, new ArrayList<String>(),
-                            new ArrayList<String>(), 5, startCity, endCity);
+                            new ArrayList<String>(), 5, startCity, endCity, departureTimeTxt, luggageTxt, pets);
         FirebaseFirestore.getInstance().collection("rides").add(r).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
