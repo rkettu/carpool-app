@@ -28,4 +28,6 @@
     <color name="starSecondaryColor">#5C5327</color>
 
     <color name="colorAccent">#D81B60</color>
+
+    <color name="colorTransparentWhite">#cccccc</color>
 </resources>
