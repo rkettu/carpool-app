@@ -100,6 +100,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
             distance = (String) savedInstanceState.getSerializable ("DISTANCE");
             duration = (String) savedInstanceState.getSerializable ("DURATION");
             selectedPoints = (List<HashMap<String,String>>) savedInstanceState.getSerializable("POINTS");
+            bounds = (HashMap<String, String>) savedInstanceState.getSerializable("BOUNDS");
         }
 
         //Muuttaa string distancen eri muuttujatyypeiksi
