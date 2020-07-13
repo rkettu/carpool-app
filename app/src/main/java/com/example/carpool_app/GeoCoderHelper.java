@@ -5,6 +5,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class GeoCoderHelper {
         }
         catch (IOException e)
         {
+            //TODO if grpc failed
             e.printStackTrace();
         }
         return null;

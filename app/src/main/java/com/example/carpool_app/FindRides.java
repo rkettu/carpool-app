@@ -34,8 +34,8 @@ class FindRides
     private CollectionReference userReference = FirebaseFirestore.getInstance().collection("users");
     private ArrayList<RideUser> rideUserArrayList = new ArrayList<>();
     private List<HashMap<String, String>> points;
-    private static String TAG = "FindRides";
-    private static int queryLimit = 10;
+    private static final String TAG = "FindRides";
+    private static final int queryLimit = 100;
     private int counter = 0;
     private DocumentSnapshot lastVisible;
     private boolean foundRide = false;
@@ -82,6 +82,10 @@ class FindRides
     //function called when using the db search
     void findRides()
     {
+        //first it will go to else condition to get the first query.
+        //the first query will get data to lastVisible and after that
+        //program will use getNextQuery, where we take next queryLimit much
+        //data from database.
         if (lastVisible != null || rideUserArrayList.size() != 0) {
             search(getNextQuery(lastVisible));
         }
@@ -122,14 +126,14 @@ class FindRides
                 {
                     try
                     {
+                        //TODO is withing bounds.
                         //takes pickUpDistance and points from rides so we can use our algorithm to filter matching routes
                         float pickUpDistance = (long) rideDoc.get("pickUpDistance");
                         points = (List<HashMap<String, String>>) rideDoc.get("points");
 
                         //algorithm (in appMath class)
                         Log.d(TAG, "onComplete: ollaan ennen appmath if lausetta");
-                        AppMath appMath = new AppMath();
-                        if(appMath.isRouteInRange(pickUpDistance, startLat, startLng, destinationLat, destinationLng, points))
+                        if(AppMath.isRouteInRange(pickUpDistance, startLat, startLng, destinationLat, destinationLng, points))
                         {
                             //checks if there is user id in ride
                             if(rideDoc.get("uid") != null)
@@ -243,13 +247,16 @@ class FindRides
 class FindRideDone extends AsyncTask<Void, Void, Boolean>{
 
     private ArrayList<RideUser> rideUserArrayList;
-    private static String TAG = "FindRideDone";
+    private static final String TAG = "FindRideDone";
     private Boolean hasDone;
     private FindRidesInterface findRidesInterface;
     private DocumentSnapshot lastVisible;
 
-    /** Use the arrayListMaxSize integer for the minimum array list size.*/
-    private int arrayListMinSize = 20;
+    /** Use the arrayListMaxSize integer for the minimum array list size.
+     * //TODO when ready, use value of 50 instead of 1.
+     * //Use value 1 if you dont want your db to get many search per time
+     * */
+    private final int arrayListMinSize = 1;
 
     FindRideDone(ArrayList<RideUser> rideUserArrayList, FindRidesInterface findRidesInterface, DocumentSnapshot lastVisible, boolean hasDone)
     {
@@ -261,6 +268,9 @@ class FindRideDone extends AsyncTask<Void, Void, Boolean>{
 
     @Override
     protected Boolean doInBackground(Void... voids) {
+        //if array list size is smaller than array list minimun size, or query size is 0 (hasDone will be true is query size is 0)
+        //change hasDone to true, so we can pass data to activity using interface.
+        //if the condition are not met, it will do the db search again.
         if(rideUserArrayList.size() >= arrayListMinSize || hasDone)
         {
             //array list size is bigger than minimum size or all the data from database has been wrought

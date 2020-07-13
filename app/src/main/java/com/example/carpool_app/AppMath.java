@@ -8,7 +8,7 @@ import java.util.List;
 public class AppMath {
 
     //Haversine algorithm
-    private double distanceBetweenCoordinates(double lat1, double lng1, double lat2, double lng2)
+    private static double distanceBetweenCoordinates(double lat1, double lng1, double lat2, double lng2)
     {
         double dLat = Math.toRadians(lat2-lat1);
         double dLon = Math.toRadians(lng2-lng1);
@@ -42,7 +42,7 @@ public class AppMath {
         }
     }
 
-    public boolean isRouteInRange(float pickupDist, double lat1, double lng1, double lat2, double lng2, List<HashMap<String,String>> points)
+    public static boolean isRouteInRange(float pickupDist, double lat1, double lng1, double lat2, double lng2, List<HashMap<String,String>> points)
     {
         Log.d("appMath", "isRouteInRange");
         double minDist1 = 10000000;

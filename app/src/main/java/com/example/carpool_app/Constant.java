@@ -45,8 +45,8 @@ public class Constant {
         }
     }
 
+    //loading dialog with transparent background.
     private AlertDialog loadingDialog;
-
     public void startLoadingDialog(Context context)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -59,7 +59,7 @@ public class Constant {
         loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         loadingDialog.show();
     }
-
+    //dismiss the loading dialog.
     public void dismissLoadingDialog()
     {
         loadingDialog.dismiss();

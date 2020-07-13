@@ -48,6 +48,7 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
     {
         super.onPreExecute();
 
+        //building the alert dialog and giving it layout.
         builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
         View dialogLayout = inflater.inflate(R.layout.dialog_ride_details, null);
@@ -58,6 +59,7 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
 
     @Override
     protected Bitmap doInBackground(Void... voids) {
+        //fetching image from database storage and returning it.
         Bitmap fetchImage = null;
         if(rideUserArrayList.get(position).getUser().getImgUri() != null)
         {
@@ -81,7 +83,9 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
     {
         super.onPostExecute(bitmap);
         final AlertDialog alertDialog = builder.show();
+        //set profile picture by using bitmap.
         profilePicture.setImageBitmap(bitmap);
+        //adding listener to back arrow
         closeDialogBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,6 +93,14 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
             }
         });
 
+        bookRideBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO book ride.
+            }
+        });
+
+        //show the dialog
         alertDialog.show();
         alertDialog.getWindow().setBackgroundDrawableResource(R.drawable.background_rating);
         if(rideDetailsInterface != null)
@@ -97,6 +109,7 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
         }
     }
 
+    //initializing layout items to alert dialog and give them correct texts.
     private void initDialogLayoutItems(View view, ArrayList<RideUser> rideUserArrayList, int position) {
         userNameDialog = view.findViewById(R.id.rideDetails_userName);
         userNameDialog.setText(rideUserArrayList.get(position).getUser().getFname() + " " + rideUserArrayList.get(position).getUser().getLname());
@@ -114,6 +127,8 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
         freeSeatsDialog.setText("Vapaita paikkoja: " + rideUserArrayList.get(position).getRide().getFreeSlots());
         wayPointsDialog = view.findViewById(R.id.rideDetails_wayPoints);
         Log.d("TAG", "initDialogLayoutItems1: ");
+
+        //checks is the 0, 1 or 2 way points and print them if there is way points.
         if(rideUserArrayList.get(position).getRide().getWaypointAddresses().size() != 0)
         {
             if(rideUserArrayList.get(position).getRide().getWaypointAddresses().size() == 1)

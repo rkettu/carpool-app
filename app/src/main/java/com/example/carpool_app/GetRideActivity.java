@@ -173,6 +173,7 @@ public class GetRideActivity extends AppCompatActivity {
                                     destinationLat = getRideUtility.getDestinationLat();
                                     destinationLng = getRideUtility.getDestinationLng();
 
+                                    //if start point and destination is same, tell user to check those edit texts.
                                     if(startLat == destinationLat && startLng == destinationLng)
                                     {
                                         progressDialog.dismiss();
@@ -191,12 +192,14 @@ public class GetRideActivity extends AppCompatActivity {
                                                 //if else to check does the array list contains any rides
                                                 if(rideUserArrayList.size() != 0)
                                                 {
+                                                    //calling the sorting algorithm to sort rides
                                                     GetRideSorting getRideSorting = new GetRideSorting(new GetRideSortingInterface() {
                                                         @Override
                                                         public void GetRideSorting(ArrayList<RideUser> rideUserArrayList) {
                                                             runOnUiThread(new Runnable() {
                                                                 @Override
                                                                 public void run() {
+                                                                    //showing the data and dismissing the progress dialog.
                                                                     getRideAdapter.notifyDataSetChanged();
                                                                     progressDialog.dismiss();
                                                                 }
@@ -205,11 +208,13 @@ public class GetRideActivity extends AppCompatActivity {
                                                     }, getApplicationContext(), spinnerCase, rideUserArrayList);
                                                     getRideSorting.execute();
                                                 }
+                                                //if array list size is 0, do this
                                                 else
                                                 {
                                                     runOnUiThread(new Runnable() {
                                                         @Override
                                                         public void run() {
+                                                            //progress dialog will be dismissed and toast will appear to tell user there was no rides.
                                                             progressDialog.dismiss();
                                                             Toast.makeText(getApplicationContext(), "Kyytejä ei löytynyt.", Toast.LENGTH_LONG).show();
                                                         }

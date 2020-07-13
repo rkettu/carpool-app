@@ -118,14 +118,26 @@ public class GetRideAdapter extends BaseAdapter {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                constant.startLoadingDialog(context);
-                FindRideDetails findRideDetails = new FindRideDetails(context, new RideDetailsInterface() {
-                    @Override
-                    public void showDialog(AlertDialog alertDialog) {
-                        constant.dismissLoadingDialog();
-                    }
-                }, rideUserArrayList, position);
-                findRideDetails.execute();
+                try
+                {
+                    //use async task to show alert dialog with ride details.
+                    //using async because of picture fetch from database takes time.
+                    constant.startLoadingDialog(context);
+                    FindRideDetails findRideDetails = new FindRideDetails(context, new RideDetailsInterface() {
+                        @Override
+                        public void showDialog(AlertDialog alertDialog) {
+                            constant.dismissLoadingDialog();
+                        }
+                    }, rideUserArrayList, position);
+                    findRideDetails.execute();
+                }
+                catch (Exception e)
+                {
+                    //if it fails for some reason, to this.
+                    constant.dismissLoadingDialog();
+                    Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
             }
         });
         return view;
