@@ -65,9 +65,29 @@ public class GetRideSorting extends AsyncTask<Void, Integer, ArrayList<RideUser>
             Collections.sort(rideUserArrayList, new Comparator<RideUser>() {
                 @Override
                 public int compare(RideUser o1, RideUser o2) {
+                    String first = String.valueOf(o1.getRide().getLeaveTime());
+                    String second = String.valueOf(o2.getRide().getLeaveTime());
+                    return second.compareTo(first);
+                }
+            });
+        }
+        else if (sortingCase == 3){
+            Collections.sort(rideUserArrayList, new Comparator<RideUser>() {
+                @Override
+                public int compare(RideUser o1, RideUser o2) {
                     String first = String.valueOf(o1.getRide().getPrice());
                     String second = String.valueOf(o2.getRide().getPrice());
                     return first.compareTo(second);
+                }
+            });
+        }
+        else if (sortingCase == 4){
+            Collections.sort(rideUserArrayList, new Comparator<RideUser>() {
+                @Override
+                public int compare(RideUser o1, RideUser o2) {
+                    String first = String.valueOf(o1.getRide().getPrice());
+                    String second = String.valueOf(o2.getRide().getPrice());
+                    return second.compareTo(first);
                 }
             });
         }

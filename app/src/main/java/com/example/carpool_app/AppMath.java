@@ -8,7 +8,7 @@ import java.util.List;
 public class AppMath {
 
     //Haversine algorithm
-    private double distanceBetweenCoordinates(double lat1, double lng1, double lat2, double lng2)
+    private static double distanceBetweenCoordinates(double lat1, double lng1, double lat2, double lng2)
     {
         double dLat = Math.toRadians(lat2-lat1);
         double dLon = Math.toRadians(lng2-lng1);
@@ -23,13 +23,19 @@ public class AppMath {
     }
 
     // Function for checking if searched start and end coordinates are within the bounds of a ride
-    public static boolean areCoordinatesWithinBounds(double lat1, double lng1, double lat2, double lng2, HashMap<String,String> bounds)
+    public static boolean areCoordinatesWithinBounds(double lat1, double lng1, double lat2, double lng2, HashMap<String,String> bounds, double pickUpDistance)
     {
-        try {
+        try
+        {
             double northernBound = Double.parseDouble(bounds.get("north"));
             double westernBound = Double.parseDouble(bounds.get("west"));
             double southernBound = Double.parseDouble(bounds.get("south"));
             double easternBound = Double.parseDouble(bounds.get("east"));
+
+            //Earth's radius, sphere
+            int R = 6378137;
+            //offset
+            double offSet = pickUpDistance;
 
             return ((lat1 < northernBound && lat2 < northernBound)
                     && (lat1 > southernBound && lat2 > southernBound)
@@ -42,7 +48,7 @@ public class AppMath {
         }
     }
 
-    public boolean isRouteInRange(float pickupDist, double lat1, double lng1, double lat2, double lng2, List<HashMap<String,String>> points)
+    public static boolean isRouteInRange(double pickupDist, double lat1, double lng1, double lat2, double lng2, List<HashMap<String,String>> points)
     {
         Log.d("appMath", "isRouteInRange");
         double minDist1 = 10000000;
