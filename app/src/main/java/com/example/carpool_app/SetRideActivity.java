@@ -50,7 +50,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
     private SearchView lahtoEditori, loppuEditori, waypointEditor1, waypointEditor2;
 
-    private String strLahto, strLoppu, startCity, endCity, strWaypoint1, strWaypoint2;
+    private String strLahto, strLoppu, strWaypoint1, strWaypoint2;
 
     //Layoutin valikon animaation asetukset
     Animation ttbAnim, bttAnim;
@@ -67,9 +67,11 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
     GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
 
     //Reitinhaun muuttujat
-    MarkerOptions place1, place2, wayPoint1, wayPoint2;
+    private MarkerOptions place1, place2, wayPoint1, wayPoint2;
     TextView distance, duration;
     private int lukitus = 0;
+
+    private double startLat, startLng, stopLat, stopLng;
 
     private String fastestRoute;
     private HashMap<String, Route> polylineHashMap = new HashMap<>(); // Contains polyline id and matching route info
@@ -228,55 +230,56 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             }
             else
             {
-                try
+                if(strWaypoint1 != null && !strWaypoint1.isEmpty())
                 {
-                    if(strWaypoint1 != null && !strWaypoint1.isEmpty())
-                    {
-
-                    }
-
-                        GetCoordinatesASync getCoordinatesASync1 = new GetCoordinatesASync(new GetCoordinatesInterface() {
-                            @Override
-                            public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility1) {
-                                double way1Lat = getCoordinatesUtility1.getStartLat();
-                                double way1Lng = getCoordinatesUtility1.getStartLng();
-                                double way2Lat = getCoordinatesUtility1.getDestinationLat();
-                                double way2Lng = getCoordinatesUtility1.getDestinationLng();
-                                Log.d("mylog", "getCoordinates: " + way1Lat + " " + way1Lng + " " + way2Lat);
-                                wayPoint1 = new MarkerOptions().position(new LatLng(way1Lat, way1Lng)).title("Pysähdys 1");
-                                wayPoint2 = new MarkerOptions().position(new LatLng(way2Lat, way2Lng)).title("Pysähdys 2");
-
-                            }
-                        }, SetRideActivity.this);
-                        getCoordinatesASync1.execute(strWaypoint1, strWaypoint2);
-
-
-                    //Getting start and destination coordinates in asynctask
-                    GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
+                    GetCoordinatesASync getCoordinatesASync1 = new GetCoordinatesASync(new GetCoordinatesInterface() {
                         @Override
-                        public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility) {
-                            float startLat = getCoordinatesUtility.getStartLat();
-                            float startLng = getCoordinatesUtility.getStartLng();
-                            float stopLat = getCoordinatesUtility.getDestinationLat();
-                            float stopLon = getCoordinatesUtility.getDestinationLng();
+                        public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility1) {
+                            double way1Lat = getCoordinatesUtility1.getStartLat();
+                            double way1Lng = getCoordinatesUtility1.getStartLng();
+                            double way2Lat = getCoordinatesUtility1.getDestinationLat();
+                            double way2Lng = getCoordinatesUtility1.getDestinationLng();
+                            Log.d("mylog", "getCoordinates: " + way1Lat + " " + way1Lng + " " + way2Lat);
+                            wayPoint1 = new MarkerOptions().position(new LatLng(way1Lat, way1Lng)).title("Pysähdys 1");
+                            wayPoint2 = new MarkerOptions().position(new LatLng(way2Lat, way2Lng)).title("Pysähdys 2");
 
+                        }
+                    }, SetRideActivity.this);
+                    getCoordinatesASync1.execute(strWaypoint1, strWaypoint2);
+                }
+
+
+
+                //Getting start and destination coordinates in asynctask
+                GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
+                    @Override
+                    public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility) {
+                        Log.d("mylog", "täälääääfdsafasdfa " );
+
+                        try {
+                            startLat = getCoordinatesUtility.getStartLat();
+                            startLng = getCoordinatesUtility.getStartLng();
+                            stopLat = getCoordinatesUtility.getDestinationLat();
+                            stopLng = getCoordinatesUtility.getDestinationLng();
+
+                            Log.d("mylog", "getCoordinates: " + startLat + startLng + stopLat + stopLng);
 
                             place1 = new MarkerOptions().position(new LatLng(startLat, startLng)).title("Location 1");
-                            place2 = new MarkerOptions().position(new LatLng(stopLat, stopLon)).title("Location 2");
+                            place2 = new MarkerOptions().position(new LatLng(stopLat, stopLng)).title("Location 2");
                             new SetRideFetchURL(SetRideActivity.this).execute(getUrl(place1.getPosition(), place2.getPosition(),"driving"), "driving");
                             routeDetails.setVisibility(View.VISIBLE);
 
                             mMap.addMarker(place1);
                             mMap.addMarker(place2);
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place2.getPosition(),8));
+                        }catch (Exception e){
+                            //ei toimi
+                            Toast.makeText(SetRideActivity.this, "Tarkista lähtö- ja määränpää osoitteet", Toast.LENGTH_LONG).show();
                         }
-                    }, SetRideActivity.this);
-                    getCoordinatesASync.execute(strLahto, strLoppu);
 
-
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+                    }
+                }, SetRideActivity.this);
+                getCoordinatesASync.execute(strLahto, strLoppu);
             }
         }
         //Sijainti napin toiminnallisuus
@@ -316,43 +319,37 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         }
         else if(v.getId() == R.id.set_ride_nextBtn)
         {
-            Intent details = new Intent(this, SetRideDetailsActivity.class);
 
-            /*
-            for(Polyline polyline : allPolylines)
-            {
-                // Tarkistaa mikä reiteistä on valittuna eli sininen ja asettaa sen id:n reitinvalinta muuttujaan.
-                if(polyline.getColor() == Color.BLUE)
-                {
-                    reitinValinta = polyline.getId();
-                    Log.d("mylog", "REITINVALINTA: " + reitinValinta);
+            //Hakee lähtö ja määränpää kaupungit kirjoitetun osoitteen perusteella, minkä jälkeen siirtyy Details activityyn.
+            GetCityASync getCityASync = new GetCityASync(new GetCityInterface() {
+                @Override
+                public void getCity(GetCoordinatesUtility getCity) {
+                    String startCity = getCity.getStartCity();
+                    String endCity = getCity.getDestinationCity();
+
+                    Log.d("mylog", "startCity: " + startCity + " endCity: " + endCity);
+
+                    Intent details = new Intent(SetRideActivity.this, SetRideDetailsActivity.class);
+
+                    try{
+                        details.putExtra("ALKUOSOITE", strLahto);
+                        details.putExtra("LOPPUOSOITE", strLoppu);
+                        details.putExtra("STARTCITY" , startCity);
+                        details.putExtra("ENDCITY", endCity);
+                        details.putExtra("DISTANCE", currentRoute.rideDistance);
+                        details.putExtra("DURATION", currentRoute.rideDuration);
+                        details.putExtra("BOUNDS",   currentRoute.bounds);
+                        details.putExtra("POINTS", (Serializable) currentRoute.selectPoints);
+
+
+                        startActivity(details);
+                    }catch (Exception e){
+                        //Log.d("mylog", "putExtra Failed: ");
+                    }
 
                 }
-            }*/
-
-            //
-            try{
-                startCity = geoCoderHelper.getCity(strLahto, SetRideActivity.this);
-                endCity = geoCoderHelper.getCity(strLoppu, SetRideActivity.this);
-                Log.d("mylog", "startCity: " + startCity + " endCity: " + endCity);
-            }catch (Exception e){
-                Log.d("mylog", "getCity Failed: " );
-            }
-
-            try{
-                details.putExtra("ALKUOSOITE", strLahto);
-                details.putExtra("LOPPUOSOITE", strLoppu);
-                details.putExtra("STARTCITY" , startCity);
-                details.putExtra("ENDCITY", endCity);
-                details.putExtra("DISTANCE", currentRoute.rideDistance);
-                details.putExtra("DURATION", currentRoute.rideDuration);
-                details.putExtra("BOUNDS",   currentRoute.bounds);
-                details.putExtra("POINTS", (Serializable) currentRoute.selectPoints);
-
-                startActivity(details);
-            }catch (Exception e){
-                //Log.d("mylog", "putExtra Failed: ");
-            }
+            }, SetRideActivity.this);
+            getCityASync.execute(strLahto, strLoppu);
 
         }
 

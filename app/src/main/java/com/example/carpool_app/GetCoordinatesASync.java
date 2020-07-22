@@ -1,7 +1,11 @@
 package com.example.carpool_app;
 
 import android.content.Context;
+import android.location.Location;
 import android.os.AsyncTask;
+import android.util.Log;
+
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
@@ -33,6 +37,8 @@ class GetCoordinatesASync extends AsyncTask<String, Integer, GetCoordinatesUtili
         float destinationLat = GeoCoderHelper.getCoordinates(destination, context).get(0);
         float destinationLng = GeoCoderHelper.getCoordinates(destination, context).get(1);
 
+        Log.d("mylog", "doInBackground: " + startLat + startLng + destinationLat + destinationLng);
+
         GetCoordinatesUtility getCoordinatesUtility = new GetCoordinatesUtility(startLat, startLng, destinationLat, destinationLng);
         return getCoordinatesUtility;
     }
@@ -51,7 +57,7 @@ interface GetCityInterface{
     void getCity(GetCoordinatesUtility getCoordinatesUtility);
 }
 
-class GetCityASync extends AsyncTask<Float, Integer, GetCoordinatesUtility> {
+class GetCityASync extends AsyncTask<String, Integer, GetCoordinatesUtility> {
 
     private GetCityInterface getCityInterface;
     private Context context;
@@ -63,15 +69,13 @@ class GetCityASync extends AsyncTask<Float, Integer, GetCoordinatesUtility> {
     }
 
     @Override
-    protected GetCoordinatesUtility doInBackground(Float... floats) {
+    protected GetCoordinatesUtility doInBackground(String... floats) {
 
-        float startLat = floats[0];
-        float startLng = floats[1];
-        float destinationLat = floats[2];
-        float destinationLng = floats[3];
+        String place1 = floats[0];
+        String place2 = floats[1];
 
-        String startCity = GeoCoderHelper.getCity(startLat, startLng, context);
-        String destinationCity = GeoCoderHelper.getCity(destinationLat, destinationLng, context);
+        String startCity = GeoCoderHelper.getCity(place1, context);
+        String destinationCity = GeoCoderHelper.getCity(place2, context);
 
         return new GetCoordinatesUtility(startCity, destinationCity);
     }

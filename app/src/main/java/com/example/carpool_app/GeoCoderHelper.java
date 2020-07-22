@@ -7,6 +7,9 @@ import android.location.Location;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +43,12 @@ public class GeoCoderHelper {
 
     //You can use this function to get NAME of the CITY only with specific address
     //You may need this if you want print just a city, not full address
-    public static String getCity(float lat, float lng, Context context)
+    public static String getCity(String address, Context context)
     {
         String city = "";
         Geocoder geocoder = new Geocoder(context);
         try{
-            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
             city = addresses.get(0).getLocality();
             return city;
         }
