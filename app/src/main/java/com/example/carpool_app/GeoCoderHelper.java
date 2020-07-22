@@ -40,12 +40,12 @@ public class GeoCoderHelper {
 
     //You can use this function to get NAME of the CITY only with specific address
     //You may need this if you want print just a city, not full address
-    public String getCity(String address, Context context)
+    public static String getCity(float lat, float lng, Context context)
     {
         String city = "";
         Geocoder geocoder = new Geocoder(context);
         try{
-            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
             city = addresses.get(0).getLocality();
             return city;
         }
