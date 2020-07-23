@@ -1,11 +1,9 @@
 package com.example.carpool_app;
 
 import android.content.Context;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
@@ -53,6 +51,8 @@ class GetCoordinatesASync extends AsyncTask<String, Integer, GetCoordinatesUtili
     }
 }
 
+
+
 interface GetCityInterface{
     void getCity(GetCoordinatesUtility getCoordinatesUtility);
 }
@@ -87,6 +87,42 @@ class GetCityASync extends AsyncTask<String, Integer, GetCoordinatesUtility> {
         if(getCityInterface != null)
         {
             getCityInterface.getCity(getCoordinatesUtility);
+        }
+    }
+}
+
+
+
+interface GetFullAddressInterface{
+    void getFullAddress(GetCoordinatesUtility getCoordinatesUtility);
+}
+
+class GetFullAddressASync extends AsyncTask<String, Integer, GetCoordinatesUtility> {
+
+    private GetFullAddressInterface getFullAddressInterface;
+    private Context context;
+
+    public GetFullAddressASync(GetFullAddressInterface getFullAddressInterface, Context context) {
+        this.getFullAddressInterface = getFullAddressInterface;
+        this.context = context;
+    }
+
+    @Override
+    protected GetCoordinatesUtility doInBackground(String... address) {
+        String place1 = address[0];
+
+        String fullStartAddress = GeoCoderHelper.fullAddress(place1, context);
+
+        return new GetCoordinatesUtility(fullStartAddress);
+    }
+
+    @Override
+    protected void onPostExecute(GetCoordinatesUtility getCoordinatesUtility)
+    {
+        super.onPostExecute(getCoordinatesUtility);
+        if(getFullAddressInterface != null)
+        {
+            getFullAddressInterface.getFullAddress(getCoordinatesUtility);
         }
     }
 }

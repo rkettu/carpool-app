@@ -232,6 +232,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             {
                 if(strWaypoint1 != null && !strWaypoint1.isEmpty())
                 {
+                    //Hakee coordinaatit waypointeille
                     GetCoordinatesASync getCoordinatesASync1 = new GetCoordinatesASync(new GetCoordinatesInterface() {
                         @Override
                         public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility1) {
@@ -247,6 +248,27 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                     }, SetRideActivity.this);
                     getCoordinatesASync1.execute(strWaypoint1, strWaypoint2);
                 }
+
+
+                //Hakee täydellisen osoitteen ("kaarnatie 5, 90350 Oulu, Suomi") LÄHTÖPISTE tekstikenttään
+                GetFullAddressASync getFullAddressASync = new GetFullAddressASync(new GetFullAddressInterface() {
+                    @Override
+                    public void getFullAddress(GetCoordinatesUtility getCoordinatesUtility) {
+                        String address = getCoordinatesUtility.getFullAddress();
+                        lahtoEditori.setQuery(address,false);
+                    }
+                }, SetRideActivity.this);
+                getFullAddressASync.execute(strLahto);
+
+                //Hakee täydellisen osoitteen ("kaarnatie 5, 90350 Oulu, Suomi") MÄÄRÄNPÄÄ tekstikenttään
+                GetFullAddressASync getFullAddressASync2 = new GetFullAddressASync(new GetFullAddressInterface() {
+                    @Override
+                    public void getFullAddress(GetCoordinatesUtility getCoordinatesUtility) {
+                        String address = getCoordinatesUtility.getFullAddress();
+                        loppuEditori.setQuery(address,false);
+                    }
+                }, SetRideActivity.this);
+                getFullAddressASync2.execute(strLoppu);
 
 
 
