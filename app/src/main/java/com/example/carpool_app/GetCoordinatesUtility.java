@@ -29,6 +29,7 @@ public class GetCoordinatesUtility {
         this.fullAddress = address;
     }
 
+
     public String getFullAddress() {
         return fullAddress;
     }

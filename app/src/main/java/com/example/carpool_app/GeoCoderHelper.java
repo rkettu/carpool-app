@@ -60,7 +60,7 @@ public class GeoCoderHelper {
     }
 
 
-    //Palauttaa täydellisen osoitteen oman sijainnin mukaan esim: "Kaarnatie 5, 90530 Oulu, Suomi"
+    //Palauttaa täydellisen osoitteen oman sijainnin mukaan esim: "Kaarnatie 5, 90530 Oulu, Suomi". Parametrina hakukenttään syötetty osoite
     public static String fullAddress(String address, Context context)
     {
         String geoAddress = "";
@@ -78,4 +78,5 @@ public class GeoCoderHelper {
         }
         return null;
     }
+
 }

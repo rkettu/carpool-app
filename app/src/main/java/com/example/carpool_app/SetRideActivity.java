@@ -11,8 +11,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -132,6 +132,47 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
             }
         });
+    }
+
+    public class AsyncTaskGetLocation extends AsyncTask<Void, Void, String> {
+
+        String geoAddress;
+        @Override
+        protected String doInBackground(Void... voids) {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(SetRideActivity.this);
+            if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            {
+                ActivityCompat.requestPermissions(SetRideActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+            }
+            else{
+                fusedLocationClient.getLastLocation().addOnSuccessListener(SetRideActivity.this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        Log.d("TESTI", "onSuccess: location: " + location);
+                        if(location != null){
+                            try {
+                                geoAddress = geoCoderHelper.fullAddress(location, SetRideActivity.this);
+                                Log.d("TESTI", "Strin geoAddress: " + geoAddress);
+                                lahtoEditori.setQuery(geoAddress, false);
+
+                            }
+                            catch (Exception e){
+                                e.printStackTrace();
+                                Toast.makeText(getApplicationContext(),"Location error", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(),"Location failed", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
+            return geoAddress;
+        }
+        @Override
+        protected void onPostExecute(String result) {
+
+        }
     }
 
     //Layoutin valikon animaation toiminnot
