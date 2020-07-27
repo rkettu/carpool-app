@@ -1,5 +1,6 @@
 package com.example.carpool_app;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -7,12 +8,17 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.audiofx.Equalizer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -35,7 +41,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -65,6 +73,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
     //Oman sijainnin asetukset
     FusedLocationProviderClient fusedLocationClient;
     GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
+    int LOCATION_REQUEST_CODE = 10001;
 
     //Reitinhaun muuttujat
     private MarkerOptions place1, place2, wayPoint1, wayPoint2;
@@ -134,46 +143,6 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         });
     }
 
-    public class AsyncTaskGetLocation extends AsyncTask<Void, Void, String> {
-
-        String geoAddress;
-        @Override
-        protected String doInBackground(Void... voids) {
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(SetRideActivity.this);
-            if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            {
-                ActivityCompat.requestPermissions(SetRideActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-            }
-            else{
-                fusedLocationClient.getLastLocation().addOnSuccessListener(SetRideActivity.this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        Log.d("TESTI", "onSuccess: location: " + location);
-                        if(location != null){
-                            try {
-                                geoAddress = geoCoderHelper.fullAddress(location, SetRideActivity.this);
-                                Log.d("TESTI", "Strin geoAddress: " + geoAddress);
-                                lahtoEditori.setQuery(geoAddress, false);
-
-                            }
-                            catch (Exception e){
-                                e.printStackTrace();
-                                Toast.makeText(getApplicationContext(),"Location error", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                        else {
-                            Toast.makeText(getApplicationContext(),"Location failed", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-            }
-            return geoAddress;
-        }
-        @Override
-        protected void onPostExecute(String result) {
-
-        }
-    }
 
     //Layoutin valikon animaation toiminnot
     public void expandableDrawer(View view) { animationHandler(); }
@@ -345,41 +314,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 getCoordinatesASync.execute(strLahto, strLoppu);
             }
         }
-        //Sijainti napin toiminnallisuus
-        else if(v.getId() == R.id.set_ride_sijaintiButton)
-        {
-            Intent intent = new Intent(this, StartIntroActivity.class);
-            startActivity(intent);
-            /*
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-            if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-            }
-            else{
-                fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        Log.d("TESTI", "onSuccess: location: " + location);
-                        if(location != null){
 
-                            try {
-                                String geoAddress = geoCoderHelper.fullAddress(location, SetRideActivity.this);
-                                Log.d("TESTI", "Strin geoAddress: " + geoAddress);
-                                lahtoEditori.setQuery(geoAddress, false);
-                            }
-                            catch (Exception e){
-                                e.printStackTrace();
-                                Toast.makeText(getApplicationContext(),"Location error", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                        else {
-                            Toast.makeText(getApplicationContext(),"Location failed", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-            }*/
-        }
         else if(v.getId() == R.id.set_ride_nextBtn)
         {
 
@@ -413,17 +348,77 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 }
             }, SetRideActivity.this);
             getCityASync.execute(strLahto, strLoppu);
+        }
 
+        //Sijainti napin toiminnallisuus
+        else if(v.getId() == R.id.set_ride_sijaintiButton)
+        {
+            if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            {
+                //Location granted
+                AsyncTaskGetLocation getLocation = new AsyncTaskGetLocation();
+                getLocation.execute();
+            }
+            else {
+                //Location not granted
+                askLocationPermission();
+            }
         }
 
     }
 
-    //Get addresses latitude and longitude using GeoCoderHelper class
-    private ArrayList<Float> getCoordinates(String address)
-    {
-        GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
-        return geoCoderHelper.getCoordinates(address, this);
+    //Kysyy käyttäjältä luvan käyttää sijaintia
+    private void askLocationPermission() {
+        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
+                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+            }else{
+                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+
+            }
+        }
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == LOCATION_REQUEST_CODE){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                //Permission granted
+                AsyncTaskGetLocation getLocation = new AsyncTaskGetLocation();
+                getLocation.execute();
+
+            }else {
+                //Permission not granted
+                if(!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
+                    //This block here means PERMANENTLY DENIED PERMISSION
+                    new AlertDialog.Builder(SetRideActivity.this)
+                            .setMessage("You have permanently danied this permission, go to settings to enable this permission")
+                            .setPositiveButton("Go to settings", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    gotoApplicationSettings();
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .setCancelable(false)
+                            .show();
+                } else {
+                    Log.d("mylog", "Permission not granted " );
+                }
+            }
+        }
+    }
+    private void gotoApplicationSettings(){
+
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+        intent.setData(uri);
+        startActivity(intent);
+
+    }
+
+
     private String getUrl(LatLng origin, LatLng dest, String directionMode){
 
         // Origin of route
@@ -524,4 +519,39 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         if (v == null) { v = new View(activity); }
         inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
+
+    private class AsyncTaskGetLocation extends AsyncTask<Void, Void, String> {
+
+        private String geoAddress;
+        @Override
+        protected String doInBackground(Void... voids) {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(SetRideActivity.this);
+            Task<Location> locationTask = fusedLocationClient.getLastLocation();
+            locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if(location != null){
+                        //we have a location
+                        Log.d("mylog", "LOCATION found: " + location.toString());
+                        geoAddress = geoCoderHelper.fullAddressLocation(location, SetRideActivity.this);
+                        lahtoEditori.setQuery(geoAddress, false);
+                    }else {
+                        Log.d("mylog", "LOCATION was null... ");
+
+                    }
+                }
+            });
+
+            locationTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("mylog", "LOCATION onFailure: " + e.getLocalizedMessage());
+                }
+            });
+
+            return null;
+        }
+
+    }
 }
+

@@ -79,4 +79,24 @@ public class GeoCoderHelper {
         return null;
     }
 
+    //Palauttaa täydellisen osoitteen oman sijainnin mukaan esim: "Kaarnatie 5, 90530 Oulu, Suomi". Parametrina hakukenttään syötetty osoite
+    public static String fullAddressLocation(Location location, Context context)
+    {
+        String geoAddress = "";
+        Geocoder geocoder = new Geocoder(context);
+        try{
+            Log.d("TESTI", "fullAddress try");
+            List<Address> addresses2 = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            geoAddress = addresses2.get(0).getAddressLine(0);
+            return geoAddress;
+        }
+        catch (IOException e)
+        {
+            Log.d("TESTI", "fullAddress catch");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 }
