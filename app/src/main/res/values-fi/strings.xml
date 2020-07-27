@@ -73,4 +73,5 @@
     <string name="setridedetails_price_hint">Hinta:</string>
     <string name="setridedetails_ride_info_title">Kyydin tiedot</string>
     <string name="setridedetails_ride_length_text">Kuljettava matka:</string>
+    <string name="myalertdialog_moikka_text">Moikka</string>
 </resources>
