@@ -8,9 +8,84 @@
         <item>Hinta (nouseva)</item>
     </string-array>
 
-    <string name="GetRideSpinnerTitle">Järjestä</string>
+    <string name="GetRideSpinnerTitle" translatable="false">Järjestä</string>
 
-    <string name="userReferenceString">users</string>
-    <string name="rideReferenceString">rides</string>
+
+    <string name="userReferenceString" translatable="false">users</string>
+    <string name="rideReferenceString" translatable="false">rides</string>
+
+    <!-- localized strings below -->
+    <string name="editprofile_first_name_text">First Name</string>
+    <string name="editprofile_first_name_hint">Firstname*</string>
+    <string name="editprofile_last_name_text">Last Name</string>
+    <string name="editprofile_last_name_hint">Lastname*</string>
+    <string name="editprofile_email_text">Email</string>
+    <string name="editprofile_email_hint">Email*</string>
+    <string name="editprofile_phone_text">Cell</string>
+    <string name="editprofile_phone_hint">Cell*</string>
+    <string name="editprofile_bio_text">Bio</string>
+    <string name="editprofile_bio_hint">Max 255</string>
+    <string name="editprofile_apply_changes_btn_text">Apply Changes</string>
+    <string name="editprofile_change_password_text">Change Password</string>
+    <string name="editprofile_old_password_hint">Old Password</string>
+    <string name="editprofile_new_password_hint">New Password</string>
+    <string name="editprofile_confirm_password_hint">Confirm Password</string>
+    <string name="editprofile_change_password_btn_text">Change Password</string>
+    <string name="getride_leavetime1_text">Leavetime between</string>
+    <string name="getride_leavetime1_date_hint">dd/mm/yyyy</string>
+    <string name="getride_leavetime1_hour_hint">hh:mm</string>
+    <string name="getride_and">and</string>
+    <string name="getride_leavetime2_date_hint">dd/mm/yyyy</string>
+    <string name="getride_leavetime2_hour_hint">hh:mm</string>
+    <string name="getride_set_starting_point_text">Set starting location</string>
+    <string name="getride_set_ending_point_text">Set destination</string>
+    <string name="getride_search_btn_text">Search for ride</string>
+    <string name="login_username_hint">Username</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_login_btn_text">Log In</string>
+    <string name="login_signup_btn_text">Sign Up</string>
+    <string name="login_forgot_pw_text">Forgot your password</string>
+    <string name="setride_choose_start_text">Select starting point:</string>
+    <string name="setride_startpoint_query_hint">Example: Kaarnatie 5, Oulu</string>
+    <string name="setride_waypoints_text">Waypoints</string>
+    <string name="setride_waypoint1_hint">Example: Lahti</string>
+    <string name="setride_waypoint2_hint">Example: Tampere</string>
+    <string name="setride_choose_destination_text">Select destination:</string>
+    <string name="setride_destination_query_hint">Example: Mannerheimintie 5, Helsinki</string>
+    <string name="setride_get_route_btn_text">Get route</string>
+    <string name="setridedetails_ride_info_title">Ride info</string>
+    <string name="setridedetails_choose_leavetime_text">Pick leavetime</string>
+    <string name="setridedetails_choose_day_hint">Leaveday</string>
+    <string name="setridedetails_choose_time_hint">Estimated leavetime</string>
+    <string name="setridedetails_leavetime_may_vary">My leavetime may change?</string>
+    <string name="setridedetails_yes">Yes</string>
+    <string name="setridedetails_verbal_leavetime_estimate_hint">Verbal estimate of leavetime. Example: I\'m leaving between 12-18 o\'clock.</string>
+    <string name="setridedetails_passengers_text">Passengers</string>
+    <string name="setridedetails_freeslots_text">Free slots:</string>
+    <string name="setridedetails_pets_allowed_text">Pets allowed</string>
+    <string name="setridedetails_limited_luggage_room_text">Limited luggage room</string>
+    <string name="setridedetails_estimated_luggage_hint">Verbal estimate of luggage. Example: My vehicle can only fit small luggage.</string>
+    <string name="setridedetails_max_pickup_dist_text">Max pickup distance</string>
+    <string name="setridedetails_ride_length_text">Kuljettava matka:</string>
+    <string name="setridedetails_example_km_eur_text">Example km: Price 0 eur</string>
+    <string name="setridedetails_price_hint">Price:</string>
+    <string name="setridedetails_confirm_ride_btn_text">CONFIRM RIDE</string>
+    <string name="signup_fname_hint">Firstname*</string>
+    <string name="signup_lname_hint">Lastname*</string>
+    <string name="signup_email_hint">Email*</string>
+    <string name="signup_phone_hint">Cell*</string>
+    <string name="signup_pw_hint">Enter Password*</string>
+    <string name="signup_pw_confirm_hint">Confirm Password*</string>
+    <string name="signup_tos_checkbox_text">I accept the Terms of Service.</string>
+    <string name="signup_tos_link">Terms of Services Here.</string>
+    <string name="signup_signup_btn_text">Sign Up</string>
+    <string name="ridedetailsdialog_book_ride_btn_text">Book ride</string>
+    <string name="myalertdialog_title">Done!</string>
+    <string name="myalertdialog_details">Great! Ride has been successfully created. Return to main menu by pressing OK.</string>
+    <string name="myalertdialog_ok_btn_text">OK</string>
+    <string name="myalertdialog2_title">Hupsista!</string>
+    <string name="myalertdialog2_details">Something went wrong creating the ride, please try again</string>
+    <string name="myalertdialog2_ok_btn_text">OK</string>
+    <string name="getridespinner_order_rides_text">Order by</string>
 
 </resources>

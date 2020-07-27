@@ -18,6 +18,8 @@ public class Constant {
     public final static long HourInMillis = 3600000;
     public final static long DayInMillis = 86400000;
 
+    public final static double BoundsInKilometers = 10; // this is the amount of kilometers that route bounds are expanded by
+
     public final static String defaultProfileImageAddress = "https://firebasestorage.googleapis.com/v0/b/carpool-app-2020.appspot.com/o/profpics%2Fdefault_pic.jpg?alt=media&token=f84336d2-c628-475a-82de-0941586fd0f7";
 
     //hide keyboard when called this
