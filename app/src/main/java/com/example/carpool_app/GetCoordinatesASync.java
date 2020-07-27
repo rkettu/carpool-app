@@ -27,20 +27,24 @@ class GetCoordinatesASync extends AsyncTask<String, Integer, GetCoordinatesUtili
         String startPoint = strings[0];
         String destination = strings[1];
 
-        //uses geocoder class to get coordinates to start point and destination
-        float startLat = GeoCoderHelper.getCoordinates(startPoint, context).get(0);
-        float startLng = GeoCoderHelper.getCoordinates(startPoint, context).get(1);
-        float destinationLat = GeoCoderHelper.getCoordinates(destination, context).get(0);
-        float destinationLng = GeoCoderHelper.getCoordinates(destination, context).get(1);
+        GetCoordinatesUtility getCoordinatesUtility = null;
 
-        GetCoordinatesUtility getCoordinatesUtility = new GetCoordinatesUtility(startLat, startLng, destinationLat, destinationLng);
+        //uses geocoder class to get coordinates to start point and destination
+        try {
+            float startLat = GeoCoderHelper.getCoordinates(startPoint, context).get(0);
+            float startLng = GeoCoderHelper.getCoordinates(startPoint, context).get(1);
+            float destinationLat = GeoCoderHelper.getCoordinates(destination, context).get(0);
+            float destinationLng = GeoCoderHelper.getCoordinates(destination, context).get(1);
+
+            getCoordinatesUtility = new GetCoordinatesUtility(startLat, startLng, destinationLat, destinationLng);
+        } catch(Exception e) { e.printStackTrace(); }
         return getCoordinatesUtility;
     }
 
     @Override
     protected void onPostExecute(GetCoordinatesUtility getCoordinatesUtility) {
         super.onPostExecute(getCoordinatesUtility);
-        if(getCoordinatesInterface != null)
+        if(getCoordinatesInterface != null && getCoordinatesUtility != null)
         {
             getCoordinatesInterface.getCoordinates(getCoordinatesUtility);
         }
