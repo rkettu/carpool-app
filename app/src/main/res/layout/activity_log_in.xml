@@ -27,7 +27,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@id/login_guideline_left"
         app:layout_constraintTop_toBottomOf="@+id/login_logo"
-        android:hint="Username"
+        android:hint="@string/login_username_hint"
         android:textColorHint="@color/hintlog"
         android:textColor="@color/white"
         android:backgroundTint="@color/white"
@@ -46,7 +46,7 @@
         app:layout_constraintStart_toStartOf="@id/login_guideline_left"
         app:layout_constraintTop_toBottomOf="@+id/login_usernameEdit"
         android:maxLines="1"
-        android:hint="Password"
+        android:hint="@string/login_password_hint"
         android:textColorHint="@color/hintlog"
         android:textColor="@color/white"
         android:backgroundTint="@color/white"
@@ -73,7 +73,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Log In"
+        android:text="@string/login_login_btn_text"
         android:textStyle="bold"
         android:textAllCaps="false"
         android:textColor="@color/pastelGreen"
@@ -88,7 +88,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Sign Up"
+        android:text="@string/login_signup_btn_text"
         android:textStyle="bold"
         android:textAllCaps="false"
         android:textColor="@color/pastelGreen"
@@ -98,18 +98,19 @@
         android:background="@drawable/custom_button1"
         android:fontFamily="@font/montserrat_medium"/>
 
+    <!--
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/hintlog"
-        android:text="Forgot your password"
+        android:text="@string/login_forgot_pw_text"
         android:paddingTop="10dp"
         android:paddingRight="130dp"
         app:layout_constraintEnd_toStartOf="@+id/login_guideline_right"
         app:layout_constraintStart_toStartOf="@+id/login_guideline_left"
-        app:layout_constraintTop_toBottomOf="@+id/login_button"
+        app:layout_constraintTop_toBottomOf="@+id/login_loginButton"
         android:fontFamily="@font/montserrat_medium"/>
-
+    -->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

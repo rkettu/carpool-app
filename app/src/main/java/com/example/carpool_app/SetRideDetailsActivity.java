@@ -608,4 +608,5 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         });
         alertDialog2.show();
     }
+
 }

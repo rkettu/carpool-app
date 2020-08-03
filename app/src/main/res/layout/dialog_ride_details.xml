@@ -145,7 +145,7 @@
         android:layout_height="wrap_content"
 
         android:background="@drawable/custom_button1"
-        android:text="Varaa matka"
+        android:text="@string/ridedetailsdialog_book_ride_btn_text"
         android:textSize="18dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

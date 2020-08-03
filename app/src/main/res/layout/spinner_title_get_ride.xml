@@ -7,4 +7,4 @@
     android:ellipsize="marquee"
     android:textSize="18dp"
     android:textColor="@color/black"
-    android:text="Järjestä kyydit" />
+    android:text="@string/getridespinner_order_rides_text" />

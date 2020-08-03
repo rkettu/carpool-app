@@ -87,4 +87,18 @@ public class AppMath {
         }
         return false;
     }
+
+    // Returns approximate latitude change based on kilometers traveled on the latitude axis
+    // For example 1 kilometer traveled on the latitude axis equals about 1/110.57 degrees of latitude traveled
+    public static double getDeltaLatitude(double kilometers)
+    {
+        return kilometers / 110.57;
+    }
+
+    // Returns approximate longitude change based on kilometers traveled on the longitude axis
+    // Requires current latitude to be more precise
+    public static double getDeltaLongitude(double kilometers, double currentLatitude)
+    {
+        return (kilometers / 111.32) * Math.cos(Math.toRadians(currentLatitude));
+    }
 }
