@@ -63,13 +63,13 @@ public class SetRidePointsParser extends AsyncTask<String, Integer, List<Route>>
             points = new ArrayList<>();
             lineOptions = new PolylineOptions();
             // Fetching i-th route
-            List<HashMap<String, String>> path = result.get(i).getAllPoints();
+            List<HashMap<String, Double>> path = result.get(i).getAllPoints();
             // Fetching all the points in i-th route
             // And converting from hashmap format to a latlng format
             for (int j = 0; j < path.size(); j++) {
-                HashMap<String, String> point = path.get(j);
-                double lat = Double.parseDouble(point.get("lat"));
-                double lng = Double.parseDouble(point.get("lng"));
+                HashMap<String, Double> point = path.get(j);
+                Double lat = point.get("lat");
+                Double lng = point.get("lng");
                 LatLng position = new LatLng(lat, lng);
                 points.add(position);
             }

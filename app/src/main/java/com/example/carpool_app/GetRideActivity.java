@@ -151,9 +151,9 @@ public class GetRideActivity extends AppCompatActivity {
                     getRideAdapter.notifyDataSetChanged();
 
                     //takes start and end date, change them to millis so we can search rides between those times
-                    calendar.set(startDateYear, startDateMonth-1, startDateDay, startTimeHour, startTimeMinute);
+                    calendar.set(startDateYear, startDateMonth, startDateDay, startTimeHour, startTimeMinute);
                     date1 = calendar.getTimeInMillis();
-                    calendar.set(endDateYear, endDateMonth-1, endDateDay, endTimeHour, endTimeMinute);
+                    calendar.set(endDateYear, endDateMonth, endDateDay, endTimeHour, endTimeMinute);
                     date2 = calendar.getTimeInMillis();
 
                     //if end time is bigger or equal to start time

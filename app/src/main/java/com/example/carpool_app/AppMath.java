@@ -19,18 +19,19 @@ public class AppMath {
         double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
+        Log.d("TAG", "distanceBetweenCoordinates: " + c*6371);
         return c * 6371;
     }
 
     // Function for checking if searched start and end coordinates are within the bounds of a ride
-    public static boolean areCoordinatesWithinBounds(double lat1, double lng1, double lat2, double lng2, HashMap<String,String> bounds, double pickUpDistance)
+    public static boolean areCoordinatesWithinBounds(double lat1, double lng1, double lat2, double lng2, HashMap<String,Double> bounds, double pickUpDistance)
     {
         try
         {
-            double northernBound = Double.parseDouble(bounds.get("north"));
-            double westernBound = Double.parseDouble(bounds.get("west"));
-            double southernBound = Double.parseDouble(bounds.get("south"));
-            double easternBound = Double.parseDouble(bounds.get("east"));
+            double northernBound = bounds.get("north");
+            double westernBound = bounds.get("west");
+            double southernBound = bounds.get("south");
+            double easternBound = bounds.get("east");
 
             //Earth's radius, sphere
             int R = 6378137;
@@ -48,7 +49,7 @@ public class AppMath {
         }
     }
 
-    public static boolean isRouteInRange(double pickupDist, double lat1, double lng1, double lat2, double lng2, List<HashMap<String,String>> points)
+    public static boolean isRouteInRange(double pickupDist, double lat1, double lng1, double lat2, double lng2, List<HashMap<String, Double>> points)
     {
         Log.d("appMath", "isRouteInRange");
         double minDist1 = 10000000;
@@ -57,9 +58,10 @@ public class AppMath {
         int index2 = -1;
         for(int i = 0; i < points.size(); i++)
         {
+            Log.d("TAG", "isRouteInRange: " + points.get(i).get("lat"));
             // Comparing user start coordinates one at a time with route coordinates
-            double routePointLat = Double.parseDouble(points.get(i).get("lat"));
-            double routePointLng = Double.parseDouble(points.get(i).get("lng"));
+            double routePointLat = (Double) points.get(i).get("lat");
+            double routePointLng = (Double) points.get(i).get("lng");
             double dist1 = distanceBetweenCoordinates(lat1,lng1,routePointLat,routePointLng);
             double dist2 = distanceBetweenCoordinates(lat2,lng2,routePointLat,routePointLng);
             if(dist1<minDist1)

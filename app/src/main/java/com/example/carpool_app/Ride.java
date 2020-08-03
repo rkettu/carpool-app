@@ -14,7 +14,7 @@ public class Ride implements Serializable {
     private String endAddress;
     private int freeSlots;
     private float price;
-    private List<HashMap<String,String>> points;
+    private List<HashMap<String,Double>> points;
     private List<String> waypointAddresses;
     private List<String> participants;
     private double distance;
@@ -23,10 +23,7 @@ public class Ride implements Serializable {
     private String departureTxt;
     private String luggageTxt;
     private Boolean pets;
-
-
-
-    private HashMap<String,String> bounds;
+    private HashMap<String,Double> bounds;
 
     //no-arg constructor so doc.toObject can deserialize
     public Ride(){ }
@@ -36,7 +33,7 @@ public class Ride implements Serializable {
     public Ride(String uid, String duration, long leaveTime,
                  String startAddress, String endAddress, int freeSlots, float price, double distance,
 
-    List<HashMap<String,String>> points, HashMap<String,String> bounds, List<String> waypointAddresses,
+    List<HashMap<String,Double>> points, HashMap<String,Double> bounds, List<String> waypointAddresses,
 
     List<String> participants, int pickUpDistance, String startCity, String endCity, String departureTxt, String luggageTxt, Boolean pets)
     {
@@ -72,8 +69,8 @@ public class Ride implements Serializable {
     public String getEndAddress() { return endAddress; }
     public int getFreeSlots() { return freeSlots; }
     public float getPrice() { return price; }
-    public List<HashMap<String,String>> getPoints() { return points; }
-    public HashMap<String, String> getBounds() {
+    public List<HashMap<String,Double>> getPoints() { return points; }
+    public HashMap<String, Double> getBounds() {
         return bounds;
     }
     public List<String> getWaypointAddresses() { return waypointAddresses; }
