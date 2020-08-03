@@ -4,38 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_login"
+    android:background="@drawable/ic_backgroundlogin"
     tools:context=".LogInActivity">
+
+    <!-- ldpi x0.75, mdpi x1, hdpi x1.5, xdpi x2, xxdpi x2.5 -->
 
     <ImageView
         android:id="@+id/login_logo"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_marginTop="50dp"
-        app:layout_constraintEnd_toStartOf="@+id/login_guideline_right"
-        app:layout_constraintStart_toStartOf="@+id/login_guideline_left"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="52dp"
         android:src="@mipmap/ic_launcher"
-        />
+        app:layout_constraintEnd_toStartOf="@+id/login_guideline_right"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="@+id/login_guideline_left"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/login_usernameEdit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="300dp"
+        android:backgroundTint="@color/green"
+        android:drawableStart="@drawable/ic_perm_identity_black_24dp"
+        android:drawablePadding="16dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:hint="@string/login_username_hint"
+        android:inputType="text"
+        android:maxLines="1"
+        android:textColor="@color/green"
+        android:textColorHint="@color/lightgreen"
         app:layout_constraintEnd_toStartOf="@id/login_guideline_right"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@id/login_guideline_left"
-        app:layout_constraintTop_toBottomOf="@+id/login_logo"
-        android:hint="@string/login_username_hint"
-        android:textColorHint="@color/hintlog"
-        android:textColor="@color/white"
-        android:backgroundTint="@color/white"
-        android:drawableStart="@drawable/ic_perm_identity_black_24dp"
-        android:drawablePadding="16dp"
-        android:maxLines="1"
-        android:inputType="text"
-        android:fontFamily="@font/montserrat_medium"/>
+        app:layout_constraintTop_toBottomOf="@+id/login_logo" />
 
     <EditText
         android:id="@+id/login_passwordEdit"
@@ -47,9 +49,9 @@
         app:layout_constraintTop_toBottomOf="@+id/login_usernameEdit"
         android:maxLines="1"
         android:hint="@string/login_password_hint"
-        android:textColorHint="@color/hintlog"
-        android:textColor="@color/white"
-        android:backgroundTint="@color/white"
+        android:textColorHint="@color/lightgreen"
+        android:textColor="@color/green"
+        android:backgroundTint="@color/green"
         android:drawableStart="@drawable/ic_lock_outline_black_24dp"
         android:drawablePadding="16dp"
         android:fontFamily="@font/montserrat_medium"/>
@@ -59,24 +61,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="24dp" />
+        app:layout_constraintGuide_begin="60dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/login_guideline_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="24dp" />
+        app:layout_constraintGuide_end="60dp" />
 
     <Button
         android:id="@+id/login_loginButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="15dp"
         android:text="@string/login_login_btn_text"
         android:textStyle="bold"
         android:textAllCaps="false"
-        android:textColor="@color/pastelGreen"
+        android:textColor="@color/green"
         app:layout_constraintEnd_toStartOf="@+id/login_guideline_right"
         app:layout_constraintStart_toStartOf="@+id/login_guideline_left"
         app:layout_constraintTop_toBottomOf="@+id/login_passwordEdit"
@@ -91,7 +93,7 @@
         android:text="@string/login_signup_btn_text"
         android:textStyle="bold"
         android:textAllCaps="false"
-        android:textColor="@color/pastelGreen"
+        android:textColor="@color/green"
         app:layout_constraintEnd_toStartOf="@+id/login_guideline_right"
         app:layout_constraintStart_toStartOf="@+id/login_guideline_left"
         app:layout_constraintTop_toBottomOf="@+id/login_loginButton"

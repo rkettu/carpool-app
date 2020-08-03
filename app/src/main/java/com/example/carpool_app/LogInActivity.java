@@ -2,6 +2,7 @@ package com.example.carpool_app;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import android.view.WindowManager;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -34,6 +35,7 @@ public class LogInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         userEdit = findViewById(R.id.login_usernameEdit);
         passEdit = findViewById(R.id.login_passwordEdit);
