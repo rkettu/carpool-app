@@ -230,6 +230,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             //Näppäimistön piilotus
             Constant.hideKeyboard(SetRideActivity.this);
 
+            routeDetails.setVisibility(View.GONE);
+
             //Nostaa reitin tiedot elementin ylös painettua "hae reitti" nappia
             //doAnimation(bttAnim);
 
@@ -314,8 +316,10 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
                 }
             }, SetRideActivity.this);
-            getCoordinatesASync.execute(strLahto, strLoppu);
 
+            if(strLahto != null && strLoppu != null){
+                getCoordinatesASync.execute(strLahto, strLoppu);
+            }
             }
 
 
