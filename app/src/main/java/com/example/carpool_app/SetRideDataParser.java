@@ -40,10 +40,10 @@ public class SetRideDataParser {
                 JSONObject jBounds = ((JSONObject)jRoutes.get(i)).getJSONObject("bounds");
                 HashMap<String, Double> bounds = new HashMap<>();
                 // Bounds are the furthest latitude (east,west) and longitude (north,south) points plus added 5 km (amount may be changed..)
-                double maxLat = ((JSONObject)jBounds.get("northeast")).getDouble("lat")) + AppMath.getDeltaLatitude(Constant.BoundsInKilometers);
-                double minLat = ((JSONObject)jBounds.get("southwest")).getDouble("lat")) - AppMath.getDeltaLatitude(Constant.BoundsInKilometers);
-                double maxLng = ((JSONObject)jBounds.get("northeast")).getDouble("lng")) + AppMath.getDeltaLongitude(Constant.BoundsInKilometers, minLat);
-                double minLng = ((JSONObject)jBounds.get("southwest")).getDouble("lng")) - AppMath.getDeltaLongitude(Constant.BoundsInKilometers, maxLat);
+                double maxLat = ((JSONObject)jBounds.get("northeast")).getDouble("lat") + AppMath.getDeltaLatitude(Constant.BoundsInKilometers);
+                double minLat = ((JSONObject)jBounds.get("southwest")).getDouble("lat") - AppMath.getDeltaLatitude(Constant.BoundsInKilometers);
+                double maxLng = ((JSONObject)jBounds.get("northeast")).getDouble("lng") + AppMath.getDeltaLongitude(Constant.BoundsInKilometers, minLat);
+                double minLng = ((JSONObject)jBounds.get("southwest")).getDouble("lng") - AppMath.getDeltaLongitude(Constant.BoundsInKilometers, maxLat);
 
                 bounds.put("north", maxLat);
                 bounds.put("east", minLng);
