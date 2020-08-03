@@ -139,6 +139,7 @@ class FindRides
                         Log.d(TAG, "onComplete: ennen points");
                         points = (ArrayList<HashMap<String, Double>>) rideDoc.get("points");
 
+                        //TODO bounds
                             //algorithm (in appMath class)
                             Log.d(TAG, "onComplete: ollaan ennen appmath if lausetta");
                             if(AppMath.isRouteInRange(pickUpDistance, startLat, startLng, destinationLat, destinationLng, points))

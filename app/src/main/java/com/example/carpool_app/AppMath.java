@@ -24,15 +24,14 @@ public class AppMath {
     }
 
     // Function for checking if searched start and end coordinates are within the bounds of a ride
-    public static boolean areCoordinatesWithinBounds(double lat1, double lng1, double lat2, double lng2, HashMap<String,String> bounds, double pickUpDistance)
+    public static boolean areCoordinatesWithinBounds(double lat1, double lng1, double lat2, double lng2, HashMap<String,Double> bounds, double pickUpDistance)
     {
         try
         {
-            double northernBound = Double.parseDouble(bounds.get("north"));
-            double westernBound = Double.parseDouble(bounds.get("west"));
-            double southernBound = Double.parseDouble(bounds.get("south"));
-            double easternBound;
-            easternBound = Double.parseDouble(bounds.get("east"));
+            double northernBound = bounds.get("north");
+            double westernBound = bounds.get("west");
+            double southernBound = bounds.get("south");
+            double easternBound = bounds.get("east");
 
             //Earth's radius, sphere
             int R = 6378137;
