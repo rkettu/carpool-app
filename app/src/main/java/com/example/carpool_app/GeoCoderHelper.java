@@ -7,6 +7,9 @@ import android.location.Location;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +43,12 @@ public class GeoCoderHelper {
 
     //You can use this function to get NAME of the CITY only with specific address
     //You may need this if you want print just a city, not full address
-    public static String getCity(float lat, float lng, Context context)
+    public static String getCity(String address, Context context)
     {
         String city = "";
         Geocoder geocoder = new Geocoder(context);
         try{
-            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
             city = addresses.get(0).getLocality();
             return city;
         }
@@ -57,17 +60,40 @@ public class GeoCoderHelper {
     }
 
 
-    //Palauttaa täydellisen osoitteen oman sijainnin mukaan esim: "Kaarnatie 5, 90530 Oulu, Suomi"
-    public String fullAddress(Location location, Context context)
+    //Palauttaa täydellisen osoitteen oman sijainnin mukaan esim: "Kaarnatie 5, 90530 Oulu, Suomi". Parametrina hakukenttään syötetty osoite
+    public static String fullAddress(String address, Context context)
+    {
+        String result = null;
+        Geocoder geocoder = new Geocoder(context);
+        try{
+            Log.d("mylog", "fullAddress try");
+            List<Address> addresses2 = geocoder.getFromLocationName(address, 1);
+            if(addresses2 != null && addresses2.size() > 0){
+                result = addresses2.get(0).getAddressLine(0);
+                return result;
+            }else {
+                Log.d("mylog", "ELSESSÄ ");
+                return null;
+            }
+
+        }
+        catch (IOException e)
+        {
+            Log.d("mylog", "fullAddress catch");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //Palauttaa täydellisen osoitteen oman sijainnin mukaan esim: "Kaarnatie 5, 90530 Oulu, Suomi". Parametrina hakukenttään syötetty osoite
+    public static String fullAddressLocation(Location location, Context context)
     {
         String geoAddress = "";
-        Log.d("TESTI", "MORO " + location.getLatitude() + location.getLongitude());
         Geocoder geocoder = new Geocoder(context);
         try{
             Log.d("TESTI", "fullAddress try");
             List<Address> addresses2 = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
             geoAddress = addresses2.get(0).getAddressLine(0);
-            Log.d("TESTI", "geocooderi geoaddress: " + geoAddress);
             return geoAddress;
         }
         catch (IOException e)
@@ -77,4 +103,6 @@ public class GeoCoderHelper {
         }
         return null;
     }
+
+
 }
