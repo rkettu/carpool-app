@@ -193,6 +193,7 @@ class FindRides
                                         }
                                     });
                                 }
+                                //TODO if the user is same
                                 else
                                 {
                                     //if ride doesn't have uid
