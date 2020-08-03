@@ -26,7 +26,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Valmista"
+            android:text="@string/myalertdialog_title"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Hienoa! Kyyti luotu onnistuneesti.\nPalaa etusivulle painamalla OK"
+            android:text="@string/myalertdialog_details"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
@@ -45,8 +45,12 @@
             android:layout_gravity="center"
             android:layout_marginTop="15dp"
             android:background="@drawable/button_background"
-            android:text="Ok"
+            android:text="@string/myalertdialog_ok_btn_text"
             android:textColor="@color/colorPrimary" />
+
+        <Button
+            android:text="@string/myalertdialog_moikka_text"
+            />
 
     </LinearLayout>
 

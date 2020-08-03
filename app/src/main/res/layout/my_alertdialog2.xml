@@ -26,7 +26,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hupsista!"
+            android:text="@string/myalertdialog2_title"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Jokin meni pieleen kyydin luonnissa, yritä uudelleen hetken kuluttua"
+            android:text="@string/myalertdialog2_details"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
@@ -45,7 +45,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="15dp"
             android:background="@drawable/button_background2"
-            android:text="OK"
+            android:text="@string/myalertdialog2_ok_btn_text"
             android:textColor="#FFE34F96" />
 
     </LinearLayout>

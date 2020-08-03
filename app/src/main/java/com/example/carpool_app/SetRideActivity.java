@@ -1,5 +1,6 @@
 package com.example.carpool_app;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -7,12 +8,17 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.audiofx.Equalizer;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -26,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,7 +42,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -50,7 +59,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
     private SearchView lahtoEditori, loppuEditori, waypointEditor1, waypointEditor2;
 
-    private String strLahto, strLoppu, startCity, endCity, strWaypoint1, strWaypoint2;
+    private String strLahto, strLoppu, strWaypoint1, strWaypoint2;
 
     //Layoutin valikon animaation asetukset
     Animation ttbAnim, bttAnim;
@@ -65,11 +74,14 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
     //Oman sijainnin asetukset
     FusedLocationProviderClient fusedLocationClient;
     GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
+    int LOCATION_REQUEST_CODE = 10001;
 
     //Reitinhaun muuttujat
-    MarkerOptions place1, place2, wayPoint1, wayPoint2;
+    private MarkerOptions place1, place2, wayPoint1, wayPoint2;
     TextView distance, duration;
     private int lukitus = 0;
+
+    private double startLat, startLng, stopLat, stopLng;
 
     private String fastestRoute;
     private HashMap<String, Route> polylineHashMap = new HashMap<>(); // Contains polyline id and matching route info
@@ -131,6 +143,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             }
         });
     }
+
 
     //Layoutin valikon animaation toiminnot
     public void expandableDrawer(View view) { animationHandler(); }
@@ -213,157 +226,208 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             mMap.clear();   // Clearing map markers and polylines
             allPolylines.clear(); // Clearing list containing references to those polylines => frees their memory
             polylineHashMap.clear();
+
             //Näppäimistön piilotus
-            hideKeyboard(SetRideActivity.this);
-            doAnimation(bttAnim);
+            Constant.hideKeyboard(SetRideActivity.this);
+
+            routeDetails.setVisibility(View.GONE);
+
+            //Nostaa reitin tiedot elementin ylös painettua "hae reitti" nappia
+            //doAnimation(bttAnim);
 
             strLahto = lahtoEditori.getQuery().toString();
             strLoppu = loppuEditori.getQuery().toString();
             strWaypoint1 = waypointEditor1.getQuery().toString();
             strWaypoint2 = waypointEditor2.getQuery().toString();
 
-            if (strLahto.trim().equals("") || strLoppu.trim().equals(""))
+            if(strWaypoint1 != null && !strWaypoint1.isEmpty())
             {
-                Toast.makeText(getApplicationContext(),"Valitse lähtö- ja määränpää pisteet", Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
-                try
-                {
-                    if(strWaypoint1 != null && !strWaypoint1.isEmpty())
-                    {
+                //Hakee coordinaatit waypointeille
+                GetCoordinatesASync getCoordinatesASync1 = new GetCoordinatesASync(new GetCoordinatesInterface() {
+                    @Override
+                    public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility1) {
+                        double way1Lat = getCoordinatesUtility1.getStartLat();
+                        double way1Lng = getCoordinatesUtility1.getStartLng();
+                        double way2Lat = getCoordinatesUtility1.getDestinationLat();
+                        double way2Lng = getCoordinatesUtility1.getDestinationLng();
+                        Log.d("mylog", "getCoordinates: " + way1Lat + " " + way1Lng + " " + way2Lat);
+                        wayPoint1 = new MarkerOptions().position(new LatLng(way1Lat, way1Lng)).title("Pysähdys 1");
+                        wayPoint2 = new MarkerOptions().position(new LatLng(way2Lat, way2Lng)).title("Pysähdys 2");
 
                     }
-
-                        GetCoordinatesASync getCoordinatesASync1 = new GetCoordinatesASync(new GetCoordinatesInterface() {
-                            @Override
-                            public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility1) {
-                                double way1Lat = getCoordinatesUtility1.getStartLat();
-                                double way1Lng = getCoordinatesUtility1.getStartLng();
-                                double way2Lat = getCoordinatesUtility1.getDestinationLat();
-                                double way2Lng = getCoordinatesUtility1.getDestinationLng();
-                                Log.d("mylog", "getCoordinates: " + way1Lat + " " + way1Lng + " " + way2Lat);
-                                wayPoint1 = new MarkerOptions().position(new LatLng(way1Lat, way1Lng)).title("Pysähdys 1");
-                                wayPoint2 = new MarkerOptions().position(new LatLng(way2Lat, way2Lng)).title("Pysähdys 2");
-
-                            }
-                        }, SetRideActivity.this);
-                        getCoordinatesASync1.execute(strWaypoint1, strWaypoint2);
-
-
-                    //Getting start and destination coordinates in asynctask
-                    GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
-                        @Override
-                        public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility) {
-                            float startLat = getCoordinatesUtility.getStartLat();
-                            float startLng = getCoordinatesUtility.getStartLng();
-                            float stopLat = getCoordinatesUtility.getDestinationLat();
-                            float stopLon = getCoordinatesUtility.getDestinationLng();
-
-
-                            place1 = new MarkerOptions().position(new LatLng(startLat, startLng)).title("Location 1");
-                            place2 = new MarkerOptions().position(new LatLng(stopLat, stopLon)).title("Location 2");
-                            new SetRideFetchURL(SetRideActivity.this).execute(getUrl(place1.getPosition(), place2.getPosition(),"driving"), "driving");
-                            routeDetails.setVisibility(View.VISIBLE);
-
-                            mMap.addMarker(place1);
-                            mMap.addMarker(place2);
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place2.getPosition(),8));
-                        }
-                    }, SetRideActivity.this);
-                    getCoordinatesASync.execute(strLahto, strLoppu);
-
-
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+                }, SetRideActivity.this);
+                getCoordinatesASync1.execute(strWaypoint1, strWaypoint2);
             }
+
+
+            //Hakee täydellisen osoitteen ("kaarnatie 5, 90350 Oulu, Suomi") LÄHTÖPISTE tekstikenttään
+            GetFullAddressASync getFullAddressASync = new GetFullAddressASync(new GetFullAddressInterface() {
+                @Override
+                public void getFullAddress(GetCoordinatesUtility getCoordinatesUtility) {
+                    String address = getCoordinatesUtility.getFullAddress();
+                    lahtoEditori.setQuery(address,false);
+                    if(address == null){
+                        Toast.makeText(SetRideActivity.this, "Tarkista lähtöosoite", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }, SetRideActivity.this);
+            getFullAddressASync.execute(strLahto);
+
+            //Hakee täydellisen osoitteen ("kaarnatie 5, 90350 Oulu, Suomi") MÄÄRÄNPÄÄ tekstikenttään
+            GetFullAddressASync getFullAddressASync2 = new GetFullAddressASync(new GetFullAddressInterface() {
+                @Override
+                public void getFullAddress(GetCoordinatesUtility getCoordinatesUtility) {
+                    String address = getCoordinatesUtility.getFullAddress();
+                    loppuEditori.setQuery(address,false);
+                    if(address == null){
+                        Toast.makeText(SetRideActivity.this, "Tarkista määränpään osoite", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }, SetRideActivity.this);
+            getFullAddressASync2.execute(strLoppu);
+
+            //Getting start and destination coordinates in asynctask
+            GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
+                @Override
+                public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility) {
+                    Log.d("mylog", "täälääääfdsafasdfa " );
+
+                    try {
+                        startLat = getCoordinatesUtility.getStartLat();
+                        startLng = getCoordinatesUtility.getStartLng();
+                        stopLat = getCoordinatesUtility.getDestinationLat();
+                        stopLng = getCoordinatesUtility.getDestinationLng();
+
+                        Log.d("mylog", "getCoordinates: " + startLat + startLng + stopLat + stopLng);
+
+
+                        place1 = new MarkerOptions().position(new LatLng(startLat, startLng)).title("Location 1");
+                        place2 = new MarkerOptions().position(new LatLng(stopLat, stopLng)).title("Location 2");
+                        new SetRideFetchURL(SetRideActivity.this).execute(getUrl(place1.getPosition(), place2.getPosition(),"driving"), "driving");
+                        routeDetails.setVisibility(View.VISIBLE);
+
+                        mMap.addMarker(place1);
+                        mMap.addMarker(place2);
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place2.getPosition(),8));
+                    }catch (Exception e){
+                        //ei toimi
+                        Toast.makeText(SetRideActivity.this, "Tarkista lähtö- ja määränpää osoitteet", Toast.LENGTH_LONG).show();
+                    }
+
+                }
+            }, SetRideActivity.this);
+
+            if(strLahto != null && strLoppu != null){
+                getCoordinatesASync.execute(strLahto, strLoppu);
+            }
+            }
+
+
+        else if(v.getId() == R.id.set_ride_nextBtn)
+        {
+
+            //Hakee lähtö ja määränpää kaupungit kirjoitetun osoitteen perusteella, minkä jälkeen siirtyy Details activityyn.
+            GetCityASync getCityASync = new GetCityASync(new GetCityInterface() {
+                @Override
+                public void getCity(GetCoordinatesUtility getCity) {
+                    String startCity = getCity.getStartCity();
+                    String endCity = getCity.getDestinationCity();
+
+                    Log.d("mylog", "startCity: " + startCity + " endCity: " + endCity);
+
+                    Intent details = new Intent(SetRideActivity.this, SetRideDetailsActivity.class);
+
+                    try{
+                        details.putExtra("ALKUOSOITE", strLahto);
+                        details.putExtra("LOPPUOSOITE", strLoppu);
+                        details.putExtra("STARTCITY" , startCity);
+                        details.putExtra("ENDCITY", endCity);
+                        details.putExtra("DISTANCE", currentRoute.rideDistance);
+                        details.putExtra("DURATION", currentRoute.rideDuration);
+                        details.putExtra("BOUNDS",   currentRoute.bounds);
+                        details.putExtra("POINTS", (Serializable) currentRoute.selectPoints);
+
+
+                        startActivity(details);
+                    }catch (Exception e){
+                        //Log.d("mylog", "putExtra Failed: ");
+                    }
+
+                }
+            }, SetRideActivity.this);
+            getCityASync.execute(strLahto, strLoppu);
         }
+
         //Sijainti napin toiminnallisuus
         else if(v.getId() == R.id.set_ride_sijaintiButton)
         {
-            Intent intent = new Intent(this, StartIntroActivity.class);
-            startActivity(intent);
-            /*
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-            if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+                //Location granted
+                AsyncTaskGetLocation getLocation = new AsyncTaskGetLocation();
+                getLocation.execute();
             }
-            else{
-                fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        Log.d("TESTI", "onSuccess: location: " + location);
-                        if(location != null){
-
-                            try {
-                                String geoAddress = geoCoderHelper.fullAddress(location, SetRideActivity.this);
-                                Log.d("TESTI", "Strin geoAddress: " + geoAddress);
-                                lahtoEditori.setQuery(geoAddress, false);
-                            }
-                            catch (Exception e){
-                                e.printStackTrace();
-                                Toast.makeText(getApplicationContext(),"Location error", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                        else {
-                            Toast.makeText(getApplicationContext(),"Location failed", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-            }*/
+            else {
+                //Location not granted
+                askLocationPermission();
+            }
         }
-        else if(v.getId() == R.id.set_ride_nextBtn)
-        {
-            Intent details = new Intent(this, SetRideDetailsActivity.class);
 
-            /*
-            for(Polyline polyline : allPolylines)
-            {
-                // Tarkistaa mikä reiteistä on valittuna eli sininen ja asettaa sen id:n reitinvalinta muuttujaan.
-                if(polyline.getColor() == Color.BLUE)
-                {
-                    reitinValinta = polyline.getId();
-                    Log.d("mylog", "REITINVALINTA: " + reitinValinta);
+    }
+
+    //Kysyy käyttäjältä luvan käyttää sijaintia
+    private void askLocationPermission() {
+        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
+                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+            }else{
+                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
 
                 }
-            }*/
-
-            //
-            try{
-                //startCity = geoCoderHelper.getCity(strLahto, SetRideActivity.this);
-                //endCity = geoCoderHelper.getCity(strLoppu, SetRideActivity.this);
-                Log.d("mylog", "startCity: " + startCity + " endCity: " + endCity);
-            }catch (Exception e){
-                Log.d("mylog", "getCity Failed: " );
             }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == LOCATION_REQUEST_CODE){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                //Permission granted
+                AsyncTaskGetLocation getLocation = new AsyncTaskGetLocation();
+                getLocation.execute();
 
-            try{
-                details.putExtra("ALKUOSOITE", strLahto);
-                details.putExtra("LOPPUOSOITE", strLoppu);
-                details.putExtra("STARTCITY" , startCity);
-                details.putExtra("ENDCITY", endCity);
-                details.putExtra("DISTANCE", currentRoute.rideDistance);
-                details.putExtra("DURATION", currentRoute.rideDuration);
-                details.putExtra("BOUNDS",   currentRoute.bounds);
-                details.putExtra("POINTS", (Serializable) currentRoute.selectPoints);
-
-                startActivity(details);
-            }catch (Exception e){
-                //Log.d("mylog", "putExtra Failed: ");
+            }else {
+                //Permission not granted
+                if(!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
+                    //This block here means PERMANENTLY DENIED PERMISSION
+                    new AlertDialog.Builder(SetRideActivity.this)
+                            .setMessage("You have permanently danied this permission, go to settings to enable this permission")
+                            .setPositiveButton("Go to settings", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    gotoApplicationSettings();
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .setCancelable(false)
+                            .show();
+                } else {
+                    Log.d("mylog", "Permission not granted " );
+                }
             }
-
         }
+    }
+
+    //Tämä funktio heittää ohjelman asetuksiin
+    private void gotoApplicationSettings(){
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+        intent.setData(uri);
+        startActivity(intent);
 
     }
 
-    //Get addresses latitude and longitude using GeoCoderHelper class
-    private ArrayList<Float> getCoordinates(String address)
-    {
-        GeoCoderHelper geoCoderHelper = new GeoCoderHelper();
-        return geoCoderHelper.getCoordinates(address, this);
-    }
+
     private String getUrl(LatLng origin, LatLng dest, String directionMode){
 
         // Origin of route
@@ -379,22 +443,27 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
         if(wayPoint1 != null)
         {
-            parameters = str_origin + "&" + str_dest + "&waypoints=via:" + wayPoint1.getPosition().latitude + "," + wayPoint1.getPosition().longitude + "&" + mode;
+            parameters = str_origin + "&" + str_dest + "&waypoints=via:" + wayPoint1.getPosition().latitude
+                    + "," + wayPoint1.getPosition().longitude + "&" + mode;
         }
         if(wayPoint1 != null & wayPoint2 != null)
         {
-            parameters = str_origin + "&" + str_dest + "&waypoints=via:" + wayPoint1.getPosition().latitude + "," +
-                    wayPoint1.getPosition().longitude + "|via:" + wayPoint2.getPosition().latitude + "," + wayPoint2.getPosition().longitude + "&" + mode;
+            parameters = str_origin + "&" + str_dest + "&waypoints=via:" + wayPoint1.getPosition().latitude
+                    + "," + wayPoint1.getPosition().longitude + "|via:" + wayPoint2.getPosition().latitude
+                    + "," + wayPoint2.getPosition().longitude + "&" + mode;
         }
         if(wayPoint2 != null & wayPoint1 == null)
         {
-            parameters = str_origin + "&" + str_dest + "&waypoints=via:" + wayPoint2.getPosition().latitude + "," + wayPoint2.getPosition().longitude + "&" + mode;
+            parameters = str_origin + "&" + str_dest + "&waypoints=via:" + wayPoint2.getPosition().latitude
+                    + "," + wayPoint2.getPosition().longitude + "&" + mode;
         }
 
         // Output format
         String output = "json";
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&alternatives=true&key=" + getString(R.string.google_maps_key);
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters
+                + "&alternatives=true&key=" + getString(R.string.google_maps_key);
+
         Log.d("URL_HAKU", url);
         return url;
     }
@@ -458,10 +527,40 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         }
 
     }
-    public static void hideKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        View v = activity.getCurrentFocus();
-        if (v == null) { v = new View(activity); }
-        inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+
+    private class AsyncTaskGetLocation extends AsyncTask<Void, Void, String> {
+
+        private String geoAddress;
+        @Override
+        protected String doInBackground(Void... voids) {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(SetRideActivity.this);
+            Task<Location> locationTask = fusedLocationClient.getLastLocation();
+            locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if(location != null){
+                        //we have a location
+                        Log.d("mylog", "LOCATION found: " + location.toString());
+                        geoAddress = geoCoderHelper.fullAddressLocation(location, SetRideActivity.this);
+                        lahtoEditori.setQuery(geoAddress, false);
+                    }else {
+                        Log.d("mylog", "LOCATION was null... ");
+
+                    }
+                }
+            });
+
+            locationTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("mylog", "LOCATION onFailure: " + e.getLocalizedMessage());
+                }
+            });
+
+            return null;
+        }
+
     }
 }
+

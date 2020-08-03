@@ -2,6 +2,8 @@ package com.example.carpool_app;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
+
 
 import java.util.ArrayList;
 
@@ -27,31 +29,37 @@ class GetCoordinatesASync extends AsyncTask<String, Integer, GetCoordinatesUtili
         String startPoint = strings[0];
         String destination = strings[1];
 
-        //uses geocoder class to get coordinates to start point and destination
-        float startLat = GeoCoderHelper.getCoordinates(startPoint, context).get(0);
-        float startLng = GeoCoderHelper.getCoordinates(startPoint, context).get(1);
-        float destinationLat = GeoCoderHelper.getCoordinates(destination, context).get(0);
-        float destinationLng = GeoCoderHelper.getCoordinates(destination, context).get(1);
+        GetCoordinatesUtility getCoordinatesUtility = null;
 
-        GetCoordinatesUtility getCoordinatesUtility = new GetCoordinatesUtility(startLat, startLng, destinationLat, destinationLng);
+        //uses geocoder class to get coordinates to start point and destination
+        try {
+            float startLat = GeoCoderHelper.getCoordinates(startPoint, context).get(0);
+            float startLng = GeoCoderHelper.getCoordinates(startPoint, context).get(1);
+            float destinationLat = GeoCoderHelper.getCoordinates(destination, context).get(0);
+            float destinationLng = GeoCoderHelper.getCoordinates(destination, context).get(1);
+
+            getCoordinatesUtility = new GetCoordinatesUtility(startLat, startLng, destinationLat, destinationLng);
+        } catch(Exception e) { e.printStackTrace(); }
         return getCoordinatesUtility;
     }
 
     @Override
     protected void onPostExecute(GetCoordinatesUtility getCoordinatesUtility) {
         super.onPostExecute(getCoordinatesUtility);
-        if(getCoordinatesInterface != null)
+        if(getCoordinatesInterface != null && getCoordinatesUtility != null)
         {
             getCoordinatesInterface.getCoordinates(getCoordinatesUtility);
         }
     }
 }
 
+
+
 interface GetCityInterface{
     void getCity(GetCoordinatesUtility getCoordinatesUtility);
 }
 
-class GetCityASync extends AsyncTask<Float, Integer, GetCoordinatesUtility> {
+class GetCityASync extends AsyncTask<String, Integer, GetCoordinatesUtility> {
 
     private GetCityInterface getCityInterface;
     private Context context;
@@ -63,15 +71,13 @@ class GetCityASync extends AsyncTask<Float, Integer, GetCoordinatesUtility> {
     }
 
     @Override
-    protected GetCoordinatesUtility doInBackground(Float... floats) {
+    protected GetCoordinatesUtility doInBackground(String... floats) {
 
-        float startLat = floats[0];
-        float startLng = floats[1];
-        float destinationLat = floats[2];
-        float destinationLng = floats[3];
+        String place1 = floats[0];
+        String place2 = floats[1];
 
-        String startCity = GeoCoderHelper.getCity(startLat, startLng, context);
-        String destinationCity = GeoCoderHelper.getCity(destinationLat, destinationLng, context);
+        String startCity = GeoCoderHelper.getCity(place1, context);
+        String destinationCity = GeoCoderHelper.getCity(place2, context);
 
         return new GetCoordinatesUtility(startCity, destinationCity);
     }
@@ -83,6 +89,42 @@ class GetCityASync extends AsyncTask<Float, Integer, GetCoordinatesUtility> {
         if(getCityInterface != null)
         {
             getCityInterface.getCity(getCoordinatesUtility);
+        }
+    }
+}
+
+
+
+interface GetFullAddressInterface{
+    void getFullAddress(GetCoordinatesUtility getCoordinatesUtility);
+}
+
+class GetFullAddressASync extends AsyncTask<String, Integer, GetCoordinatesUtility> {
+
+    private GetFullAddressInterface getFullAddressInterface;
+    private Context context;
+
+    public GetFullAddressASync(GetFullAddressInterface getFullAddressInterface, Context context) {
+        this.getFullAddressInterface = getFullAddressInterface;
+        this.context = context;
+    }
+
+    @Override
+    protected GetCoordinatesUtility doInBackground(String... address) {
+        String place1 = address[0];
+
+        String fullStartAddress = GeoCoderHelper.fullAddress(place1, context);
+
+        return new GetCoordinatesUtility(fullStartAddress);
+    }
+
+    @Override
+    protected void onPostExecute(GetCoordinatesUtility getCoordinatesUtility)
+    {
+        super.onPostExecute(getCoordinatesUtility);
+        if(getFullAddressInterface != null)
+        {
+            getFullAddressInterface.getFullAddress(getCoordinatesUtility);
         }
     }
 }

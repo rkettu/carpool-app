@@ -33,6 +33,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -73,6 +74,9 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
     Button confirmBtn;
     ImageButton timeBtn, luggageBtn, picUpBtn, rangeBtn, priceBtn;
 
+    private Calendar calendar;
+    private long systemTime = System.currentTimeMillis();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +84,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
 
         mC = new GregorianCalendar();
 
+        initCalendarTimes();
         //Reitin tietojen vastaanotto setRideActivitystä
         if(savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
@@ -278,8 +283,25 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
 
     }
 
+    private void initCalendarTimes()
+    {
+        calendar = Calendar.getInstance();
+        mYear = calendar.get(Calendar.YEAR);
+        mMonth = calendar.get(Calendar.MONTH);
+        mDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+        strDate = String.valueOf(CalendarHelper.getDayString(systemTime) + "-" + CalendarHelper.getMonthString(systemTime) +
+                "-" + CalendarHelper.getYearString(systemTime));
+
+        strTime = String.valueOf(CalendarHelper.getHourString(systemTime) + ":" + CalendarHelper.getMinuteString(systemTime));
+
+
+    }
+
     @Override
     public void onClick(View v) {
+
+        /*
         if (v == txtDate) {
             final Calendar c = Calendar.getInstance();
             mYear = c.get(Calendar.YEAR);
@@ -320,7 +342,42 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
                     }, mHour, mMinute, true);
 
             timePickerDialog.show();
+        }*/
+
+        //when you press DateEditText, it will open datePickerDialog where you can select date in dd-MM-yyyy
+        if(v == txtDate){
+            DatePickerDialog datePickerDialog = new DatePickerDialog(SetRideDetailsActivity.this, new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                    calendar.set(year, month, dayOfMonth);
+                    strDate = new SimpleDateFormat("dd-MM-yyyy").format(calendar.getTime());
+                    txtDate.setText(strDate);
+                    pickedYear = calendar.get(Calendar.YEAR);
+                    pickedMonth = calendar.get(Calendar.MONTH);
+                    pickedDate = calendar.get(Calendar.DAY_OF_MONTH);
+                }
+            }, mYear, mMonth, mDay);
+            datePickerDialog.show();
         }
+
+        //when you click TimeText, it will popup timePickerDialog, where you set hours and minutes
+        else if (v == txtTime){
+            TimePickerDialog timePickerDialog = new TimePickerDialog(SetRideDetailsActivity.this, AlertDialog.THEME_HOLO_LIGHT, new TimePickerDialog.OnTimeSetListener() {
+                @Override
+                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    mHour = hourOfDay;
+                    mMinute = minute;
+
+                    String format = "%1$02d";
+                    String estHour = String.format(format, hourOfDay);
+                    String estMinute = String.format(format, minute);
+                    strTime = estHour + ":" + estMinute;
+                    txtTime.setText(strTime);
+                }
+            }, mHour, mMinute, true);
+            timePickerDialog.show();
+        }
+
         else if (v == timeBtn)
         {
             AlertDialog.Builder time = new AlertDialog.Builder(SetRideDetailsActivity.this);
@@ -555,4 +612,5 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         });
         alertDialog2.show();
     }
+
 }

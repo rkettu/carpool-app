@@ -1,6 +1,7 @@
 package com.example.carpool_app;
 
 import android.os.AsyncTask;
+import android.os.Debug;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -304,6 +305,8 @@ class FindRideDone extends AsyncTask<Void, Void, Boolean>{
             if(findRidesInterface != null)
             {
                 findRidesInterface.FindRidesResult(rideUserArrayList);
+
+
             }
         }
     }
