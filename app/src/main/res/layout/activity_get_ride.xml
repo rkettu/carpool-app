@@ -199,7 +199,7 @@
         android:fontFamily="@font/montserrat_medium"
         android:text="@string/getride_search_btn_text"
         android:textColor="@color/pastelGreen"
-        android:textSize="@string/getride_searchbtn_textsize"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/getRide_destinationEditText"
         app:layout_constraintLeft_toRightOf="@id/getRide_guideLine07"
