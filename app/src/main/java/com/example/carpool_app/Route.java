@@ -13,19 +13,16 @@ import java.util.List;
 // Routes are obtained from parsing Google Maps request result json data
 // As of 08/06/2020 json request returns 0-3 distinct routes
 public class Route implements Serializable {
-    List<HashMap<String, String>> allPoints;        // All coordinate points of a route
-    List<HashMap<String, String>> selectPoints;    // Every 100th point
-
-
-
-    HashMap<String, String> bounds;                  // Most northern, western etc coordinates, keys are as follows: "north", "south" etc
+    List<HashMap<String, Double>> allPoints;        // All coordinate points of a route
+    List<HashMap<String, Double>> selectPoints;    // Every 100th point
+    HashMap<String, Double> bounds;                  // Most northern, western etc coordinates, keys are as follows: "north", "south" etc
     String rideDistance;
     String rideDuration;
 
     PolylineOptions lineOptions;    // Must be set separately!
 
-    Route(List<HashMap<String, String>> allPoints, List<HashMap<String, String>> selectPoints,
-                        HashMap<String, String> bounds, String rideDistance, String rideDuration)
+    Route(List<HashMap<String, Double>> allPoints, List<HashMap<String, Double>> selectPoints,
+                        HashMap<String, Double> bounds, String rideDistance, String rideDuration)
     {
         this.allPoints = allPoints;
         this.selectPoints = selectPoints;
@@ -34,11 +31,11 @@ public class Route implements Serializable {
         this.rideDuration = rideDuration;
     }
 
-    public List<HashMap<String, String>> getAllPoints() {
+    public List<HashMap<String, Double>> getAllPoints() {
         return allPoints;
     }
 
-    public List<HashMap<String, String>> getSelectPoints() {
+    public List<HashMap<String, Double>> getSelectPoints() {
         return selectPoints;
     }
 

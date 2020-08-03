@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,13 +42,14 @@ import java.util.List;
 public class SetRideDetailsActivity extends AppCompatActivity implements Serializable, View.OnClickListener{
 
     //SetRideActivitystä siirretty data
-    private List<HashMap<String,String>> selectedPoints;
+    private List<HashMap<String,Double>> selectedPoints;
     private String startAddress, endAddress, duration, distance, startCity, endCity;
 
     private Calendar mC;
     private int mYear, mMonth, mDay, mHour, mMinute;
     private int pickedYear, pickedMonth, pickedDate, pickedHour, pickedMinute;
     private String strDate, strTime;
+    private long leaveTime;
 
     private float price = 0.03f;
     int pickUpDistance = 10;
@@ -60,7 +62,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
     private CheckBox checkBox_time, checkBox_luggage, checkBox_pets;
     private Boolean pets;
 
-    private HashMap<String,String> bounds;
+    private HashMap<String,Double> bounds;
 
 
     TextView priceTxt, examplePriceTxt, fetchRange, rangeValueTextView;
@@ -89,8 +91,8 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
                 endCity = extras.getString("ENDCITY");
                 distance = extras.getString("DISTANCE");
                 duration = extras.getString("DURATION");
-                selectedPoints = (List<HashMap<String,String>>) extras.getSerializable("POINTS");
-                bounds = (HashMap<String,String>) extras.getSerializable("BOUNDS");
+                selectedPoints = (List<HashMap<String, Double>>) extras.getSerializable("POINTS");
+                bounds = (HashMap<String,Double>) extras.getSerializable("BOUNDS");
             }
         }else {
             startAddress = (String) savedInstanceState.getSerializable ("ALKUOSOITE");
@@ -99,8 +101,8 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
             endCity = (String) savedInstanceState.getSerializable("ENDCITY");
             distance = (String) savedInstanceState.getSerializable ("DISTANCE");
             duration = (String) savedInstanceState.getSerializable ("DURATION");
-            selectedPoints = (List<HashMap<String,String>>) savedInstanceState.getSerializable("POINTS");
-            bounds = (HashMap<String, String>) savedInstanceState.getSerializable("BOUNDS");
+            selectedPoints = (List<HashMap<String,Double>>) savedInstanceState.getSerializable("POINTS");
+            bounds = (HashMap<String, Double>) savedInstanceState.getSerializable("BOUNDS");
         }
 
         //Muuttaa string distancen eri muuttujatyypeiksi
@@ -288,13 +290,15 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
                     new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                            strDate = (dayOfMonth + "-" + (month + 1) + "-" + year);
+                            strDate = (dayOfMonth + "-" + (month+1) + "-" + year);
                             txtDate.setText(strDate);
                             pickedYear = year;
                             pickedMonth = month;
                             pickedDate = dayOfMonth;
+                            Log.d("TAG", "onDateSet: " + pickedMonth);
                         }
                     }, mYear, mMonth, mDay);
+
             datePickerDialog.show();
         }else if (v == txtTime) {
             final Calendar c = Calendar.getInstance();
@@ -435,8 +439,8 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         if(v.getId() == R.id.setRideDetails_button_vahvista)
         {
           
-            //mC.set(pickedYear, pickedMonth, pickedDate, pickedHour, pickedMinute);
-            //long leaveTime = mC.getTimeInMillis();
+            mC.set(pickedYear, pickedMonth, pickedDate, pickedHour, pickedMinute);
+            leaveTime = mC.getTimeInMillis();
 
             departureTimeTxt = lahtoaikaSanallinen.getText().toString();
             luggageTxt = matkatavaraSanallinen.getText().toString();
@@ -497,7 +501,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
     public void CREATE_RIDE_DEMO()
     {
 
-        Ride r = new Ride(FirebaseHelper.getUid(), duration, (new GregorianCalendar().getTimeInMillis()+40*Constant.DayInMillis),
+        Ride r = new Ride(FirebaseHelper.getUid(), duration, leaveTime,
                             startAddress, endAddress, passengers, price, doubleDistance,
                             selectedPoints, bounds, new ArrayList<String>(),
                             new ArrayList<String>(), 5, startCity, endCity, departureTimeTxt, luggageTxt, pets);

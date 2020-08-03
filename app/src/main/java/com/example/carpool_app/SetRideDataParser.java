@@ -38,17 +38,17 @@ public class SetRideDataParser {
 
                 // Getting bounds
                 JSONObject jBounds = ((JSONObject)jRoutes.get(i)).getJSONObject("bounds");
-                HashMap<String, String> bounds = new HashMap<>();
-                bounds.put("north", ((JSONObject)jBounds.get("northeast")).getString("lat"));
-                bounds.put("east", ((JSONObject)jBounds.get("northeast")).getString("lng"));
-                bounds.put("south", ((JSONObject)jBounds.get("southwest")).getString("lat"));
-                bounds.put("west", ((JSONObject)jBounds.get("southwest")).getString("lng"));
+                HashMap<String, Double> bounds = new HashMap<>();
+                bounds.put("north", ((JSONObject)jBounds.get("northeast")).getDouble("lat"));
+                bounds.put("east", ((JSONObject)jBounds.get("northeast")).getDouble("lng"));
+                bounds.put("south", ((JSONObject)jBounds.get("southwest")).getDouble("lat"));
+                bounds.put("west", ((JSONObject)jBounds.get("southwest")).getDouble("lng"));
 
                 // Getting legs
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
                 Log.d("mytag", "parse: " + jLegs);
-                List<HashMap<String,String>> path = new ArrayList<>();  // Holds all coordinate points of this route
-                List<HashMap<String, String>> myList = new ArrayList<>();   // Holds every 100th coordinate point of this route
+                List<HashMap<String, Double>> path = new ArrayList<>();  // Holds all coordinate points of this route
+                List<HashMap<String, Double>> myList = new ArrayList<>();   // Holds every 100th coordinate point of this route
                 /** Traversing all legs */
                 for (int j = 0; j < jLegs.length(); j++) {
                     jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
@@ -70,9 +70,9 @@ public class SetRideDataParser {
 
                         /** Traversing all points */
                         for (int l = 0; l < list.size(); l++) {
-                            HashMap<String, String> hm = new HashMap<>();
-                            hm.put("lat", Double.toString((list.get(l)).latitude));
-                            hm.put("lng", Double.toString((list.get(l)).longitude));
+                            HashMap<String, Double> hm = new HashMap<>();
+                            hm.put("lat", (list.get(l)).latitude);
+                            hm.put("lng", (list.get(l)).longitude);
                             path.add(hm);
                             if (myIndex % 100 == 0) {
                                 myList.add(hm);

@@ -332,8 +332,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
             //
             try{
-                startCity = geoCoderHelper.getCity(strLahto, SetRideActivity.this);
-                endCity = geoCoderHelper.getCity(strLoppu, SetRideActivity.this);
+                //startCity = geoCoderHelper.getCity(strLahto, SetRideActivity.this);
+                //endCity = geoCoderHelper.getCity(strLoppu, SetRideActivity.this);
                 Log.d("mylog", "startCity: " + startCity + " endCity: " + endCity);
             }catch (Exception e){
                 Log.d("mylog", "getCity Failed: " );
