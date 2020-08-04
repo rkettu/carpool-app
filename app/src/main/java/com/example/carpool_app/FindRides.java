@@ -128,7 +128,7 @@ class FindRides
             {
                 Log.d(TAG, "onComplete: " + task.isSuccessful() + task.getResult());
                 //if the task is successful, do forEach to every result
-                for(QueryDocumentSnapshot rideDoc : task.getResult())
+                for(final QueryDocumentSnapshot rideDoc : task.getResult())
                 {
                     Log.d(TAG, "onComplete: " + task.getResult());
                     try
@@ -151,6 +151,8 @@ class FindRides
                                     //places rideDoc (QueryDocumentSnapshot) object into Ride class. foundRide changes from false to true
                                     //and counter add one for one found ride.
                                     final Ride ride = rideDoc.toObject(Ride.class);
+                                    final String rideId = rideDoc.getId();
+                                    Log.d(TAG, "onComplete: " + rideId);
                                     foundRide = true;
                                     counter += 1;
 
@@ -168,7 +170,7 @@ class FindRides
                                                     if(user.getFname() != null)
                                                     {
                                                         //if there is first name in user object, add the ride and user into list.
-                                                        rideUserArrayList.add(new RideUser(ride, user));
+                                                        rideUserArrayList.add(new RideUser(ride, user, rideId));
                                                         Log.d(TAG, "onComplete: " + ride.getLeaveTime() + " " + user.getFname() + " " + ride.getDuration());
                                                     }
                                                 }
@@ -305,8 +307,6 @@ class FindRideDone extends AsyncTask<Void, Void, Boolean>{
             if(findRidesInterface != null)
             {
                 findRidesInterface.FindRidesResult(rideUserArrayList);
-
-
             }
         }
     }

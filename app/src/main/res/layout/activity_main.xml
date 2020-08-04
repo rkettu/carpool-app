@@ -30,6 +30,17 @@
         app:layout_constraintStart_toStartOf="@+id/main_guideline_left"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <ListView
+        android:id="@+id/main_ridesList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="@id/main_guideline_left"
+        app:layout_constraintRight_toRightOf="@id/main_guideline_right"
+        app:layout_constraintTop_toBottomOf="@id/main_btnGetRide"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
     <ListView
         android:id="@+id/main_settingsListView"
         android:layout_width="0dp"
@@ -39,43 +50,11 @@
         app:layout_constraintLeft_toRightOf="@id/main_appLogo"
         />
 
-    <Button
-        android:id="@+id/main_btnBookedTrips"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="12dp"
-        android:background="@drawable/custom_button2"
-        android:onClick="SelectBookedTrips"
-        android:text="Booked trips"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@+id/main_guideline_middle"
-        app:layout_constraintStart_toStartOf="@+id/main_guideline_left"
-        app:layout_constraintTop_toBottomOf="@id/main_appLogo"
-        android:fontFamily="@font/montserrat_medium"
-        android:textSize="15sp"/>
-
-
-    <Button
-        android:id="@+id/main_btnOfferedRides"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:text="Offered rides"
-        android:background="@drawable/custom_button2"
-        android:textColor="@color/white"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="12dp"
-        app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
-        app:layout_constraintStart_toEndOf="@id/main_guideline_middle"
-        app:layout_constraintTop_toBottomOf="@+id/main_appLogo"
-        android:onClick="SelectOfferedTrips"
-        android:fontFamily="@font/montserrat_medium"
-        android:textSize="15sp"/>
 
     <Button
         android:id="@+id/main_btnGetRide"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="24dp"
@@ -88,9 +67,7 @@
         android:textSize="21sp"
         app:layout_constraintEnd_toStartOf="@+id/main_guideline_middle"
         app:layout_constraintStart_toEndOf="@+id/main_guideline_left"
-        app:layout_constraintTop_toBottomOf="@+id/main_btnBookedTrips"
-        app:layout_constraintBottom_toBottomOf="parent"
-
+        app:layout_constraintTop_toTopOf="parent"
         android:onClick="SelectGetARide"
         android:fontFamily="@font/montserrat_medium"
         />
@@ -98,7 +75,7 @@
     <Button
         android:id="@+id/main_btnOfferRide"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="24dp"
@@ -112,8 +89,7 @@
         android:gravity="center"
         app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
         app:layout_constraintStart_toEndOf="@id/main_guideline_middle"
-        app:layout_constraintTop_toBottomOf="@id/main_btnOfferedRides"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:onClick="SelectOfferARide"
         android:fontFamily="@font/montserrat_medium"
         />

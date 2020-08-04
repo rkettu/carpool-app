@@ -557,7 +557,6 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
     // now only creates rides with proper points and user but otherwise random values
     public void CREATE_RIDE_DEMO()
     {
-
         Ride r = new Ride(FirebaseHelper.getUid(), duration, leaveTime,
                             startAddress, endAddress, passengers, price, doubleDistance,
                             selectedPoints, bounds, new ArrayList<String>(),

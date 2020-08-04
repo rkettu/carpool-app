@@ -19,7 +19,6 @@ public class AppMath {
         double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-        Log.d("TAG", "distanceBetweenCoordinates: " + c*6371);
         return c * 6371;
     }
 
@@ -51,14 +50,12 @@ public class AppMath {
 
     public static boolean isRouteInRange(double pickupDist, double lat1, double lng1, double lat2, double lng2, List<HashMap<String, Double>> points)
     {
-        Log.d("appMath", "isRouteInRange");
         double minDist1 = 10000000;
         double minDist2 = 10000000;
         int index1 = -1;
         int index2 = -1;
         for(int i = 0; i < points.size(); i++)
         {
-            Log.d("TAG", "isRouteInRange: " + points.get(i).get("lat"));
             // Comparing user start coordinates one at a time with route coordinates
             double routePointLat = (Double) points.get(i).get("lat");
             double routePointLng = (Double) points.get(i).get("lng");
