@@ -9,15 +9,19 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.audiofx.Equalizer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +36,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -364,6 +370,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             {
                 //Location granted
+                Toast.makeText(SetRideActivity.this, "Haetaan sijaintia", Toast.LENGTH_LONG).show();
+
                 AsyncTaskGetLocation getLocation = new AsyncTaskGetLocation();
                 getLocation.execute();
             }
@@ -383,7 +391,6 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
             }else{
                 ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
-
                 }
             }
     }
@@ -392,6 +399,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         if(requestCode == LOCATION_REQUEST_CODE){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 //Permission granted
+                Toast.makeText(SetRideActivity.this, "Haetaan sijaintia", Toast.LENGTH_LONG).show();
+
                 AsyncTaskGetLocation getLocation = new AsyncTaskGetLocation();
                 getLocation.execute();
 
@@ -534,30 +543,40 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         private String geoAddress;
         @Override
         protected String doInBackground(Void... voids) {
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(SetRideActivity.this);
-            Task<Location> locationTask = fusedLocationClient.getLastLocation();
-            locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if(location != null){
-                        //we have a location
-                        Log.d("mylog", "LOCATION found: " + location.toString());
-                        geoAddress = geoCoderHelper.fullAddressLocation(location, SetRideActivity.this);
-                        lahtoEditori.setQuery(geoAddress, false);
-                    }else {
-                        Log.d("mylog", "LOCATION was null... ");
 
-                    }
-                }
-            });
+            if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                LocationRequest locationRequest = new LocationRequest();
+                locationRequest.setInterval(10000);
+                locationRequest.setFastestInterval(3000);
+                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-            locationTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d("mylog", "LOCATION onFailure: " + e.getLocalizedMessage());
-                }
-            });
+                LocationServices.getFusedLocationProviderClient(SetRideActivity.this)
+                        .requestLocationUpdates(locationRequest, new LocationCallback(){
 
+                            @Override
+                            public void onLocationResult(LocationResult locationResult) {
+                                super.onLocationResult(locationResult);
+                                LocationServices.getFusedLocationProviderClient(SetRideActivity.this)
+                                        .removeLocationUpdates(this);
+                                if(locationResult != null && locationResult.getLocations().size() > 0){
+                                    int latestLocationIndex = locationResult.getLocations().size() -1;
+                                    double latitude =
+                                            locationResult.getLocations().get(latestLocationIndex).getLatitude();
+                                    double longitude =
+                                            locationResult.getLocations().get(latestLocationIndex).getLongitude();
+                                    Log.d("mylog", "onLocationResult: " + latitude + longitude);
+
+                                    Location location = new Location("provider");
+                                    location.setLatitude(latitude);
+                                    location.setLongitude(longitude);
+
+                                    geoAddress = geoCoderHelper.fullAddressLocation(location, SetRideActivity.this);
+                                    lahtoEditori.setQuery(geoAddress, false);
+                                }
+
+                            }
+                        }, Looper.getMainLooper());
+            }
             return null;
         }
 
