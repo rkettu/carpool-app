@@ -75,6 +75,8 @@ public class User implements Serializable {
         imgUri = strUri;
     }
 
+    public void initBookedRides() { bookedRides = new ArrayList<>(); }
+
     public void addToBookedRides(String routeId) {
         bookedRides.add(routeId);
     }

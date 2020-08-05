@@ -3,6 +3,8 @@ package com.example.carpool_app;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -11,10 +13,20 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -85,6 +97,7 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
         final AlertDialog alertDialog = builder.show();
         //set profile picture by using bitmap.
         profilePicture.setImageBitmap(bitmap);
+        Log.d("TAG", "onPostExecute: " + rideUserArrayList.get(position).getRideId());
         //adding listener to back arrow
         closeDialogBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +110,14 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
             @Override
             public void onClick(View v) {
                 //TODO book ride.
+                if(FirebaseHelper.loggedIn)
+                {
+                    bookRideDialog();
+                }
+                else
+                {
+                    FirebaseHelper.GoToLogin(context);
+                }
             }
         });
 
@@ -107,6 +128,78 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
         {
             rideDetailsInterface.showDialog(alertDialog);
         }
+    }
+
+    private void bookRideDialog()
+    {
+        AlertDialog.Builder bookRideBuilder = new AlertDialog.Builder(context);
+        bookRideBuilder.setTitle("Vahvista matkan varaus");
+        bookRideBuilder.setCancelable(false);
+        bookRideBuilder.setPositiveButton("Varaa", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                bookTrip(rideUserArrayList.get(position).getRideId(), FirebaseAuth.getInstance().getCurrentUser().getUid());
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
+        });
+        AlertDialog bookRideDialog = bookRideBuilder.show();
+        bookRideDialog.show();
+    }
+
+    private void bookTrip(final String rideId, final String userId)
+    {
+        Log.d("TAG", "bookTrip: " + rideId + " " + userId);
+        if(rideId.equals("") || userId.equals(""))
+        {
+            return;
+        }
+
+        final DocumentReference rideDocRef = FirebaseFirestore.getInstance().collection("rides").document(rideId);
+        rideDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    DocumentSnapshot rideDoc = task.getResult();
+                    if((long) rideDoc.get("freeSlots") >= 1)
+                    {
+                        Ride ride = rideDoc.toObject(Ride.class);
+                        ride.removeFreeSlot();
+                        try {
+                            ride.addToParticipants(userId);
+                        } catch (Exception e) {
+                            ride.initParticipants();
+                            ride.addToParticipants(userId);
+                        }
+                        rideDocRef.set(ride);
+                        final long leaveTime = ride.getLeaveTime();
+                        final String startAddress = ride.getStartAddress();
+                        final String destination = ride.getEndAddress();
+
+                        final DocumentReference usersDocRef = FirebaseFirestore.getInstance().collection("users").document(userId);
+                        usersDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if(task.isSuccessful())
+                                {
+                                    DocumentSnapshot userDoc = task.getResult();
+                                    User user = userDoc.toObject(User.class);
+                                    try{
+                                        user.addToBookedRides(rideId);
+                                    } catch (Exception e){
+                                        user.initBookedRides();
+                                        user.addToBookedRides(rideId);
+                                    }
+                                    usersDocRef.set(user);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
     }
 
     //initializing layout items to alert dialog and give them correct texts.

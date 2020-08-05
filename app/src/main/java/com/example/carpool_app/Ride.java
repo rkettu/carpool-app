@@ -58,7 +58,6 @@ public class Ride implements Serializable {
     }
 
     // Getters for all fields - required for document<->object
-
     public String getUid() {
         return uid;
     }

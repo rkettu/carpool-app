@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -189,6 +190,7 @@ public class GetRideActivity extends AppCompatActivity {
                                             @Override
                                             public void FindRidesResult(ArrayList<RideUser> result) {
                                                 rideUserArrayList.addAll(result);
+                                                Log.d(TAG, "FindRidesResult: " + rideUserArrayList.get(0).getRideId());
                                                 //if else to check does the array list contains any rides
                                                 if(rideUserArrayList.size() != 0)
                                                 {

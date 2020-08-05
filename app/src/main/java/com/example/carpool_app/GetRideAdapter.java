@@ -2,6 +2,7 @@ package com.example.carpool_app;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,6 +89,8 @@ public class GetRideAdapter extends BaseAdapter {
         viewHolder.dateTextView.setText(newDate);
         viewHolder.timeTextView.setText(newTime);
         viewHolder.priceTextView.setText(price + "€");
+
+        Log.d(TAG, "getView: " + rideUserArrayList.get(position).getRideId());
 
         //if you press info image next to price, do this
         viewHolder.infoImageView.setOnClickListener(new View.OnClickListener() {
