@@ -13,21 +13,52 @@ import com.google.firebase.auth.FirebaseAuth;
 
 
 import android.widget.Button;
+import android.widget.ListView;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity{
 
-    //private Button getRideButton;
+    private ListView ridesListView;
+    private Button getRideBtn, offerRideBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.main_btnGetRide).setOnClickListener(this);
-        findViewById(R.id.main_btnOfferRide).setOnClickListener(this);
+        checkIfSignedIn();
+        initMainLayoutItems();
+        initMainLayoutButtons();
+    }
 
+    private void initMainLayoutItems()
+    {
+        ridesListView = findViewById(R.id.main_ridesList);
+        getRideBtn = findViewById(R.id.main_btnGetRide);
+        offerRideBtn = findViewById(R.id.main_btnOfferRide);
+    }
 
+    private void initMainLayoutButtons()
+    {
+        getRideBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent GetRideIntent = new Intent(MainActivity.this, GetRideActivity.class);
+                startActivity(GetRideIntent);
+            }
+        });
+
+        offerRideBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent SetRideIntent = new Intent(MainActivity.this, SetRideActivity.class);
+                startActivity(SetRideIntent);
+            }
+        });
+    }
+
+    private void checkIfSignedIn()
+    {
         // Setting auth state listener
         // onAuthStateChanged is called when user logs in / out
         // onAuthStateChanged is also called when starting app
@@ -74,23 +105,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 Intent GetRideIntent = new Intent(MainActivity.this, GetRideActivity.class);
-                startActivity(GetRideIntent);
+                startActiv ity(GetRideIntent);
             }
         });
     }
 */
-    @Override
-    public void onClick(View v) {
-        if(v.getId() == R.id.main_btnGetRide)
-        {
-            Intent GetRideIntent = new Intent(MainActivity.this, GetRideActivity.class);
-            startActivity(GetRideIntent);
-        }
-        else if(v.getId() == R.id.main_btnOfferRide)
-        {
-            Intent SetRideIntent = new Intent(MainActivity.this, SetRideActivity.class);
-            startActivity(SetRideIntent);
-        }
-
-    }
 }

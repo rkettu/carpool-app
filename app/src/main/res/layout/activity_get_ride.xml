@@ -218,6 +218,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/getRide_destinationEditText" />
 
+
     <ListView
         android:id="@+id/getRide_rideListView"
         android:layout_width="match_parent"
