@@ -4,8 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_login"
+    android:background="@color/white"
     tools:context=".MainActivity">
+
+    <View
+        android:id="@+id/view5"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="450dp"
+        android:background="@drawable/ic_backgroundmain"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/main_btnSettings"
@@ -20,13 +31,12 @@
         android:id="@+id/main_appLogo"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="40dp"
         android:alpha="100"
         android:src="@mipmap/ic_launcher"
         app:civ_border_color="@color/white"
         app:civ_border_width="2dp"
-        app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
-        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintEnd_toStartOf="@+id/main_guideline_middle"
         app:layout_constraintStart_toStartOf="@+id/main_guideline_left"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,85 +49,143 @@
         app:layout_constraintLeft_toRightOf="@id/main_appLogo"
         />
 
-    <Button
-        android:id="@+id/main_btnBookedTrips"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="12dp"
-        android:background="@drawable/custom_button2"
-        android:onClick="SelectBookedTrips"
-        android:text="Booked trips"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@+id/main_guideline_middle"
-        app:layout_constraintStart_toStartOf="@+id/main_guideline_left"
-        app:layout_constraintTop_toBottomOf="@id/main_appLogo"
-        android:fontFamily="@font/montserrat_medium"
-        android:textSize="15sp"/>
 
 
-    <Button
-        android:id="@+id/main_btnOfferedRides"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:text="Offered rides"
-        android:background="@drawable/custom_button2"
-        android:textColor="@color/white"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="12dp"
-        app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
-        app:layout_constraintStart_toEndOf="@id/main_guideline_middle"
-        app:layout_constraintTop_toBottomOf="@+id/main_appLogo"
-        android:onClick="SelectOfferedTrips"
-        android:fontFamily="@font/montserrat_medium"
-        android:textSize="15sp"/>
 
-    <Button
+    <LinearLayout
         android:id="@+id/main_btnGetRide"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="24dp"
-        android:background="@drawable/custom_button2"
-        android:drawableTop="@drawable/ic_noun_hitchhiking"
-        android:paddingTop="120dp"
-        android:drawablePadding="-120dp"
-        android:text="Get A Ride"
-        android:textColor="@color/white"
-        android:textSize="21sp"
-        app:layout_constraintEnd_toStartOf="@+id/main_guideline_middle"
-        app:layout_constraintStart_toEndOf="@+id/main_guideline_left"
-        app:layout_constraintTop_toBottomOf="@+id/main_btnBookedTrips"
-        app:layout_constraintBottom_toBottomOf="parent"
-
+        android:layout_height="50dp"
+        android:background="@drawable/custom_button1"
         android:onClick="SelectGetARide"
-        android:fontFamily="@font/montserrat_medium"
-        />
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="@+id/main_guideline_middle"
+        app:layout_constraintTop_toBottomOf="@+id/main_appLogo">
 
-    <Button
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:src="@drawable/ic_baseline_search_24" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/montserrat_medium"
+            android:gravity="center"
+            android:text="Get A Ride"
+            android:textColor="@color/green"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/main_btnOfferRide"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
-        android:background="@drawable/custom_button2"
-        android:drawableTop="@drawable/ic_time_to_leave_black_50dp"
-        android:paddingTop="120dp"
-        android:drawablePadding="-120dp"
-        android:text="Offer A Ride"
-        android:textColor="@color/white"
-        android:textSize="21sp"
-        android:gravity="center"
+        android:layout_height="50dp"
+        android:background="@drawable/custom_button1"
+        android:orientation="horizontal"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toBottomOf="@id/main_btnGetRide"
+        app:layout_constraintStart_toStartOf="@+id/main_guideline_middle"
         app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
-        app:layout_constraintStart_toEndOf="@id/main_guideline_middle"
-        app:layout_constraintTop_toBottomOf="@id/main_btnOfferedRides"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:onClick="SelectOfferARide"
-        android:fontFamily="@font/montserrat_medium"
-        />
+        android:onClick="SelectOfferARide">
 
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_drive_eta_black_24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Offer A Ride"
+            android:fontFamily="@font/montserrat_medium"
+            android:textColor="@color/green"
+            android:textSize="16sp"/>
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        app:layout_constraintTop_toBottomOf="@+id/view5">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_btnBookedTrips"
+            android:layout_width="180dp"
+            android:layout_height="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:onClick="SelectBookedTrips">
+
+        <ImageView
+            android:id="@+id/bookBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_mainactivitycustombuttonleft"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="Offer A Ride"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintHorizontal_bias="0.32"
+                app:layout_constraintVertical_bias="0.3"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_btnOfferedRides"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="120dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:onClick="SelectOfferedTrips">
+
+            <ImageView
+                android:id="@+id/offerBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_mainactivitycustombuttonright"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="Booked trips"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintVertical_bias="0.3"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/customButtonsLine"
+            android:layout_width="0dp"
+            android:layout_height="14dp"
+            android:src="@drawable/ic_mainactivitycustombuttonline"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/main_guideline_middle"
@@ -140,6 +208,5 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="24dp" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

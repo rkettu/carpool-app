@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -12,20 +13,30 @@ import android.view.View;
 import com.google.firebase.auth.FirebaseAuth;
 
 
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     //private Button getRideButton;
 
+    ImageView bookBackground;
+    ImageView offerbackground;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         findViewById(R.id.main_btnGetRide).setOnClickListener(this);
         findViewById(R.id.main_btnOfferRide).setOnClickListener(this);
+
+        bookBackground = findViewById(R.id.bookBackground);
+        offerbackground = findViewById(R.id.offerBackground);
+        offerbackground.setImageAlpha(128);
 
 
         // Setting auth state listener
@@ -53,20 +64,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         FirebaseAuth.getInstance().addAuthStateListener(als);
     }
 
-    public void SelectOfferARide(View v)
+
+
+    public void SelectBookedTrips(View v)
     {
+        bookBackground.setImageAlpha(255);
+        offerbackground.setImageAlpha(128);
+    }
+
+    public void SelectOfferedTrips(View v)
+    {
+        bookBackground.setImageAlpha(128);
+        offerbackground.setImageAlpha(255);
         /*
         // Go to log in... for testing purposes
         Intent i = new Intent(MainActivity.this, LogInActivity.class);
         startActivity(i);
          */
         // Go to profile test
-        ActivitySwitcher.GoToProfileActivity(getApplicationContext(), FirebaseHelper.getUid());
+        //ActivitySwitcher.GoToProfileActivity(getApplicationContext(), FirebaseHelper.getUid());
 
      
 
   
     }
+
 
     /*
     private void initMainButtons(){
