@@ -249,22 +249,35 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             if(strWaypoint1 != null && !strWaypoint1.isEmpty())
             {
                 //Hakee coordinaatit waypointeille
-                GetCoordinatesASync getCoordinatesASync1 = new GetCoordinatesASync(new GetCoordinatesInterface() {
+                GetWaypointCoordinatesASync getWaypointCoordinatesASync = new GetWaypointCoordinatesASync(new GetWaypointCoordinatesInterface() {
                     @Override
-                    public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility1) {
-                        double way1Lat = getCoordinatesUtility1.getStartLat();
-                        double way1Lng = getCoordinatesUtility1.getStartLng();
-                        double way2Lat = getCoordinatesUtility1.getDestinationLat();
-                        double way2Lng = getCoordinatesUtility1.getDestinationLng();
-                        Log.d("mylog", "getCoordinates: " + way1Lat + " " + way1Lng + " " + way2Lat);
-                        wayPoint1 = new MarkerOptions().position(new LatLng(way1Lat, way1Lng)).title("Pysähdys 1");
-                        wayPoint2 = new MarkerOptions().position(new LatLng(way2Lat, way2Lng)).title("Pysähdys 2");
+                    public void getWayCoordinates(GetCoordinatesUtility getCoordinatesUtility) {
+                        try {
+                            double way1Lat = getCoordinatesUtility.getWayLat();
+                            double way1Lng = getCoordinatesUtility.getWayLng();
+                            Log.d("mylog", "getCoordinates WAYPOINT1: " + way1Lat + way1Lng);
+                            wayPoint1 = new MarkerOptions().position(new LatLng(way1Lat, way1Lng)).title("Pysähdys 1");
+                            mMap.addMarker(wayPoint1);
+                        }catch (Exception e){
 
+                        }
                     }
                 }, SetRideActivity.this);
-                getCoordinatesASync1.execute(strWaypoint1, strWaypoint2);
+                getWaypointCoordinatesASync.execute(strWaypoint1);
             }
-
+            if(strWaypoint2 != null && !strWaypoint2.isEmpty())
+            {
+                GetCoordinatesASync getCoordinatesASync2 = new GetCoordinatesASync(new GetCoordinatesInterface() {
+                    @Override
+                    public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility2) {
+                        double way2Lat = getCoordinatesUtility2.getStartLat();
+                        double way2Lng = getCoordinatesUtility2.getStartLng();
+                        wayPoint2 = new MarkerOptions().position(new LatLng(way2Lat, way2Lng)).title("Pysähdys 2");
+                        mMap.addMarker(wayPoint2);
+                    }
+                }, SetRideActivity.this);
+                getCoordinatesASync2.execute(strWaypoint2);
+            }
 
             //Hakee täydellisen osoitteen ("kaarnatie 5, 90350 Oulu, Suomi") LÄHTÖPISTE tekstikenttään
             GetFullAddressASync getFullAddressASync = new GetFullAddressASync(new GetFullAddressInterface() {
@@ -304,7 +317,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                         stopLat = getCoordinatesUtility.getDestinationLat();
                         stopLng = getCoordinatesUtility.getDestinationLng();
 
-                        Log.d("mylog", "getCoordinates: " + startLat + startLng + stopLat + stopLng);
+                        //Log.d("mylog", "getCoordinates: " + startLat + startLng + stopLat + stopLng);
 
 
                         place1 = new MarkerOptions().position(new LatLng(startLat, startLng)).title("Location 1");
@@ -450,21 +463,25 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         //String parameters = str_origin + "&" + str_dest + 64.080600,%2024.533221" + "&" + mode;
         String parameters = str_origin + "&" + str_dest + "&" + mode;
 
+        Log.d("mylog", "WAYPOINTTI 1: " + wayPoint1);
         if(wayPoint1 != null)
         {
             parameters = str_origin + "&" + str_dest + "&waypoints=via:" + wayPoint1.getPosition().latitude
                     + "," + wayPoint1.getPosition().longitude + "&" + mode;
+            Log.d("mylog", "getUrl: WAY1  ");
         }
         if(wayPoint1 != null & wayPoint2 != null)
         {
             parameters = str_origin + "&" + str_dest + "&waypoints=via:" + wayPoint1.getPosition().latitude
                     + "," + wayPoint1.getPosition().longitude + "|via:" + wayPoint2.getPosition().latitude
                     + "," + wayPoint2.getPosition().longitude + "&" + mode;
+            Log.d("mylog", "getUrl: WAT2 ");
         }
         if(wayPoint2 != null & wayPoint1 == null)
         {
             parameters = str_origin + "&" + str_dest + "&waypoints=via:" + wayPoint2.getPosition().latitude
                     + "," + wayPoint2.getPosition().longitude + "&" + mode;
+            Log.d("mylog", "getUrl: WAY1 ja WAY2 ");
         }
 
         // Output format

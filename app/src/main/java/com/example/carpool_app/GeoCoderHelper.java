@@ -41,6 +41,32 @@ public class GeoCoderHelper {
         return null;
     }
 
+
+    //Waypoint coordinates
+    public static ArrayList<Float> getWaypointCoordinates(String address, Context context)
+    {
+        try{
+            Geocoder geocoder = new Geocoder(context);
+            List<Address> addressPoint = geocoder.getFromLocationName(address, 1);
+            Address newAddress = addressPoint.get(0);
+
+            float latitude = (float) newAddress.getLatitude();
+            float longitude = (float) newAddress.getLongitude();
+
+            ArrayList<Float> result = new ArrayList<>();
+            result.add(latitude);
+            result.add(longitude);
+
+            return result;
+        }
+        catch (IOException e)
+        {
+            //TODO if grpc failed
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     //You can use this function to get NAME of the CITY only with specific address
     //You may need this if you want print just a city, not full address
     public static String getCity(String address, Context context)
