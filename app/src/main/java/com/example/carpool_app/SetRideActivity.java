@@ -246,37 +246,37 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             strWaypoint1 = waypointEditor1.getQuery().toString();
             strWaypoint2 = waypointEditor2.getQuery().toString();
 
+            //Tarkistaa onko waypoint1 kenttään syötetty osoitetta
             if(strWaypoint1 != null && !strWaypoint1.isEmpty())
             {
                 //Hakee coordinaatit waypointeille
                 GetWaypointCoordinatesASync getWaypointCoordinatesASync = new GetWaypointCoordinatesASync(new GetWaypointCoordinatesInterface() {
                     @Override
                     public void getWayCoordinates(GetCoordinatesUtility getCoordinatesUtility) {
-                        try {
-                            double way1Lat = getCoordinatesUtility.getWayLat();
-                            double way1Lng = getCoordinatesUtility.getWayLng();
-                            Log.d("mylog", "getCoordinates WAYPOINT1: " + way1Lat + way1Lng);
-                            wayPoint1 = new MarkerOptions().position(new LatLng(way1Lat, way1Lng)).title("Pysähdys 1");
-                            mMap.addMarker(wayPoint1);
-                        }catch (Exception e){
-
-                        }
+                        double way1Lat = getCoordinatesUtility.getWayLat();
+                        double way1Lng = getCoordinatesUtility.getWayLng();
+                        Log.d("mylog", "getCoordinates WAYPOINT1: " + way1Lat + way1Lng);
+                        wayPoint1 = new MarkerOptions().position(new LatLng(way1Lat, way1Lng)).title("Pysähdys 1");
+                        mMap.addMarker(wayPoint1);
                     }
                 }, SetRideActivity.this);
                 getWaypointCoordinatesASync.execute(strWaypoint1);
             }
+            //Tarkistaa onko waypoint2 kenttään syötetty osoitetta
             if(strWaypoint2 != null && !strWaypoint2.isEmpty())
             {
-                GetCoordinatesASync getCoordinatesASync2 = new GetCoordinatesASync(new GetCoordinatesInterface() {
+                //Hakee coordinaatit waypointeille
+                GetWaypointCoordinatesASync getWaypointCoordinatesASync = new GetWaypointCoordinatesASync(new GetWaypointCoordinatesInterface() {
                     @Override
-                    public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility2) {
-                        double way2Lat = getCoordinatesUtility2.getStartLat();
-                        double way2Lng = getCoordinatesUtility2.getStartLng();
+                    public void getWayCoordinates(GetCoordinatesUtility getCoordinatesUtility) {
+                        double way2Lat = getCoordinatesUtility.getWayLat();
+                        double way2Lng = getCoordinatesUtility.getWayLng();
+                        Log.d("mylog", "getCoordinates WAYPOINT1: " + way2Lat + way2Lng);
                         wayPoint2 = new MarkerOptions().position(new LatLng(way2Lat, way2Lng)).title("Pysähdys 2");
                         mMap.addMarker(wayPoint2);
                     }
                 }, SetRideActivity.this);
-                getCoordinatesASync2.execute(strWaypoint2);
+                getWaypointCoordinatesASync.execute(strWaypoint2);
             }
 
             //Hakee täydellisen osoitteen ("kaarnatie 5, 90350 Oulu, Suomi") LÄHTÖPISTE tekstikenttään
