@@ -286,7 +286,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                     String address = getCoordinatesUtility.getFullAddress();
                     lahtoEditori.setQuery(address,false);
                     if(address == null){
-                        Toast.makeText(SetRideActivity.this, "Tarkista lähtöosoite", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SetRideActivity.this, R.string.setride_check_start_position, Toast.LENGTH_LONG).show();
                     }
                 }
             }, SetRideActivity.this);
@@ -299,7 +299,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                     String address = getCoordinatesUtility.getFullAddress();
                     loppuEditori.setQuery(address,false);
                     if(address == null){
-                        Toast.makeText(SetRideActivity.this, "Tarkista määränpään osoite", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SetRideActivity.this, R.string.setride_check_destination_position, Toast.LENGTH_LONG).show();
                     }
                 }
             }, SetRideActivity.this);
@@ -330,7 +330,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place2.getPosition(),8));
                     }catch (Exception e){
                         //ei toimi
-                        Toast.makeText(SetRideActivity.this, "Tarkista lähtö- ja määränpää osoitteet", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SetRideActivity.this, R.string.setride_check_start_and_destination, Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -383,7 +383,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             {
                 //Location granted
-                Toast.makeText(SetRideActivity.this, "Haetaan sijaintia", Toast.LENGTH_LONG).show();
+                Toast.makeText(SetRideActivity.this, R.string.setride_search_location, Toast.LENGTH_LONG).show();
 
                 AsyncTaskGetLocation getLocation = new AsyncTaskGetLocation();
                 getLocation.execute();
@@ -412,7 +412,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         if(requestCode == LOCATION_REQUEST_CODE){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 //Permission granted
-                Toast.makeText(SetRideActivity.this, "Haetaan sijaintia", Toast.LENGTH_LONG).show();
+                Toast.makeText(SetRideActivity.this, R.string.setride_search_location, Toast.LENGTH_LONG).show();
 
                 AsyncTaskGetLocation getLocation = new AsyncTaskGetLocation();
                 getLocation.execute();
@@ -422,14 +422,14 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 if(!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
                     //This block here means PERMANENTLY DENIED PERMISSION
                     new AlertDialog.Builder(SetRideActivity.this)
-                            .setMessage("You have permanently danied this permission, go to settings to enable this permission")
-                            .setPositiveButton("Go to settings", new DialogInterface.OnClickListener() {
+                            .setMessage(R.string.setride_location_message)
+                            .setPositiveButton(R.string.setride_location_button_positive, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     gotoApplicationSettings();
                                 }
                             })
-                            .setNegativeButton("Cancel", null)
+                            .setNegativeButton(R.string.setride_location_button_negative, null)
                             .setCancelable(false)
                             .show();
                 } else {

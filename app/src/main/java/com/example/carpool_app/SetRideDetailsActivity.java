@@ -203,6 +203,14 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         fetchRange.setText("Nouto etäisyys: " + pickUpDistance + "km");
         priceTxt.setText(String.format("Hinta: %.3f", price) + " per kilometri");
 
+                /*
+        examplePriceTxt.setText(R.string.setridedetails_distance_example + distance + " km \n"
+                + R.string.setridedetails_price_example + String.format("%.2f", doubleDistance * 0.03) + " eur");
+        rangeValueTextView.setText(R.string.setridedetails_ride_length_text + minRangeInt + "km");
+        fetchRange.setText(R.string.setridedetails_max_pickup_dist_text  + pickUpDistance + "km");
+        priceTxt.setText(String.format(R.string.setridedetails_price_example + "%.3f", price) + R.string.setridedetails_km_example);
+         */
+
         //Number Picker matkustajien määritys
         numberPicker = findViewById(R.id.setRideDetails_numberPicker_passengers);
         numberPicker.setMinValue(1);
