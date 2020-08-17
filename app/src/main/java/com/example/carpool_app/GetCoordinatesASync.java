@@ -54,6 +54,47 @@ class GetCoordinatesASync extends AsyncTask<String, Integer, GetCoordinatesUtili
 }
 
 
+interface GetWaypointCoordinatesInterface {
+    void getWayCoordinates(GetCoordinatesUtility getCoordinatesUtility);
+}
+
+class  GetWaypointCoordinatesASync extends AsyncTask<String, Integer, GetCoordinatesUtility>{
+    private GetWaypointCoordinatesInterface getWaypointCoordinatesInterface;
+    private Context context;
+
+    public GetWaypointCoordinatesASync(GetWaypointCoordinatesInterface getWaypointCoordinatesInterface, Context context)
+    {
+        this.getWaypointCoordinatesInterface = getWaypointCoordinatesInterface;
+        this.context = context;
+    }
+
+    @Override
+    protected GetCoordinatesUtility doInBackground(String... strings){
+        String waypoint = strings[0];
+
+        GetCoordinatesUtility getCoordinatesUtility = null;
+
+        try {
+            float waypointLat = GeoCoderHelper.getWaypointCoordinates(waypoint, context).get(0);
+            float waypointLng = GeoCoderHelper.getWaypointCoordinates(waypoint, context).get(1);
+
+            getCoordinatesUtility = new GetCoordinatesUtility(waypointLat, waypointLng);
+
+        }catch (Exception e){ e.printStackTrace(); }
+        return getCoordinatesUtility;
+    }
+
+    @Override
+    protected void onPostExecute(GetCoordinatesUtility getCoordinatesUtility){
+        super.onPostExecute(getCoordinatesUtility);
+        if(getWaypointCoordinatesInterface != null && getCoordinatesUtility != null)
+        {
+            getWaypointCoordinatesInterface.getWayCoordinates(getCoordinatesUtility);
+        }
+    }
+}
+
+
 
 interface GetCityInterface{
     void getCity(GetCoordinatesUtility getCoordinatesUtility);
