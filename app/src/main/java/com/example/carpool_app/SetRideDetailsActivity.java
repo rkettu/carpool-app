@@ -198,18 +198,12 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         examplePriceTxt = (TextView) findViewById(R.id.setRideDetails_textView_examplePrice);
         fetchRange = (TextView) findViewById(R.id.setRideDetails_textView_noutoEtaisyys);
         rangeValueTextView = (TextView) findViewById(R.id.setRideDetails_textView_minmatka);
-        examplePriceTxt.setText("Example km: " + distance + " km \n" + "Price: " + String.format("%.2f", doubleDistance * 0.03) + " euroa");
-        rangeValueTextView.setText("Kuljettava matka: " + minRangeInt + "km");
-        fetchRange.setText("Nouto etäisyys: " + pickUpDistance + "km");
-        priceTxt.setText(String.format("Hinta: %.3f", price) + " per kilometri");
 
-                /*
-        examplePriceTxt.setText(R.string.setridedetails_distance_example + distance + " km \n"
-                + R.string.setridedetails_price_example + String.format("%.2f", doubleDistance * 0.03) + " eur");
-        rangeValueTextView.setText(R.string.setridedetails_ride_length_text + minRangeInt + "km");
-        fetchRange.setText(R.string.setridedetails_max_pickup_dist_text  + pickUpDistance + "km");
-        priceTxt.setText(String.format(R.string.setridedetails_price_example + "%.3f", price) + R.string.setridedetails_km_example);
-         */
+        examplePriceTxt.setText(getString(R.string.setridedetails_distance_example) + distance + " km \n"
+                + getString(R.string.setridedetails_price_example) + String.format("%.2f", doubleDistance * 0.03) + " eur");
+        rangeValueTextView.setText(getString(R.string.setridedetails_ride_length_text) + minRangeInt + "km");
+        fetchRange.setText(getString(R.string.setridedetails_max_pickup_dist_text) + pickUpDistance + "km");
+        priceTxt.setText(String.format(getString(R.string.setridedetails_price_example) + "%.3f", price) + getString(R.string.setridedetails_km_example));
 
         //Number Picker matkustajien määritys
         numberPicker = findViewById(R.id.setRideDetails_numberPicker_passengers);
@@ -235,7 +229,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
                 float tempDist = ((50 / 100.00f) * progress);
                 pickUpDistance = (int) tempDist;
                 //Log.d("####matka3####", range + ", " + intMatka + ", " + progress + ", " + (intMatka / 100.00f) * progress);
-                fetchRange.setText("Nouto etäisyys: " + pickUpDistance + "km");
+                fetchRange.setText(getString(R.string.setridedetails_max_pickup_dist_text) + pickUpDistance + "km");
             }
 
             @Override
@@ -254,7 +248,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 minRangeInt = (int) ((intDistance / 100.00f) * progress);
                 DecimalFormat df = new DecimalFormat("#.##");
-                rangeValueTextView.setText("Kuljettava matka: " + minRangeInt + " km");
+                rangeValueTextView.setText(getString(R.string.setridedetails_ride_length_text) + minRangeInt + " km");
             }
 
             @Override
@@ -272,9 +266,9 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 price = ((float) progress / 1000);
-                priceTxt.setText(String.format("Hinta: %.3f", price) + " per kilometri");
+                priceTxt.setText(getString(R.string.setridedetails_price_hint) + String.format("%.3f", price) + getString(R.string.setridedetails_km_example));
                 //hintaTxt.setTextColor(Color.WHITE);
-                examplePriceTxt.setText("Esimerkki km: " + distance + " km \n" + "Hinta: " + String.format("%.2f", doubleDistance * price) + " euroa");
+                examplePriceTxt.setText(getString(R.string.setridedetails_distance_example) + distance + " km \n" + getString(R.string.setridedetails_price_example) + String.format("%.2f", doubleDistance * price) + " eur");
 
             }
 
