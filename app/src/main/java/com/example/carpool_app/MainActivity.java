@@ -38,7 +38,6 @@ public class MainActivity extends FragmentActivity {
     private TabLayout ridesHeader;
     private FragmentPagerAdapter fragmentPagerAdapter;
     private Button getRideBtn, offerRideBtn;
-    private boolean userLoggedIn = false;
     private CollectionReference mRidesColRef = FirebaseFirestore.getInstance().collection("rides");
     private CollectionReference mUsersColRef = FirebaseFirestore.getInstance().collection("users");
     private ArrayList<RideUser> bookedRideUserArrayList = new ArrayList<>();
@@ -77,6 +76,7 @@ public class MainActivity extends FragmentActivity {
         FirebaseAuth.getInstance().addAuthStateListener(als);
     }
 
+    //TODO fix array lists
     //if user is logged in, do db search from booked trips
     private void loadBookedRides()
     {
@@ -89,6 +89,7 @@ public class MainActivity extends FragmentActivity {
                     for(QueryDocumentSnapshot doc : task.getResult()){
                         final Ride ride = doc.toObject(Ride.class);
                         final String rideId = doc.getId();
+                        counter += 1;
 
                         if(ride.getUid() != null){
                             mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -98,16 +99,11 @@ public class MainActivity extends FragmentActivity {
                                         DocumentSnapshot doc = task.getResult();
                                         User user = doc.toObject(User.class);
 
-                                        if(user.getFname() != null){
-                                            //adds found rides to RideUser class.
-                                            bookedRideUserArrayList.add(new RideUser(ride, user, rideId));
-                                        }
+                                        //adds found rides to RideUser class.
+                                        bookedRideUserArrayList.add(new RideUser(ride, user, rideId));
+                                        counter -= 1;
                                     }
-                                }
-                            }).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    if(documentSnapshot.exists()){
+                                    if(counter == 0){
                                         //when done, search offered rides
                                         loadOfferedRides();
                                     }
@@ -212,12 +208,20 @@ public class MainActivity extends FragmentActivity {
              * The integer is there to tell fragments what to print if the array list size is 0 in
              * MainActivityFragments.java
              */
+
+            try {
+                Log.d("TAG", "getItem: " + bookedRideUserArrayList.size() + " " + bookedRideUserArrayList.get(0).getUser().getFname());
+                Log.d("TAG", "getItem: " + offeredRideUserArrayList.size() + " " + offeredRideUserArrayList.get(0).getUser().getFname());
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
             switch(position){
                 case 0:
-                    return MainActivityFragments.newInstance(bookedRideUserArrayList, 0);
+                    return MainActivityFragments.newInstance(bookedRideUserArrayList, offeredRideUserArrayList, 0);
 
                 case 1:
-                    return MainActivityFragments.newInstance(offeredRideUserArrayList, 1);
+                    return MainActivityFragments.newInstance(offeredRideUserArrayList, offeredRideUserArrayList, 1);
 
                 default:
                     return null;
