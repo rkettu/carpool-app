@@ -76,4 +76,6 @@
     <string name="myalertdialog_moikka_text">Moikka</string>
     <string name="main_fragment_tab_booked">Varatut kyydit</string>
     <string name="main_fragment_tab_offered">Tarjotut matkat</string>
+    <string name="main_fragment_no_booked_rides">Ei varattuja matkoja</string>
+    <string name="main_fragment_no_offered_rides">Ei tarjottuja matkoja</string>
 </resources>

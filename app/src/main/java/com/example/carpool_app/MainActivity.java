@@ -8,9 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -30,8 +28,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -47,6 +43,7 @@ public class MainActivity extends FragmentActivity {
     private CollectionReference mUsersColRef = FirebaseFirestore.getInstance().collection("users");
     private ArrayList<RideUser> bookedRideUserArrayList = new ArrayList<>();
     private ArrayList<RideUser> offeredRideUserArrayList = new ArrayList<>();
+    private int counter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,32 +62,22 @@ public class MainActivity extends FragmentActivity {
                     // Checking that user has created a profile
                     // Sends user to profile edit if not
                     FirebaseHelper.checkProfileCreated(getApplicationContext());
-                    //changes boolean to true, so we can load the rides in front screen
-                    userLoggedIn = true;
+                    //start loading rides to view pager if logged in.
                     loadBookedRides();
                 } else {
                     // If user has logged out
                     Log.d("TAG", "onAuthStateChanged: false");
                     FirebaseHelper.loggedIn = false;
-                    //changes boolean to false, so program doesn't try to load rides
-                    userLoggedIn = false;
+                    //skips the ride loading if not signed in.
                     initMainLayoutItems();
                     initMainLayoutButtons();
                 }
             }
         };
         FirebaseAuth.getInstance().addAuthStateListener(als);
-
-        Log.d("TAG", "onCreate1: " + userLoggedIn);
-        if(userLoggedIn)
-        {
-
-        }
-        else {
-        }
-        Log.d("TAG", "onCreate2: " + userLoggedIn);
     }
 
+    //if user is logged in, do db search from booked trips
     private void loadBookedRides()
     {
         Log.d("TAG", "loadBookedRides: ");
@@ -103,35 +90,39 @@ public class MainActivity extends FragmentActivity {
                         final Ride ride = doc.toObject(Ride.class);
                         final String rideId = doc.getId();
 
-                        mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if(task.isSuccessful()){
-                                    DocumentSnapshot doc = task.getResult();
-                                    User user = doc.toObject(User.class);
+                        if(ride.getUid() != null){
+                            mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if(task.isSuccessful()){
+                                        DocumentSnapshot doc = task.getResult();
+                                        User user = doc.toObject(User.class);
 
-                                    if(user.getFname() != null){
-                                        bookedRideUserArrayList.add(new RideUser(ride, user, rideId));
+                                        if(user.getFname() != null){
+                                            //adds found rides to RideUser class.
+                                            bookedRideUserArrayList.add(new RideUser(ride, user, rideId));
+                                        }
                                     }
                                 }
-                            }
-                        }).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                            @Override
-                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                if(documentSnapshot.exists()){
-                                    loadOfferedRides();
+                            }).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if(documentSnapshot.exists()){
+                                        //when done, search offered rides
+                                        loadOfferedRides();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
                 }
             }
         });
     }
 
+    //db search for offered rides
     private void loadOfferedRides()
     {
-        Log.d("TAG", "loadOfferedRides: ");
         Query query = mRidesColRef.whereEqualTo("uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -140,6 +131,7 @@ public class MainActivity extends FragmentActivity {
                     for(QueryDocumentSnapshot doc : task.getResult()){
                         final Ride ride = doc.toObject(Ride.class);
                         final String rideId = doc.getId();
+                        counter += 1;
 
                         mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
@@ -149,16 +141,13 @@ public class MainActivity extends FragmentActivity {
                                     User user = doc.toObject(User.class);
 
                                     if(user.getFname() != null){
+                                        //adds rides to RideUser class
                                         offeredRideUserArrayList.add(new RideUser(ride, user, rideId));
-                                        Log.d("TAG", "onComplete: " + offeredRideUserArrayList);
+                                        counter -= 1;
                                     }
                                 }
-                            }
-                        }).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                            @Override
-                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                if(documentSnapshot.exists()){
-                                    Log.d("TAG", "onSuccess: ");
+                                //when done, initializing MainActivity layout elements
+                                if(counter == 0){
                                     initMainLayoutItems();
                                     initMainLayoutButtons();
                                 }
@@ -171,15 +160,19 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void initMainLayoutItems() {
+        //setting up viewpager, viewpager header and adapter
         ridesViewPager = findViewById(R.id.main_viewPager);
-        fragmentPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
+        fragmentPagerAdapter = new RidesViewPagerAdapter(getSupportFragmentManager());
         ridesViewPager.setAdapter(fragmentPagerAdapter);
         ridesHeader = findViewById(R.id.main_viewPagerHeader);
         ridesHeader.setupWithViewPager(ridesViewPager);
+
+        //setting up buttons
         getRideBtn = findViewById(R.id.main_btnGetRide);
         offerRideBtn = findViewById(R.id.main_btnOfferRide);
     }
 
+    //buttons on click events
     private void initMainLayoutButtons() {
         getRideBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,23 +191,33 @@ public class MainActivity extends FragmentActivity {
         });
     }
 
-    public class MyPagerAdapter extends FragmentPagerAdapter{
+    //viewpager for rides
+    public class RidesViewPagerAdapter extends FragmentPagerAdapter{
+        //page count is 2, booked and offered rides.
         private static final int PAGE_COUNT = 2;
-        private String[] tabTitles = new String[] {getResources().getString(R.string.main_fragment_tab_booked), getResources().getString(R.string.main_fragment_tab_offered)};
-        public MyPagerAdapter(FragmentManager fragmentManager){
+        //tabs titles will always be booked rides and offered rides.
+        private final String[] tabTitles = new String[] {getResources().getString(R.string.main_fragment_tab_booked), getResources().getString(R.string.main_fragment_tab_offered)};
+        //constructor for viewpager
+        public RidesViewPagerAdapter(FragmentManager fragmentManager){
             super(fragmentManager);
         }
 
         @NonNull
         @Override
         public Fragment getItem(int position) {
-            //TODO get data from database
+            /**
+             * switch case in viewpager to know which data to show.
+             * case 0 = booked rides.
+             * case 1 = offered rides.
+             * The integer is there to tell fragments what to print if the array list size is 0 in
+             * MainActivityFragments.java
+             */
             switch(position){
                 case 0:
-                    return MainActivityFragments.newInstance(bookedRideUserArrayList);
+                    return MainActivityFragments.newInstance(bookedRideUserArrayList, 0);
 
                 case 1:
-                    return MainActivityFragments.newInstance(offeredRideUserArrayList);
+                    return MainActivityFragments.newInstance(offeredRideUserArrayList, 1);
 
                 default:
                     return null;

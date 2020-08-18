@@ -37,7 +37,7 @@
         android:layout_height="0dp"
         app:layout_constraintLeft_toLeftOf="@id/main_guideline_left"
         app:layout_constraintRight_toRightOf="@id/main_guideline_right"
-        app:layout_constraintTop_toBottomOf="@id/main_btnGetRide"
+        app:layout_constraintTop_toBottomOf="@id/main_guideline_horizontal_middle"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.tabs.TabLayout
@@ -75,8 +75,7 @@
         android:textSize="21sp"
         app:layout_constraintEnd_toStartOf="@+id/main_guideline_middle"
         app:layout_constraintStart_toEndOf="@+id/main_guideline_left"
-        app:layout_constraintTop_toTopOf="parent"
-        android:onClick="SelectGetARide"
+        app:layout_constraintBottom_toTopOf="@id/main_guideline_horizontal_middle"
         android:fontFamily="@font/montserrat_medium"
         />
 
@@ -97,8 +96,7 @@
         android:gravity="center"
         app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
         app:layout_constraintStart_toEndOf="@id/main_guideline_middle"
-        app:layout_constraintTop_toTopOf="parent"
-        android:onClick="SelectOfferARide"
+        app:layout_constraintBottom_toBottomOf="@id/main_guideline_horizontal_middle"
         android:fontFamily="@font/montserrat_medium"
         />
 
@@ -124,6 +122,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="24dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/main_guideline_horizontal_middle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".4"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
