@@ -47,7 +47,6 @@ public class MainActivity extends FragmentActivity {
     private CollectionReference mUsersColRef = FirebaseFirestore.getInstance().collection("users");
     private ArrayList<RideUser> bookedRideUserArrayList = new ArrayList<>();
     private ArrayList<RideUser> offeredRideUserArrayList = new ArrayList<>();
-    private int counter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,7 +140,6 @@ public class MainActivity extends FragmentActivity {
                     for(QueryDocumentSnapshot doc : task.getResult()){
                         final Ride ride = doc.toObject(Ride.class);
                         final String rideId = doc.getId();
-                        counter += 1;
 
                         mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
@@ -152,16 +150,8 @@ public class MainActivity extends FragmentActivity {
 
                                     if(user.getFname() != null){
                                         offeredRideUserArrayList.add(new RideUser(ride, user, rideId));
-                                        counter -= 1;
                                         Log.d("TAG", "onComplete: " + offeredRideUserArrayList);
                                     }
-                                }
-                                if(counter == 0){
-
-                                    Log.d("TAG", "on counter = 0: ");
-                                    initMainLayoutItems();
-                                    initMainLayoutButtons();
-
                                 }
                             }
                         }).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -169,6 +159,8 @@ public class MainActivity extends FragmentActivity {
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 if(documentSnapshot.exists()){
                                     Log.d("TAG", "onSuccess: ");
+                                    initMainLayoutItems();
+                                    initMainLayoutButtons();
                                 }
                             }
                         });
@@ -184,23 +176,6 @@ public class MainActivity extends FragmentActivity {
         ridesViewPager.setAdapter(fragmentPagerAdapter);
         ridesHeader = findViewById(R.id.main_viewPagerHeader);
         ridesHeader.setupWithViewPager(ridesViewPager);
-        ridesHeader.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener()
-        {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
         getRideBtn = findViewById(R.id.main_btnGetRide);
         offerRideBtn = findViewById(R.id.main_btnOfferRide);
     }
