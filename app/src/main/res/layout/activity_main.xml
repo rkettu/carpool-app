@@ -31,15 +31,23 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <ListView
-        android:id="@+id/main_ridesList"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/main_viewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintLeft_toLeftOf="@id/main_guideline_left"
         app:layout_constraintRight_toRightOf="@id/main_guideline_right"
         app:layout_constraintTop_toBottomOf="@id/main_btnGetRide"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/main_viewPagerHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="fixed"/>
+
+
+    </androidx.viewpager.widget.ViewPager>
 
     <ListView
         android:id="@+id/main_settingsListView"

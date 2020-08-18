@@ -50,7 +50,7 @@
         android:layout_marginTop="3dp"
         android:layout_marginStart="3dp"
         app:layout_constraintLeft_toRightOf="@id/MainAdapter_timeImageView"
-        app:layout_constraintBottom_toTopOf="@+id/MainAdapter_priceTextView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toLeftOf="@id/guideline_left"
         app:layout_constraintTop_toBottomOf="@id/MainAdapter_dateTextView"
         />
@@ -65,41 +65,9 @@
         android:layout_marginTop="3dp"
         android:layout_marginStart="3dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/MainAdapter_priceTextView"
         app:layout_constraintRight_toLeftOf="@id/MainAdapter_timeTextView"
         app:layout_constraintTop_toBottomOf="@id/MainAdapter_dateTextView"
-        />
-
-    <TextView
-        android:id="@+id/MainAdapter_priceTextView"
-        android:textColor="@color/black"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textSize="14dp"
-        android:maxLines="1"
-        android:gravity="left"
-        android:layout_marginBottom="3dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginStart="3dp"
-        app:layout_constraintLeft_toRightOf="@id/MainAdapter_infoImageView"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/guideline_left"
-        app:layout_constraintTop_toBottomOf="@id/MainAdapter_timeTextView"
-        />
-
-    <ImageView
-        android:id="@+id/MainAdapter_infoImageView"
-        android:background="@drawable/ic_info_outline_black_24dp"
-        android:backgroundTint="#B3B3B3"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:layout_marginStart="3dp"
-        android:layout_marginBottom="3dp"
-        android:layout_marginTop="3dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/MainAdapter_priceTextView"
-        app:layout_constraintTop_toBottomOf="@id/MainAdapter_timeTextView"
         />
 
 

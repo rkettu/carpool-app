@@ -74,4 +74,6 @@
     <string name="setridedetails_ride_info_title">Kyydin tiedot</string>
     <string name="setridedetails_ride_length_text">Kuljettava matka:</string>
     <string name="myalertdialog_moikka_text">Moikka</string>
+    <string name="main_fragment_tab_booked">Varatut kyydit</string>
+    <string name="main_fragment_tab_offered">Tarjotut matkat</string>
 </resources>
