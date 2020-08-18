@@ -30,6 +30,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import android.widget.Button;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends FragmentActivity {
@@ -42,7 +43,8 @@ public class MainActivity extends FragmentActivity {
     private CollectionReference mUsersColRef = FirebaseFirestore.getInstance().collection("users");
     private ArrayList<RideUser> bookedRideUserArrayList = new ArrayList<>();
     private ArrayList<RideUser> offeredRideUserArrayList = new ArrayList<>();
-    private int counter = 0;
+    private int bookedCounter = 0;
+    private int offeredCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,36 +82,42 @@ public class MainActivity extends FragmentActivity {
     //if user is logged in, do db search from booked trips
     private void loadBookedRides()
     {
-        Log.d("TAG", "loadBookedRides: ");
-        Query bookedQuery = mRidesColRef.whereArrayContains("participants", FirebaseAuth.getInstance().getCurrentUser().getUid());
-        bookedQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        mUsersColRef.document(FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot doc : task.getResult()){
-                        final Ride ride = doc.toObject(Ride.class);
-                        final String rideId = doc.getId();
-                        counter += 1;
+                    DocumentSnapshot doc = task.getResult();
+                    final User user = doc.toObject(User.class);
+                    bookedCounter = user.getBookedRides().size();
 
-                        if(ride.getUid() != null){
-                            mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    Log.d("TAG", "onComplete: " + bookedCounter);
+
+                    if(user.getBookedRides().size() != 0){
+                        for(int i = 0; i < user.getBookedRides().size(); i++){
+                            mRidesColRef.document(user.getBookedRides().get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                     if(task.isSuccessful()){
                                         DocumentSnapshot doc = task.getResult();
-                                        User user = doc.toObject(User.class);
+                                        Ride ride = doc.toObject(Ride.class);
 
-                                        //adds found rides to RideUser class.
-                                        bookedRideUserArrayList.add(new RideUser(ride, user, rideId));
-                                        counter -= 1;
+                                        if(ride.getUid() != null){
+                                            bookedRideUserArrayList.add(new RideUser(ride, user, doc.getId()));
+                                            Log.d("TAG", "onComplete: " + bookedRideUserArrayList.size());
+                                            bookedCounter -= 1;
+                                        }
                                     }
-                                    if(counter == 0){
-                                        //when done, search offered rides
+                                    if(bookedCounter == 0){
+                                        Log.d("TAG", "onComplete:321321 ");
                                         loadOfferedRides();
                                     }
                                 }
                             });
                         }
+                    }
+                    else{
+                        Log.d("TAG", "onComplet213143141451rewe: ");
+                        loadOfferedRides();
                     }
                 }
             }
@@ -127,7 +135,7 @@ public class MainActivity extends FragmentActivity {
                     for(QueryDocumentSnapshot doc : task.getResult()){
                         final Ride ride = doc.toObject(Ride.class);
                         final String rideId = doc.getId();
-                        counter += 1;
+                        offeredCounter += 1;
 
                         mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
@@ -139,11 +147,14 @@ public class MainActivity extends FragmentActivity {
                                     if(user.getFname() != null){
                                         //adds rides to RideUser class
                                         offeredRideUserArrayList.add(new RideUser(ride, user, rideId));
-                                        counter -= 1;
                                     }
+                                    offeredCounter -= 1;
                                 }
+
+                                Log.d("TAG", "onComplete: " + offeredCounter);
                                 //when done, initializing MainActivity layout elements
-                                if(counter == 0){
+                                if(offeredCounter == 0){
+                                    Log.d("TAG", "onComple21314521  5125436tyagz<df §1 te: ");
                                     initMainLayoutItems();
                                     initMainLayoutButtons();
                                 }
@@ -157,6 +168,7 @@ public class MainActivity extends FragmentActivity {
 
     private void initMainLayoutItems() {
         //setting up viewpager, viewpager header and adapter
+        Log.d("TAG", "initMainLayoutItems: ");
         ridesViewPager = findViewById(R.id.main_viewPager);
         fragmentPagerAdapter = new RidesViewPagerAdapter(getSupportFragmentManager());
         ridesViewPager.setAdapter(fragmentPagerAdapter);
@@ -209,19 +221,14 @@ public class MainActivity extends FragmentActivity {
              * MainActivityFragments.java
              */
 
-            try {
-                Log.d("TAG", "getItem: " + bookedRideUserArrayList.size() + " " + bookedRideUserArrayList.get(0).getUser().getFname());
-                Log.d("TAG", "getItem: " + offeredRideUserArrayList.size() + " " + offeredRideUserArrayList.get(0).getUser().getFname());
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            Log.d("TAG", "getItem: " + bookedRideUserArrayList.size() + " " + offeredRideUserArrayList.size());
 
             switch(position){
                 case 0:
                     return MainActivityFragments.newInstance(bookedRideUserArrayList, offeredRideUserArrayList, 0);
 
                 case 1:
-                    return MainActivityFragments.newInstance(offeredRideUserArrayList, offeredRideUserArrayList, 1);
+                    return MainActivityFragments.newInstance(bookedRideUserArrayList, offeredRideUserArrayList, 1);
 
                 default:
                     return null;

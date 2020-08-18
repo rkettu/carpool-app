@@ -26,6 +26,7 @@ public class MainActivityFragments extends Fragment {
         MainActivityFragments mainActivityFragments = new MainActivityFragments();
         //bundles to pass data to on create.
         Bundle args = new Bundle();
+        Log.d("TAG", "onCreateView: " + bookedRideUserArrayList.size() + " " + offeredRideUserArrayList.size() + " " + page);
         args.putSerializable("bRideUser", bookedRideUserArrayList);
         args.putSerializable("oRideUser", offeredRideUserArrayList);
         args.putInt("curPage", page);
@@ -38,6 +39,8 @@ public class MainActivityFragments extends Fragment {
         super.onCreate(savedInstanceState);
         bookedRideUserArrayList = (ArrayList<RideUser>) getArguments().getSerializable("bRideUser");
         offeredRideUserArrayList = (ArrayList<RideUser>) getArguments().getSerializable("oRideUser");
+        Log.d("TAG", "onCreateView2: " + bookedRideUserArrayList.size() + " " + offeredRideUserArrayList.size() + " " + page);
+
         page = (int) getArguments().getInt("curPage");
     }
 
@@ -50,6 +53,8 @@ public class MainActivityFragments extends Fragment {
         //init elements in view_pager_main_activity.
         ListView rideListView = view.findViewById(R.id.view_pager_main_listView);
         TextView noRidesTextView = view.findViewById(R.id.view_pager_main_textView);
+
+        Log.d("TAG", "onCreateView3: " + bookedRideUserArrayList.size() + " " + offeredRideUserArrayList.size() + " " + page);
 
         //if array list size is not equal to 0, print array list
         if(bookedRideUserArrayList.size() != 0 && page == 0)
