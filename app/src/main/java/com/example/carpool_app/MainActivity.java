@@ -50,6 +50,8 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        bookedRideUserArrayList.clear();
+        offeredRideUserArrayList.clear();
 
         // Setting auth state listener
         // onAuthStateChanged is called when user logs in / out
@@ -104,9 +106,9 @@ public class MainActivity extends FragmentActivity {
 
                                             if(ride.getUid() != null){
                                                 bookedRideUserArrayList.add(new RideUser(ride, user, doc.getId()));
-                                                Log.d("TAG", "onComplete: " + bookedRideUserArrayList.size());
-                                                bookedCounter -= 1;
+                                                Log.d("TAG", "onComplete14244141: " + bookedRideUserArrayList.size());
                                             }
+                                            bookedCounter -= 1;
                                         }
                                         if(bookedCounter == 0){
                                             Log.d("TAG", "onComplete:321321 ");
@@ -134,6 +136,7 @@ public class MainActivity extends FragmentActivity {
     //db search for offered rides
     private void loadOfferedRides()
     {
+        Log.d("TAG", "onComplete: ");
         Query query = mRidesColRef.whereEqualTo("uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -141,16 +144,19 @@ public class MainActivity extends FragmentActivity {
                 if(task.isSuccessful()){
                     try{
                         for(QueryDocumentSnapshot doc : task.getResult()){
-                        final Ride ride = doc.toObject(Ride.class);
-                        final String rideId = doc.getId();
-                        offeredCounter += 1;
-
+                            Log.d("TAG", "onComplete22: " + doc.exists());
+                            final Ride ride = doc.toObject(Ride.class);
+                            final String rideId = doc.getId();
+                            Log.d("TAG", "onComplete: " + rideId);
+                            offeredCounter += 1;
+                            Log.d("TAG", "onComplete: ");
                             mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                     if(task.isSuccessful()){
                                         DocumentSnapshot doc = task.getResult();
                                         User user = doc.toObject(User.class);
+                                        Log.d("TAG", "onComplete: ");
 
                                         if(user.getFname() != null){
                                             //adds rides to RideUser class
@@ -169,12 +175,15 @@ public class MainActivity extends FragmentActivity {
                                 }
                             });
                         }
+                        if(task.getResult().getDocuments().size() == 0){
+                            initMainLayoutItems();
+                            initMainLayoutButtons();
+                        }
                     }
                     catch (Exception e)
                     {
                         e.printStackTrace();
                     }
-
                 }
             }
         });
@@ -211,6 +220,12 @@ public class MainActivity extends FragmentActivity {
                 startActivity(SetRideIntent);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finishAffinity();
     }
 
     //viewpager for rides
