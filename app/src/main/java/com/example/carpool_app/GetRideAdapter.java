@@ -3,6 +3,7 @@ package com.example.carpool_app;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -135,14 +136,45 @@ public class GetRideAdapter extends BaseAdapter {
                         }
 
                         //when you press book ride in FindRideDetails.java and the data has been added to database
+                        //TODO own layout
                         @Override
                         public void whenDone() {
-                            //
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            final LayoutInflater inflater = LayoutInflater.from(context);
+                            View dialogView = inflater.inflate(R.layout.my_alertdialog, null);
+                            builder.setView(dialogView);
+
+                            Button btnOk = (Button) dialogView.findViewById(R.id.my_alertdialog_buttonOk);
+                            btnOk.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(context, MainActivity.class);
+                                    context.startActivity(intent);
+                                }
+                            });
+                            AlertDialog alertDialog = builder.show();
+                            alertDialog.show();
                         }
 
+                        //if FindRideDetails.java task is not successful
+                        //TODO own layout
                         @Override
                         public void whenFailed() {
-                            //
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            final LayoutInflater inflater = LayoutInflater.from(context);
+                            View dialogView = inflater.inflate(R.layout.my_alertdialog2, null);
+                            builder.setView(dialogView);
+
+                            Button btnOk = (Button) dialogView.findViewById(R.id.my_alertdialog2_buttonOk);
+                            btnOk.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(context, MainActivity.class);
+                                    context.startActivity(intent);
+                                }
+                            });
+                            AlertDialog alertDialog = builder.show();
+                            alertDialog.show();
                         }
                     }, rideUserArrayList, position);
                     findRideDetails.execute();

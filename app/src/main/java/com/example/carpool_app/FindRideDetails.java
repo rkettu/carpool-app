@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -111,7 +112,6 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
         bookRideBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO book ride.
                 if(FirebaseHelper.loggedIn)
                 {
                     bookRideDialog();
@@ -208,19 +208,28 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
     //initializing layout items to alert dialog and give them correct texts.
     private void initDialogLayoutItems(View view, ArrayList<RideUser> rideUserArrayList, int position) {
         userNameDialog = view.findViewById(R.id.rideDetails_userName);
-        userNameDialog.setText(rideUserArrayList.get(position).getUser().getFname() + " " + rideUserArrayList.get(position).getUser().getLname());
+        String userName = rideUserArrayList.get(position).getUser().getFname() + " " + rideUserArrayList.get(position).getUser().getLname();
+        userNameDialog.setText(userName);
         startPointDialog = view.findViewById(R.id.rideDetails_startPoint);
-        startPointDialog.setText("Lähtöpaikka: " + rideUserArrayList.get(position).getRide().getStartAddress());
+        String startPoint = context.getResources().getString(R.string.find_ride_details_startpoint);
+        startPointDialog.setText(startPoint + ": " + rideUserArrayList.get(position).getRide().getStartAddress());
         destinationDialog = view.findViewById(R.id.rideDetails_destination);
-        destinationDialog.setText("Määränpää: " + rideUserArrayList.get(position).getRide().getEndAddress());
+        String destination = context.getResources().getString(R.string.find_rides_details_destination);
+        destinationDialog.setText(destination + ": " + rideUserArrayList.get(position).getRide().getEndAddress());
         leaveTimeDialog = view.findViewById(R.id.rideDetails_leaveTime);
-        leaveTimeDialog.setText("Arvioitu lähtöaika: " + CalendarHelper.getDateTimeString(rideUserArrayList.get(position).getRide().getLeaveTime()));
+        String leaveTime = context.getResources().getString(R.string.find_ride_details_est_time);
+        leaveTimeDialog.setText(leaveTime + ": " + CalendarHelper.getDateTimeString(rideUserArrayList.get(position).getRide().getLeaveTime()));
         durationDialog = view.findViewById(R.id.rideDetails_duration);
-        durationDialog.setText("Arvioitu kesto: " + rideUserArrayList.get(position).getRide().getDuration());
+        String duration = context.getResources().getString(R.string.find_rides_details_est_duration);
+        durationDialog.setText(duration + ": " + rideUserArrayList.get(position).getRide().getDuration());
         priceDialog = view.findViewById(R.id.rideDetails_price);
-        priceDialog.setText("Hinta: " + rideUserArrayList.get(position).getRide().getPrice() * 100 + " euroa 100km kohti");
+        String pricePer100 = String.format("%.2f", rideUserArrayList.get(position).getRide().getPrice() * 100);
+        String price = context.getResources().getString(R.string.find_ride_details_price);
+        String per100 = context.getResources().getString(R.string.find_ride_details_per_100_km);
+        priceDialog.setText(price + ": " + pricePer100 + " " + per100);
         freeSeatsDialog = view.findViewById(R.id.rideDetails_freeSeats);
-        freeSeatsDialog.setText("Vapaita paikkoja: " + rideUserArrayList.get(position).getRide().getFreeSlots());
+        String freeSeat = context.getResources().getString(R.string.find_ride_details_free_seats);
+        freeSeatsDialog.setText(freeSeat + ": " + rideUserArrayList.get(position).getRide().getFreeSlots());
         wayPointsDialog = view.findViewById(R.id.rideDetails_wayPoints);
         Log.d("TAG", "initDialogLayoutItems1: ");
 
