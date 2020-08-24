@@ -109,5 +109,12 @@
     <string name="myalertdialog_moikka_text">Hello</string>
     <string name="main_fragment_tab_offered">Offered rides</string>
     <string name="main_fragment_no_offered_rides">No offered rides</string>
+    <string name="find_ride_details_startpoint">Start point</string>
+    <string name="find_rides_details_destination">Destination</string>
+    <string name="find_ride_details_est_time">Estimated leave time</string>
+    <string name="find_rides_details_est_duration">Estimated duration</string>
+    <string name="find_ride_details_price">Price</string>
+    <string name="find_ride_details_free_seats">Free seats</string>
+    <string name="find_ride_details_per_100_km">euros per 100 kilometers</string>
 
 </resources>

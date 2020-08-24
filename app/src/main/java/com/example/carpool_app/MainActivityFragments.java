@@ -13,6 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MainActivityFragments extends Fragment {
     private static ArrayList<RideUser> bookedRideUserArrayList;
@@ -40,6 +42,23 @@ public class MainActivityFragments extends Fragment {
         bookedRideUserArrayList = (ArrayList<RideUser>) getArguments().getSerializable("bRideUser");
         offeredRideUserArrayList = (ArrayList<RideUser>) getArguments().getSerializable("oRideUser");
         Log.d("TAG", "onCreateView2: " + bookedRideUserArrayList.size() + " " + offeredRideUserArrayList.size() + " " + page);
+
+        Collections.sort(bookedRideUserArrayList, new Comparator<RideUser>() {
+            @Override
+            public int compare(RideUser o1, RideUser o2) {
+                String first = String.valueOf(o1.getRide().getLeaveTime());
+                String second = String.valueOf(o2.getRide().getLeaveTime());
+                return first.compareTo(second);
+            }
+        });
+        Collections.sort(offeredRideUserArrayList, new Comparator<RideUser>() {
+            @Override
+            public int compare(RideUser o1, RideUser o2) {
+                String first = String.valueOf(o1.getRide().getLeaveTime());
+                String second = String.valueOf(o2.getRide().getLeaveTime());
+                return first.compareTo(second);
+            }
+        });
 
         page = (int) getArguments().getInt("curPage");
     }

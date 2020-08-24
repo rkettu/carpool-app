@@ -92,4 +92,11 @@
     <string name="main_fragment_tab_offered">Tarjotut matkat</string>
     <string name="main_fragment_no_booked_rides">Ei varattuja matkoja</string>
     <string name="main_fragment_no_offered_rides">Ei tarjottuja matkoja</string>
+    <string name="find_ride_details_startpoint">Lähtöpiste</string>
+    <string name="find_rides_details_destination">Määränpää</string>
+    <string name="find_ride_details_est_time">Arvioitu lähtöaika</string>
+    <string name="find_rides_details_est_duration">Arvioitu kesto</string>
+    <string name="find_ride_details_price">Hinta</string>
+    <string name="find_ride_details_free_seats">Vapaat paikat</string>
+    <string name="find_ride_details_per_100_km">euroa 100 kilometriä kohti</string>
 </resources>
