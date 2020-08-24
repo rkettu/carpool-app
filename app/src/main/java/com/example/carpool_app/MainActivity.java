@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -17,7 +18,6 @@ import android.view.View;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -27,7 +27,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +39,8 @@ import java.util.List;
 public class MainActivity extends FragmentActivity {
 
     private ViewPager ridesViewPager;
-    private TabLayout ridesHeader;
     private FragmentPagerAdapter fragmentPagerAdapter;
-    private Button getRideBtn, offerRideBtn;
+    private LinearLayout getRideBtn, offerRideBtn;
     private CollectionReference mRidesColRef = FirebaseFirestore.getInstance().collection("rides");
     private CollectionReference mUsersColRef = FirebaseFirestore.getInstance().collection("users");
     private ArrayList<RideUser> bookedRideUserArrayList = new ArrayList<>();
@@ -46,10 +48,26 @@ public class MainActivity extends FragmentActivity {
     private int bookedCounter = 0;
     private int offeredCounter = 0;
 
+    ImageView bookBackground;
+    ImageView offerbackground;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        //findViewById(R.id.main_btnGetRide).setOnClickListener(this);
+        //findViewById(R.id.main_btnOfferRide).setOnClickListener(this);
+
+        //setting up buttons
+        getRideBtn = findViewById(R.id.main_btnGetRide);
+        offerRideBtn = findViewById(R.id.main_btnOfferRide);
+
+        bookBackground = findViewById(R.id.bookBackground);
+        offerbackground = findViewById(R.id.offerBackground);
+        bookBackground.setImageAlpha(128);
+
         bookedRideUserArrayList.clear();
         offeredRideUserArrayList.clear();
 
@@ -80,59 +98,95 @@ public class MainActivity extends FragmentActivity {
         FirebaseAuth.getInstance().addAuthStateListener(als);
     }
 
-    //TODO fix array lists
-    //if user is logged in, do db search from booked trips
-    private void loadBookedRides()
+    public void  AppSettings(View v)
     {
-        mUsersColRef.document(FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    try {
-                        DocumentSnapshot doc = task.getResult();
-                        final User user = doc.toObject(User.class);
-                        bookedCounter = user.getBookedRides().size();
+        ActivitySwitcher.GoToProfileActivity(this, FirebaseHelper.getUid());
+    }
 
-                        Log.d("TAG", "onComplete: " + bookedCounter);
+    public void SelectBookedTrips(View v)
+    {
+        bookBackground.setImageAlpha(255);
+        offerbackground.setImageAlpha(128);
+        ridesViewPager.setCurrentItem(1);
+    }
 
-                        if(user.getBookedRides().size() != 0){
-                            for(int i = 0; i < user.getBookedRides().size(); i++){
-                                mRidesColRef.document(user.getBookedRides().get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if(task.isSuccessful()){
-                                            DocumentSnapshot doc = task.getResult();
-                                            Ride ride = doc.toObject(Ride.class);
+    public void SelectOfferedTrips(View v) {
+        bookBackground.setImageAlpha(128);
+        offerbackground.setImageAlpha(255);
+        ridesViewPager.setCurrentItem(0);
+        /*
+        // Go to log in... for testing purposes
+        Intent i = new Intent(MainActivity.this, LogInActivity.class);
+        startActivity(i);
+         */
+        // Go to profile test
+        //ActivitySwitcher.GoToProfileActivity(getApplicationContext(), FirebaseHelper.getUid());
+    }
 
+    public void SelectGetARide(View v){
+        Intent GetRideIntent = new Intent(MainActivity.this, GetRideActivity.class);
+        startActivity(GetRideIntent);
+    }
+
+    public void SelectOfferARide(View v){
+        Intent SetRideIntent = new Intent(MainActivity.this, SetRideActivity.class);
+        startActivity(SetRideIntent);
+    }
+
+        //TODO fix array lists
+        //if user is logged in, do db search from booked trips
+        private void loadBookedRides()
+        {
+            mUsersColRef.document(FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()){
+                        try {
+                            DocumentSnapshot doc = task.getResult();
+                            final User user = doc.toObject(User.class);
+                            bookedCounter = user.getBookedRides().size();
+
+                            Log.d("TAG", "onComplete: " + bookedCounter);
+
+                            if(user.getBookedRides().size() != 0){
+                                for(int i = 0; i < user.getBookedRides().size(); i++){
+                                    mRidesColRef.document(user.getBookedRides().get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            if(task.isSuccessful()){
+                                                DocumentSnapshot doc = task.getResult();
+                                                Ride ride = doc.toObject(Ride.class);
+
+                                                if(ride.getUid() != null){
+                                                    bookedRideUserArrayList.add(new RideUser(ride, user, doc.getId()));
+                                                    Log.d("TAG", "onComplete: " + bookedRideUserArrayList.size());
+                                                    bookedCounter -= 1;
+                                                }
+                                            }
                                             if(ride.getUid() != null){
                                                 bookedRideUserArrayList.add(new RideUser(ride, user, doc.getId()));
                                                 Log.d("TAG", "onComplete14244141: " + bookedRideUserArrayList.size());
                                             }
                                             bookedCounter -= 1;
                                         }
-                                        if(bookedCounter == 0){
-                                            Log.d("TAG", "onComplete:321321 ");
-                                            loadOfferedRides();
-                                        }
-                                    }
-                                });
+                                    });
+                                }
+                            }
+                            else{
+                                Log.d("TAG", "onComplet213143141451rewe: ");
+                                loadOfferedRides();
                             }
                         }
-                        else{
-                            Log.d("TAG", "onComplet213143141451rewe: ");
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
                             loadOfferedRides();
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                        loadOfferedRides();
-                    }
 
+                    }
                 }
-            }
-        });
-    }
+            });
+        }
 
     //db search for offered rides
     private void loadOfferedRides()
@@ -163,18 +217,25 @@ public class MainActivity extends FragmentActivity {
                                             //adds rides to RideUser class
                                             offeredRideUserArrayList.add(new RideUser(ride, user, rideId));
                                         }
-                                        offeredCounter -= 1;
-                                    }
 
-                                    Log.d("TAG", "onComplete: " + offeredCounter);
-                                    //when done, initializing MainActivity layout elements
-                                    if(offeredCounter == 0){
-                                        Log.d("TAG", "onComple21314521  5125436tyagz<df §1 te: ");
-                                        initMainLayoutItems();
-                                        initMainLayoutButtons();
+                                        Log.d("TAG", "onComplete: " + offeredCounter);
+                                        //when done, initializing MainActivity layout elements
+                                        if(offeredCounter == 0){
+                                            Log.d("TAG", "onComple21314521  5125436tyagz<df §1 te: ");
+                                            initMainLayoutItems();
+                                            //initMainLayoutButtons();
+                                        }
                                     }
-                                }
-                            });
+                                });
+                            }
+                            if(task.getResult().getDocuments().size() == 0){
+                                initMainLayoutItems();
+                                initMainLayoutButtons();
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
                         }
                         if(task.getResult().getDocuments().size() == 0){
                             initMainLayoutItems();
@@ -186,26 +247,20 @@ public class MainActivity extends FragmentActivity {
                         e.printStackTrace();
                     }
                 }
-            }
-        });
-    }
+            });
+        }
 
-    private void initMainLayoutItems() {
+        private void initMainLayoutItems() {
         //setting up viewpager, viewpager header and adapter
         Log.d("TAG", "initMainLayoutItems: ");
         ridesViewPager = findViewById(R.id.main_viewPager);
         fragmentPagerAdapter = new RidesViewPagerAdapter(getSupportFragmentManager());
         ridesViewPager.setAdapter(fragmentPagerAdapter);
-        ridesHeader = findViewById(R.id.main_viewPagerHeader);
-        ridesHeader.setupWithViewPager(ridesViewPager);
 
-        //setting up buttons
-        getRideBtn = findViewById(R.id.main_btnGetRide);
-        offerRideBtn = findViewById(R.id.main_btnOfferRide);
     }
 
-    //buttons on click events
-    private void initMainLayoutButtons() {
+        //buttons on click events
+        /*private void initMainLayoutButtons() {
         getRideBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -221,7 +276,7 @@ public class MainActivity extends FragmentActivity {
                 startActivity(SetRideIntent);
             }
         });
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
@@ -260,20 +315,40 @@ public class MainActivity extends FragmentActivity {
                 case 1:
                     return MainActivityFragments.newInstance(bookedRideUserArrayList, offeredRideUserArrayList, 1);
 
-                default:
-                    return null;
+            @NonNull
+            @Override
+            public Fragment getItem(int position) {
+                /**
+                 * switch case in viewpager to know which data to show.
+                 * case 0 = booked rides.
+                 * case 1 = offered rides.
+                 * The integer is there to tell fragments what to print if the array list size is 0 in
+                 * MainActivityFragments.java
+                 */
+
+                Log.d("TAG", "getItem: " + bookedRideUserArrayList.size() + " " + offeredRideUserArrayList.size());
+
+                switch(position){
+                    case 0:
+                        return MainActivityFragments.newInstance(bookedRideUserArrayList, offeredRideUserArrayList, 0);
+
+                    case 1:
+                        return MainActivityFragments.newInstance(bookedRideUserArrayList, offeredRideUserArrayList, 1);
+
+                    default:
+                        return null;
+                }
+            }
+
+            @Nullable
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return tabTitles[position];
+            }
+
+            @Override
+            public int getCount() {
+                return PAGE_COUNT;
             }
         }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabTitles[position];
-        }
-
-        @Override
-        public int getCount() {
-            return PAGE_COUNT;
-        }
     }
-}

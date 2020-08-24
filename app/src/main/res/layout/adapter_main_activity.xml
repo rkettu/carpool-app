@@ -3,7 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/custom_button3">
+    android:paddingBottom="5dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/custom_button3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="@id/main_guideline_backleft"
+        app:layout_constraintEnd_toEndOf="@id/main_guideline_backright">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/MainAdapter_userPicture"
@@ -127,26 +135,41 @@
         app:layout_constraintLeft_toRightOf="@+id/MainAdapter_userNameTextView"
         />
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/MainAdapter_guideline_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="99dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/MainAdapter_guideline_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.76"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/MainAdapter_guideline_middle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.50" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/MainAdapter_guideline_left"
+        android:id="@+id/main_guideline_backleft"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="99dp" />
+        app:layout_constraintGuide_begin="24dp" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/MainAdapter_guideline_right"
+        android:id="@+id/main_guideline_backright"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.76"/>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/MainAdapter_guideline_middle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.50" />
+        app:layout_constraintGuide_end="24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

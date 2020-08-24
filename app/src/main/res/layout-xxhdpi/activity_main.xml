@@ -40,26 +40,11 @@
         android:background="@drawable/ic_backgroundmain"
         app:layout_constraintBottom_toTopOf="@+id/activitymainCustomButtongroup"/>
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/main_appLogo"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="25dp"
-        android:alpha="100"
-        android:src="@mipmap/ic_launcher"
-        app:civ_border_color="@color/white"
-        app:civ_border_width="2dp"
-        app:layout_constraintEnd_toStartOf="@+id/main_guideline_middle"
-        app:layout_constraintStart_toStartOf="@id/main_guideline_left"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/main_btnSettings"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:onClick="AppSettings"
         android:src="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/main_reviewsText"
@@ -83,9 +68,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:fontFamily="@font/montserrat_medium"
-        android:text="namee_defaul0"
+        android:text="namee_defaul5"
         android:textColor="@color/white"
-        android:textSize="13sp"
+        android:textSize="12sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@id/main_guideline_middle"/>
 
@@ -94,8 +79,8 @@
         style="@android:style/Widget.Holo.RatingBar.Indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:scaleX=".5"
-        android:scaleY=".5"
+        android:scaleX=".45"
+        android:scaleY=".45"
         android:transformPivotX="0dp"
         android:transformPivotY="0dp"
         android:isIndicator="true"
@@ -115,25 +100,40 @@
         android:fontFamily="@font/montserrat_medium"
         android:text="Reviews -10-"
         android:textColor="@color/white"
-        android:textSize="10sp"
+        android:textSize="9sp"
         app:layout_constraintStart_toEndOf="@id/main_guideline_middle"
         app:layout_constraintBottom_toBottomOf="@id/main_btnSettings"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/main_appLogo"
+        android:layout_width="0dp"
+        android:layout_height="105dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="25dp"
+        android:alpha="100"
+        android:src="@mipmap/ic_launcher"
+        app:civ_border_color="@color/white"
+        app:civ_border_width="2dp"
+        app:layout_constraintEnd_toStartOf="@+id/main_guideline_middle"
+        app:layout_constraintStart_toStartOf="@id/main_guideline_left"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <LinearLayout
         android:id="@+id/main_btnGetRide"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/custom_button1"
-        android:onClick="SelectGetARide"
         android:orientation="horizontal"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintTop_toBottomOf="@id/main_appLogo"
         app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
-        app:layout_constraintStart_toStartOf="@+id/main_guideline_middle">
+        app:layout_constraintStart_toStartOf="@+id/main_guideline_middle"
+        android:onClick="SelectGetARide">
 
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:padding="10dp"
             android:src="@drawable/ic_baseline_search_24" />
 
@@ -162,8 +162,8 @@
         android:onClick="SelectOfferARide">
 
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:padding="10dp"
             android:src="@drawable/ic_drive_eta_black_24dp" />
 
@@ -196,8 +196,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main_btnOfferedRides"
-            android:layout_width="180dp"
-            android:layout_height="50dp"
+            android:layout_width="165dp"
+            android:layout_height="45dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:onClick="SelectOfferedTrips">
@@ -226,9 +226,9 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main_btnBookedTrips"
-            android:layout_width="200dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="125dp"
+            android:layout_width="185dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="110dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:onClick="SelectBookedTrips">
