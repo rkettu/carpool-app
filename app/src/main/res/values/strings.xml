@@ -8,6 +8,7 @@
         <item>Hinta (nouseva)</item>
     </string-array>
 
+
     <string name="GetRideSpinnerTitle" translatable="false">Järjestä</string>
 
 
@@ -15,6 +16,8 @@
     <string name="rideReferenceString" translatable="false">rides</string>
 
     <!-- localized strings below -->
+    <string name="main_fragment_no_booked_rides">No booked rides</string>
+    <string name="main_fragment_tab_booked">Booked rides</string>
     <string name="editprofile_first_name_text">First Name</string>
     <string name="editprofile_first_name_hint">Firstname*</string>
     <string name="editprofile_last_name_text">Last Name</string>
@@ -46,6 +49,9 @@
     <string name="login_signup_btn_text">Sign Up</string>
     <string name="login_forgot_pw_text">Forgot your password</string>
     <string name="setride_choose_start_text">Select starting point:</string>
+    <string name="setride_check_start_position">Check starting point</string>
+    <string name="setride_check_destination_position">Check destination point</string>
+    <string name="setride_check_start_and_destination">Check start and destination points</string>
     <string name="setride_startpoint_query_hint">Example: Kaarnatie 5, Oulu</string>
     <string name="setride_waypoints_text">Waypoints</string>
     <string name="setride_waypoint1_hint">Example: Lahti</string>
@@ -53,6 +59,13 @@
     <string name="setride_choose_destination_text">Select destination:</string>
     <string name="setride_destination_query_hint">Example: Mannerheimintie 5, Helsinki</string>
     <string name="setride_get_route_btn_text">Get route</string>
+    <string name="setride_waypoint1_mark_text">Waypoint 1</string>
+    <string name="setride_waypoint2_mark_text">Waypoint 2</string>
+    <string name="setride_search_location">Search location</string>
+    <string name="setride_location_message">You have permanently danied this permission, go to settings to enable this permission</string>
+    <string name="setride_location_button_positive">Go to settings</string>
+    <string name="setride_location_button_negative">Cancel</string>
+
     <string name="setridedetails_ride_info_title">Ride info</string>
     <string name="setridedetails_choose_leavetime_text">Pick leavetime</string>
     <string name="setridedetails_choose_day_hint">Leaveday</string>
@@ -70,6 +83,10 @@
     <string name="setridedetails_example_km_eur_text">Example km: Price 0 eur</string>
     <string name="setridedetails_price_hint">Price:</string>
     <string name="setridedetails_confirm_ride_btn_text">CONFIRM RIDE</string>
+    <string name="setridedetails_distance_example">Example km: </string>
+    <string name="setridedetails_price_example">Price: </string>
+    <string name="setridedetails_km_example"> per kilometer</string>
+
     <string name="signup_fname_hint">Firstname*</string>
     <string name="signup_lname_hint">Lastname*</string>
     <string name="signup_email_hint">Email*</string>
@@ -90,5 +107,7 @@
 
 
     <string name="myalertdialog_moikka_text">Hello</string>
+    <string name="main_fragment_tab_offered">Offered rides</string>
+    <string name="main_fragment_no_offered_rides">No offered rides</string>
 
 </resources>

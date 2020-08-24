@@ -9,6 +9,13 @@ public class GetCoordinatesUtility {
     private String startCity;
     private String destinationCity;
     private String fullAddress;
+    private float wayLat;
+    private float wayLng;
+
+    public GetCoordinatesUtility(float wayLat, float wayLng) {
+        this.wayLat = wayLat;
+        this.wayLng = wayLng;
+    }
 
     public GetCoordinatesUtility(float startLat, float startLng, float destinationLat, float destinationLng)
     {
@@ -29,6 +36,14 @@ public class GetCoordinatesUtility {
         this.fullAddress = address;
     }
 
+
+    public float getWayLat() {
+        return wayLat;
+    }
+
+    public float getWayLng() {
+        return wayLng;
+    }
 
     public String getFullAddress() {
         return fullAddress;

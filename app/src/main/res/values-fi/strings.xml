@@ -41,12 +41,21 @@
     <string name="ridedetailsdialog_book_ride_btn_text">Varaa matka</string>
     <string name="setride_choose_destination_text">Valitse määränpää:</string>
     <string name="setride_choose_start_text">Valitse lähtöpiste:</string>
+    <string name="setride_check_start_position">Tarkista lähtöosoite</string>
+    <string name="setride_check_destination_position">Tarkista määränpää osoite</string>
+    <string name="setride_check_start_and_destination">Tarkista lähtö- ja määränpää osoite</string>
     <string name="setride_destination_query_hint">Esimerkki: Mannerheimintie 5, Helsinki</string>
     <string name="setride_get_route_btn_text">Hae reitti</string>
     <string name="setride_startpoint_query_hint">Esimerkiksi: Kaarnatie 5, Oulu</string>
     <string name="setride_waypoint1_hint">Esimerkiksi: Lahti</string>
     <string name="setride_waypoint2_hint">Esimerkiksi: Tampere</string>
     <string name="setride_waypoints_text">Välietapit</string>
+    <string name="setride_waypoint1_mark_text">Pysähdys 1</string>
+    <string name="setride_waypoint2_mark_text">Pysähdys 2</string>
+    <string name="setride_search_location">Haetaan sijaintia</string>
+    <string name="setride_location_message">Olet kieltänyt sovellusta käyttämästä sijaintia, voit muuttaa sovelluksen oikeuksia asetuksista</string>
+    <string name="setride_location_button_positive">Mene asetuksiin</string>
+    <string name="setride_location_button_negative">Peruuta</string>
     <string name="signup_tos_link">Käyttöehdot täällä</string>
     <string name="signup_tos_checkbox_text">Hyväksyn käyttöehdot.</string>
     <string name="signup_signup_btn_text">Luo tunnukset</string>
@@ -56,6 +65,7 @@
     <string name="signup_lname_hint">Sukunimi*</string>
     <string name="signup_fname_hint">Etunimi*</string>
     <string name="signup_email_hint">Email*</string>
+
     <string name="setridedetails_yes">Kyllä</string>
     <string name="setridedetails_verbal_leavetime_estimate_hint">Sanallinen arvio lähtöajasta. Esimerkiksi: Lähtöaikani on aikavälillä 12-18</string>
     <string name="setridedetails_choose_day_hint">Lähtöpäivä</string>
@@ -73,5 +83,13 @@
     <string name="setridedetails_price_hint">Hinta:</string>
     <string name="setridedetails_ride_info_title">Kyydin tiedot</string>
     <string name="setridedetails_ride_length_text">Kuljettava matka:</string>
+    <string name="setridedetails_distance_example">Esimerkki km: </string>
+    <string name="setridedetails_price_example">Hinta: </string>
+    <string name="setridedetails_km_example"> per kilometri</string>
+
     <string name="myalertdialog_moikka_text">Moikka</string>
+    <string name="main_fragment_tab_booked">Varatut kyydit</string>
+    <string name="main_fragment_tab_offered">Tarjotut matkat</string>
+    <string name="main_fragment_no_booked_rides">Ei varattuja matkoja</string>
+    <string name="main_fragment_no_offered_rides">Ei tarjottuja matkoja</string>
 </resources>

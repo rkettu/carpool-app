@@ -8,6 +8,28 @@
     android:background="@color/white"
     tools:context=".MainActivity">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/main_guideline_middle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/main_guideline_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="24dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/main_guideline_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="24dp" />
+
     <View
         android:id="@+id/view5"
         android:layout_width="match_parent"
@@ -173,15 +195,15 @@
             app:layout_constraintRight_toRightOf="parent"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/main_btnBookedTrips"
+            android:id="@+id/main_btnOfferedRides"
             android:layout_width="140dp"
             android:layout_height="40dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:onClick="SelectBookedTrips">
+            android:onClick="SelectOfferedTrips">
 
             <ImageView
-                android:id="@+id/bookBackground"
+                android:id="@+id/offerBackground"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_mainactivitycustombuttonleft"/>
@@ -203,16 +225,16 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/main_btnOfferedRides"
+            android:id="@+id/main_btnBookedTrips"
             android:layout_width="155dp"
             android:layout_height="40dp"
             android:layout_marginStart="95dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:onClick="SelectOfferedTrips">
+            android:onClick="SelectBookedTrips">
 
             <ImageView
-                android:id="@+id/offerBackground"
+                android:id="@+id/bookBackground"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_mainactivitycustombuttonright"/>
@@ -232,40 +254,16 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ListView
-        android:id="@+id/main_ridesList"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/main_viewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintLeft_toLeftOf="@id/main_guideline_left"
-        app:layout_constraintRight_toRightOf="@id/main_guideline_right"
+        android:layout_marginTop="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/activitymainCustomButtongroup"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/main_guideline_middle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5"
-        />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/main_guideline_left"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="24dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/main_guideline_right"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="24dp" />
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,10 +27,10 @@ public class AppMath {
     {
         try
         {
-            double northernBound = bounds.get("north");
-            double westernBound = bounds.get("west");
-            double southernBound = bounds.get("south");
-            double easternBound = bounds.get("east");
+            double northernBound = (double) bounds.get("north");
+            double westernBound = (double) bounds.get("west");
+            double southernBound = (double) bounds.get("south");
+            double easternBound = (double) bounds.get("east");
 
             //Earth's radius, sphere
             int R = 6378137;

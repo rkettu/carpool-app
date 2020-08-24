@@ -9,15 +9,19 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.audiofx.Equalizer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +36,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -240,25 +246,38 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             strWaypoint1 = waypointEditor1.getQuery().toString();
             strWaypoint2 = waypointEditor2.getQuery().toString();
 
+            //Tarkistaa onko waypoint1 kenttään syötetty osoitetta
             if(strWaypoint1 != null && !strWaypoint1.isEmpty())
             {
                 //Hakee coordinaatit waypointeille
-                GetCoordinatesASync getCoordinatesASync1 = new GetCoordinatesASync(new GetCoordinatesInterface() {
+                GetWaypointCoordinatesASync getWaypointCoordinatesASync = new GetWaypointCoordinatesASync(new GetWaypointCoordinatesInterface() {
                     @Override
-                    public void getCoordinates(GetCoordinatesUtility getCoordinatesUtility1) {
-                        double way1Lat = getCoordinatesUtility1.getStartLat();
-                        double way1Lng = getCoordinatesUtility1.getStartLng();
-                        double way2Lat = getCoordinatesUtility1.getDestinationLat();
-                        double way2Lng = getCoordinatesUtility1.getDestinationLng();
-                        Log.d("mylog", "getCoordinates: " + way1Lat + " " + way1Lng + " " + way2Lat);
+                    public void getWayCoordinates(GetCoordinatesUtility getCoordinatesUtility) {
+                        double way1Lat = getCoordinatesUtility.getWayLat();
+                        double way1Lng = getCoordinatesUtility.getWayLng();
+                        Log.d("mylog", "getCoordinates WAYPOINT1: " + way1Lat + way1Lng);
                         wayPoint1 = new MarkerOptions().position(new LatLng(way1Lat, way1Lng)).title("Pysähdys 1");
-                        wayPoint2 = new MarkerOptions().position(new LatLng(way2Lat, way2Lng)).title("Pysähdys 2");
-
+                        mMap.addMarker(wayPoint1);
                     }
                 }, SetRideActivity.this);
-                getCoordinatesASync1.execute(strWaypoint1, strWaypoint2);
+                getWaypointCoordinatesASync.execute(strWaypoint1);
             }
-
+            //Tarkistaa onko waypoint2 kenttään syötetty osoitetta
+            if(strWaypoint2 != null && !strWaypoint2.isEmpty())
+            {
+                //Hakee coordinaatit waypointeille
+                GetWaypointCoordinatesASync getWaypointCoordinatesASync = new GetWaypointCoordinatesASync(new GetWaypointCoordinatesInterface() {
+                    @Override
+                    public void getWayCoordinates(GetCoordinatesUtility getCoordinatesUtility) {
+                        double way2Lat = getCoordinatesUtility.getWayLat();
+                        double way2Lng = getCoordinatesUtility.getWayLng();
+                        Log.d("mylog", "getCoordinates WAYPOINT1: " + way2Lat + way2Lng);
+                        wayPoint2 = new MarkerOptions().position(new LatLng(way2Lat, way2Lng)).title("Pysähdys 2");
+                        mMap.addMarker(wayPoint2);
+                    }
+                }, SetRideActivity.this);
+                getWaypointCoordinatesASync.execute(strWaypoint2);
+            }
 
             //Hakee täydellisen osoitteen ("kaarnatie 5, 90350 Oulu, Suomi") LÄHTÖPISTE tekstikenttään
             GetFullAddressASync getFullAddressASync = new GetFullAddressASync(new GetFullAddressInterface() {
@@ -267,7 +286,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                     String address = getCoordinatesUtility.getFullAddress();
                     lahtoEditori.setQuery(address,false);
                     if(address == null){
-                        Toast.makeText(SetRideActivity.this, "Tarkista lähtöosoite", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SetRideActivity.this, R.string.setride_check_start_position, Toast.LENGTH_LONG).show();
                     }
                 }
             }, SetRideActivity.this);
@@ -280,7 +299,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                     String address = getCoordinatesUtility.getFullAddress();
                     loppuEditori.setQuery(address,false);
                     if(address == null){
-                        Toast.makeText(SetRideActivity.this, "Tarkista määränpään osoite", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SetRideActivity.this, R.string.setride_check_destination_position, Toast.LENGTH_LONG).show();
                     }
                 }
             }, SetRideActivity.this);
@@ -298,7 +317,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                         stopLat = getCoordinatesUtility.getDestinationLat();
                         stopLng = getCoordinatesUtility.getDestinationLng();
 
-                        Log.d("mylog", "getCoordinates: " + startLat + startLng + stopLat + stopLng);
+                        //Log.d("mylog", "getCoordinates: " + startLat + startLng + stopLat + stopLng);
 
 
                         place1 = new MarkerOptions().position(new LatLng(startLat, startLng)).title("Location 1");
@@ -311,7 +330,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place2.getPosition(),8));
                     }catch (Exception e){
                         //ei toimi
-                        Toast.makeText(SetRideActivity.this, "Tarkista lähtö- ja määränpää osoitteet", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SetRideActivity.this, R.string.setride_check_start_and_destination, Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -364,6 +383,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             {
                 //Location granted
+                Toast.makeText(SetRideActivity.this, R.string.setride_search_location, Toast.LENGTH_LONG).show();
+
                 AsyncTaskGetLocation getLocation = new AsyncTaskGetLocation();
                 getLocation.execute();
             }
@@ -383,7 +404,6 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
             }else{
                 ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
-
                 }
             }
     }
@@ -392,6 +412,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         if(requestCode == LOCATION_REQUEST_CODE){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 //Permission granted
+                Toast.makeText(SetRideActivity.this, R.string.setride_search_location, Toast.LENGTH_LONG).show();
+
                 AsyncTaskGetLocation getLocation = new AsyncTaskGetLocation();
                 getLocation.execute();
 
@@ -400,14 +422,14 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 if(!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
                     //This block here means PERMANENTLY DENIED PERMISSION
                     new AlertDialog.Builder(SetRideActivity.this)
-                            .setMessage("You have permanently danied this permission, go to settings to enable this permission")
-                            .setPositiveButton("Go to settings", new DialogInterface.OnClickListener() {
+                            .setMessage(R.string.setride_location_message)
+                            .setPositiveButton(R.string.setride_location_button_positive, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     gotoApplicationSettings();
                                 }
                             })
-                            .setNegativeButton("Cancel", null)
+                            .setNegativeButton(R.string.setride_location_button_negative, null)
                             .setCancelable(false)
                             .show();
                 } else {
@@ -441,21 +463,25 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         //String parameters = str_origin + "&" + str_dest + 64.080600,%2024.533221" + "&" + mode;
         String parameters = str_origin + "&" + str_dest + "&" + mode;
 
+        Log.d("mylog", "WAYPOINTTI 1: " + wayPoint1);
         if(wayPoint1 != null)
         {
             parameters = str_origin + "&" + str_dest + "&waypoints=via:" + wayPoint1.getPosition().latitude
                     + "," + wayPoint1.getPosition().longitude + "&" + mode;
+            Log.d("mylog", "getUrl: WAY1  ");
         }
         if(wayPoint1 != null & wayPoint2 != null)
         {
             parameters = str_origin + "&" + str_dest + "&waypoints=via:" + wayPoint1.getPosition().latitude
                     + "," + wayPoint1.getPosition().longitude + "|via:" + wayPoint2.getPosition().latitude
                     + "," + wayPoint2.getPosition().longitude + "&" + mode;
+            Log.d("mylog", "getUrl: WAT2 ");
         }
         if(wayPoint2 != null & wayPoint1 == null)
         {
             parameters = str_origin + "&" + str_dest + "&waypoints=via:" + wayPoint2.getPosition().latitude
                     + "," + wayPoint2.getPosition().longitude + "&" + mode;
+            Log.d("mylog", "getUrl: WAY1 ja WAY2 ");
         }
 
         // Output format
@@ -534,30 +560,40 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         private String geoAddress;
         @Override
         protected String doInBackground(Void... voids) {
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(SetRideActivity.this);
-            Task<Location> locationTask = fusedLocationClient.getLastLocation();
-            locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if(location != null){
-                        //we have a location
-                        Log.d("mylog", "LOCATION found: " + location.toString());
-                        geoAddress = geoCoderHelper.fullAddressLocation(location, SetRideActivity.this);
-                        lahtoEditori.setQuery(geoAddress, false);
-                    }else {
-                        Log.d("mylog", "LOCATION was null... ");
 
-                    }
-                }
-            });
+            if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                LocationRequest locationRequest = new LocationRequest();
+                locationRequest.setInterval(10000);
+                locationRequest.setFastestInterval(3000);
+                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-            locationTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d("mylog", "LOCATION onFailure: " + e.getLocalizedMessage());
-                }
-            });
+                LocationServices.getFusedLocationProviderClient(SetRideActivity.this)
+                        .requestLocationUpdates(locationRequest, new LocationCallback(){
 
+                            @Override
+                            public void onLocationResult(LocationResult locationResult) {
+                                super.onLocationResult(locationResult);
+                                LocationServices.getFusedLocationProviderClient(SetRideActivity.this)
+                                        .removeLocationUpdates(this);
+                                if(locationResult != null && locationResult.getLocations().size() > 0){
+                                    int latestLocationIndex = locationResult.getLocations().size() -1;
+                                    double latitude =
+                                            locationResult.getLocations().get(latestLocationIndex).getLatitude();
+                                    double longitude =
+                                            locationResult.getLocations().get(latestLocationIndex).getLongitude();
+                                    Log.d("mylog", "onLocationResult: " + latitude + longitude);
+
+                                    Location location = new Location("provider");
+                                    location.setLatitude(latitude);
+                                    location.setLongitude(longitude);
+
+                                    geoAddress = geoCoderHelper.fullAddressLocation(location, SetRideActivity.this);
+                                    lahtoEditori.setQuery(geoAddress, false);
+                                }
+
+                            }
+                        }, Looper.getMainLooper());
+            }
             return null;
         }
 
