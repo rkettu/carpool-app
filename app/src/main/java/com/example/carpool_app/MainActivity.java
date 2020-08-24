@@ -86,39 +86,46 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
-                    DocumentSnapshot doc = task.getResult();
-                    final User user = doc.toObject(User.class);
-                    bookedCounter = user.getBookedRides().size();
+                    try {
+                        DocumentSnapshot doc = task.getResult();
+                        final User user = doc.toObject(User.class);
+                        bookedCounter = user.getBookedRides().size();
 
-                    Log.d("TAG", "onComplete: " + bookedCounter);
+                        Log.d("TAG", "onComplete: " + bookedCounter);
 
-                    if(user.getBookedRides().size() != 0){
-                        for(int i = 0; i < user.getBookedRides().size(); i++){
-                            mRidesColRef.document(user.getBookedRides().get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if(task.isSuccessful()){
-                                        DocumentSnapshot doc = task.getResult();
-                                        Ride ride = doc.toObject(Ride.class);
+                        if(user.getBookedRides().size() != 0){
+                            for(int i = 0; i < user.getBookedRides().size(); i++){
+                                mRidesColRef.document(user.getBookedRides().get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if(task.isSuccessful()){
+                                            DocumentSnapshot doc = task.getResult();
+                                            Ride ride = doc.toObject(Ride.class);
 
-                                        if(ride.getUid() != null){
-                                            bookedRideUserArrayList.add(new RideUser(ride, user, doc.getId()));
-                                            Log.d("TAG", "onComplete: " + bookedRideUserArrayList.size());
-                                            bookedCounter -= 1;
+                                            if(ride.getUid() != null){
+                                                bookedRideUserArrayList.add(new RideUser(ride, user, doc.getId()));
+                                                Log.d("TAG", "onComplete: " + bookedRideUserArrayList.size());
+                                                bookedCounter -= 1;
+                                            }
+                                        }
+                                        if(bookedCounter == 0){
+                                            Log.d("TAG", "onComplete:321321 ");
+                                            loadOfferedRides();
                                         }
                                     }
-                                    if(bookedCounter == 0){
-                                        Log.d("TAG", "onComplete:321321 ");
-                                        loadOfferedRides();
-                                    }
-                                }
-                            });
+                                });
+                            }
+                        }
+                        else{
+                            Log.d("TAG", "onComplet213143141451rewe: ");
+                            loadOfferedRides();
                         }
                     }
-                    else{
-                        Log.d("TAG", "onComplet213143141451rewe: ");
-                        loadOfferedRides();
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
                     }
+
                 }
             }
         });
@@ -132,35 +139,42 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot doc : task.getResult()){
+                    try{
+                        for(QueryDocumentSnapshot doc : task.getResult()){
                         final Ride ride = doc.toObject(Ride.class);
                         final String rideId = doc.getId();
                         offeredCounter += 1;
 
-                        mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if(task.isSuccessful()){
-                                    DocumentSnapshot doc = task.getResult();
-                                    User user = doc.toObject(User.class);
+                            mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if(task.isSuccessful()){
+                                        DocumentSnapshot doc = task.getResult();
+                                        User user = doc.toObject(User.class);
 
-                                    if(user.getFname() != null){
-                                        //adds rides to RideUser class
-                                        offeredRideUserArrayList.add(new RideUser(ride, user, rideId));
+                                        if(user.getFname() != null){
+                                            //adds rides to RideUser class
+                                            offeredRideUserArrayList.add(new RideUser(ride, user, rideId));
+                                        }
+                                        offeredCounter -= 1;
                                     }
-                                    offeredCounter -= 1;
-                                }
 
-                                Log.d("TAG", "onComplete: " + offeredCounter);
-                                //when done, initializing MainActivity layout elements
-                                if(offeredCounter == 0){
-                                    Log.d("TAG", "onComple21314521  5125436tyagz<df §1 te: ");
-                                    initMainLayoutItems();
-                                    initMainLayoutButtons();
+                                    Log.d("TAG", "onComplete: " + offeredCounter);
+                                    //when done, initializing MainActivity layout elements
+                                    if(offeredCounter == 0){
+                                        Log.d("TAG", "onComple21314521  5125436tyagz<df §1 te: ");
+                                        initMainLayoutItems();
+                                        initMainLayoutButtons();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         });
