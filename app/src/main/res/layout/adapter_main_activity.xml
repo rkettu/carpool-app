@@ -5,25 +5,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/custom_button3">
 
-    <!-- endpoint -->
-    <!--
-    <TextView
-        android:id="@+id/getRideAdapter_destinationTextView"
-        android:textColor="@color/white"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textSize="24dp"
-        android:gravity="center"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/MainAdapter_userPicture"
+        android:layout_width="24sp"
+        android:layout_height="24sp"
+
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginEnd="3dp"
+
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/guideline_middle"
-        app:layout_constraintRight_toLeftOf="@id/guideline_right"
-        android:maxLines="1"
+        app:layout_constraintRight_toRightOf="@+id/MainAdapter_arrow"
+        app:layout_constraintLeft_toLeftOf="@id/MainAdapter_guideline_right"
+        app:layout_constraintBottom_toTopOf="@+id/MainAdapter_userNameTextView"
         />
-            -->
 
     <!-- start point and destination -->
     <TextView
-        android:id="@+id/getRideAdapter_startPointDestinationTextView"
+        android:id="@+id/MainAdapter_startPointDestinationTextView"
         android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -38,34 +37,8 @@
         app:layout_constraintRight_toLeftOf="@id/MainAdapter_guideline_right"
         />
 
-    <!--
     <TextView
-        android:id="@+id/tv3"
-        android:layout_height="0dp"
-        android:layout_width="0dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        />
-    -->
-
-    <!-- free slots
-    <TextView
-        android:id="@+id/tv5"
-        android:textColor="@color/white"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="free slots"
-        android:textSize="16dp"
-        android:gravity="right"
-        app:layout_constraintTop_toBottomOf="@+id/tv3"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/guideline_4"
-        />
--->
-    <TextView
-        android:id="@+id/getRideAdapter_timeTextView"
+        android:id="@+id/MainAdapter_timeTextView"
         android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -75,62 +48,30 @@
         android:layout_marginBottom="3dp"
         android:layout_marginTop="3dp"
         android:layout_marginStart="3dp"
-        app:layout_constraintLeft_toRightOf="@id/getRideAdapter_timeImageView"
-        app:layout_constraintBottom_toTopOf="@+id/getRideAdapter_priceTextView"
+        app:layout_constraintLeft_toRightOf="@id/MainAdapter_timeImageView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toLeftOf="@id/MainAdapter_guideline_left"
-        app:layout_constraintTop_toBottomOf="@id/getRideAdapter_dateTextView"
+        app:layout_constraintTop_toBottomOf="@id/MainAdapter_dateTextView"
         />
 
     <ImageView
         android:background="@drawable/ic_clock_time__24dp"
         android:backgroundTint="#FFB3B3B3"
-        android:id="@+id/getRideAdapter_timeImageView"
+        android:id="@+id/MainAdapter_timeImageView"
         android:layout_width="18dp"
         android:layout_height="18dp"
         android:layout_marginBottom="3dp"
         android:layout_marginTop="3dp"
         android:layout_marginStart="3dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/getRideAdapter_priceTextView"
-        app:layout_constraintRight_toLeftOf="@id/getRideAdapter_timeTextView"
-        app:layout_constraintTop_toBottomOf="@id/getRideAdapter_dateTextView"
-        />
-
-    <TextView
-        android:id="@+id/getRideAdapter_priceTextView"
-        android:textColor="@color/black"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textSize="14dp"
-        android:maxLines="1"
-        android:gravity="left"
-        android:layout_marginBottom="3dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginStart="3dp"
-        app:layout_constraintLeft_toRightOf="@id/getRideAdapter_infoImageView"
+        app:layout_constraintRight_toLeftOf="@id/MainAdapter_timeTextView"
+        app:layout_constraintTop_toBottomOf="@id/MainAdapter_dateTextView"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/MainAdapter_guideline_left"
-        app:layout_constraintTop_toBottomOf="@id/getRideAdapter_timeTextView"
-        />
-
-    <ImageView
-        android:id="@+id/getRideAdapter_infoImageView"
-        android:background="@drawable/ic_info_outline_black_24dp"
-        android:backgroundTint="#B3B3B3"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:layout_marginStart="3dp"
-        android:layout_marginBottom="3dp"
-        android:layout_marginTop="3dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/getRideAdapter_priceTextView"
-        app:layout_constraintTop_toBottomOf="@id/getRideAdapter_timeTextView"
         />
 
 
     <TextView
-        android:id="@+id/getRideAdapter_dateTextView"
+        android:id="@+id/MainAdapter_dateTextView"
         android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -142,12 +83,12 @@
         android:layout_marginStart="3dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toLeftOf="@id/MainAdapter_guideline_left"
-        app:layout_constraintLeft_toRightOf="@id/getRideAdapter_dateImageView"
-        app:layout_constraintBottom_toTopOf="@id/getRideAdapter_timeTextView"
+        app:layout_constraintLeft_toRightOf="@id/MainAdapter_dateImageView"
+        app:layout_constraintBottom_toTopOf="@id/MainAdapter_timeTextView"
         />
 
     <ImageView
-        android:id="@+id/getRideAdapter_dateImageView"
+        android:id="@+id/MainAdapter_dateImageView"
         android:background="@drawable/ic_calendar_24dp"
         android:backgroundTint="#B3B3B3"
         android:layout_width="18dp"
@@ -156,34 +97,34 @@
         android:layout_marginBottom="3dp"
         android:layout_marginStart="3dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/getRideAdapter_dateTextView"
+        app:layout_constraintRight_toLeftOf="@id/MainAdapter_dateTextView"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/getRideAdapter_timeTextView"
+        app:layout_constraintBottom_toTopOf="@id/MainAdapter_timeTextView"
         />
 
     <!-- user -->
     <TextView
-        android:id="@+id/getRideAdapter_userNameTextView"
+        android:id="@+id/MainAdapter_userNameTextView"
         android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="14dp"
         android:gravity="right"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/getRideAdapter_arrow"
+        app:layout_constraintTop_toBottomOf="@+id/MainAdapter_userPicture"
+        app:layout_constraintRight_toLeftOf="@+id/MainAdapter_arrow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/MainAdapter_guideline_right"
         />
 
     <ImageView
-        android:id="@+id/getRideAdapter_arrow"
+        android:id="@+id/MainAdapter_arrow"
         android:background="@drawable/ic_keyboard_arrow_right_black_24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/getRideAdapter_userNameTextView"
+        app:layout_constraintLeft_toRightOf="@+id/MainAdapter_userNameTextView"
         />
 
 
@@ -192,7 +133,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.24"/>
+        app:layout_constraintGuide_begin="99dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/MainAdapter_guideline_right"

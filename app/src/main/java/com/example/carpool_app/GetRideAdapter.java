@@ -30,7 +30,7 @@ public class GetRideAdapter extends BaseAdapter {
         this.rideUserArrayList = rideUserArrayList;
     }
 
-    public static class ViewHolder
+    public static class ViewHolderGetRideAdapter
     {
         TextView startPointDestinationTextView, rideProviderTextView, dateTextView, timeTextView, priceTextView;
         ImageView infoImageView, dateImageView, timeImageView;
@@ -55,10 +55,10 @@ public class GetRideAdapter extends BaseAdapter {
     public View getView(final int position, View view, ViewGroup parent)
     {
         //initializing list item elements
-        final ViewHolder viewHolder;
+        final ViewHolderGetRideAdapter viewHolder;
         if(view == null)
         {
-            viewHolder = new ViewHolder();
+            viewHolder = new ViewHolderGetRideAdapter();
             view = inflater.from(parent.getContext()).inflate(R.layout.adapter_get_ride, parent, false);
             viewHolder.startPointDestinationTextView = view.findViewById(R.id.getRideAdapter_startPointDestinationTextView);
             viewHolder.priceTextView = view.findViewById(R.id.getRideAdapter_priceTextView);
@@ -72,7 +72,7 @@ public class GetRideAdapter extends BaseAdapter {
         }
         else
         {
-            viewHolder = (ViewHolder) view.getTag();
+            viewHolder = (ViewHolderGetRideAdapter) view.getTag();
         }
 
         //uses calendarHelper class to change time in millis to date time

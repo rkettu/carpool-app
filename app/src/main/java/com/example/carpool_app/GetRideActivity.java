@@ -2,6 +2,7 @@ package com.example.carpool_app;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -12,6 +13,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -190,7 +192,6 @@ public class GetRideActivity extends AppCompatActivity {
                                             @Override
                                             public void FindRidesResult(ArrayList<RideUser> result) {
                                                 rideUserArrayList.addAll(result);
-                                                Log.d(TAG, "FindRidesResult: " + rideUserArrayList.get(0).getRideId());
                                                 //if else to check does the array list contains any rides
                                                 if(rideUserArrayList.size() != 0)
                                                 {

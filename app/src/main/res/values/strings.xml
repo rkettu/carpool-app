@@ -8,6 +8,7 @@
         <item>Hinta (nouseva)</item>
     </string-array>
 
+
     <string name="GetRideSpinnerTitle" translatable="false">Järjestä</string>
 
 
@@ -15,6 +16,8 @@
     <string name="rideReferenceString" translatable="false">rides</string>
 
     <!-- localized strings below -->
+    <string name="main_fragment_no_booked_rides">No booked rides</string>
+    <string name="main_fragment_tab_booked">Booked rides</string>
     <string name="editprofile_first_name_text">First Name</string>
     <string name="editprofile_first_name_hint">Firstname*</string>
     <string name="editprofile_last_name_text">Last Name</string>
@@ -104,5 +107,7 @@
 
 
     <string name="myalertdialog_moikka_text">Hello</string>
+    <string name="main_fragment_tab_offered">Offered rides</string>
+    <string name="main_fragment_no_offered_rides">No offered rides</string>
 
 </resources>
