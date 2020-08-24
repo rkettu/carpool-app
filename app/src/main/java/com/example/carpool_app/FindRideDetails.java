@@ -34,6 +34,8 @@ import java.util.ArrayList;
 
 interface RideDetailsInterface{
     void showDialog(AlertDialog alertDialog);
+    void whenDone();
+    void whenFailed();
 }
 
 public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
@@ -139,9 +141,6 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 bookTrip(rideUserArrayList.get(position).getRideId(), FirebaseAuth.getInstance().getCurrentUser().getUid());
-                Intent intent = new Intent(context, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
             }
         });
         AlertDialog bookRideDialog = bookRideBuilder.show();
@@ -193,6 +192,10 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
                                         user.addToBookedRides(rideId);
                                     }
                                     usersDocRef.set(user);
+                                    rideDetailsInterface.whenDone();
+                                }
+                                else{
+                                    rideDetailsInterface.whenFailed();
                                 }
                             }
                         });

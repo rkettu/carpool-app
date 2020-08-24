@@ -2,11 +2,13 @@ package com.example.carpool_app;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -130,6 +132,17 @@ public class GetRideAdapter extends BaseAdapter {
                         @Override
                         public void showDialog(AlertDialog alertDialog) {
                             constant.dismissLoadingDialog();
+                        }
+
+                        //when you press book ride in FindRideDetails.java and the data has been added to database
+                        @Override
+                        public void whenDone() {
+                            //
+                        }
+
+                        @Override
+                        public void whenFailed() {
+                            //
                         }
                     }, rideUserArrayList, position);
                     findRideDetails.execute();

@@ -139,8 +139,9 @@ class FindRides
                         pickUpDistance = (long) rideDoc.get("pickUpDistance");
                         Log.d(TAG, "onComplete: ennen points");
                         points = (ArrayList<HashMap<String, Double>>) rideDoc.get("points");
-
-                        //TODO bounds
+                        if((long) rideDoc.get("freeSlots") >= 1){
+                            Log.d(TAG, "onComplete: freesltos");
+                            Log.d(TAG, "onComplete: bounds");
                             //algorithm (in appMath class)
                             Log.d(TAG, "onComplete: ollaan ennen appmath if lausetta");
                             if(AppMath.isRouteInRange(pickUpDistance, startLat, startLng, destinationLat, destinationLng, points))
@@ -202,7 +203,7 @@ class FindRides
                                     //if ride doesn't have uid
                                 }
                             }
-
+                        }
                     }
                     catch (Exception e)
                     {

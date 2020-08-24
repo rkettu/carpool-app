@@ -48,10 +48,6 @@
             android:text="@string/myalertdialog_ok_btn_text"
             android:textColor="@color/colorPrimary" />
 
-        <Button
-            android:text="@string/myalertdialog_moikka_text"
-            />
-
     </LinearLayout>
 
 </LinearLayout>
