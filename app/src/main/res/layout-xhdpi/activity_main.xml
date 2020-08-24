@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:fontFamily="@font/montserrat_medium"
-        android:text="namee_defaul6"
+        android:text="namee_defaul4"
         android:textColor="@color/white"
         android:textSize="13sp"
         app:layout_constraintTop_toTopOf="parent"
@@ -85,7 +85,7 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/main_appLogo"
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="110dp"
         android:layout_marginTop="25dp"
         android:layout_marginEnd="25dp"
         android:alpha="100"
@@ -111,7 +111,7 @@
 
         <ImageView
             android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:padding="10dp"
             android:src="@drawable/ic_baseline_search_24" />
 
@@ -141,7 +141,7 @@
 
         <ImageView
             android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:padding="10dp"
             android:src="@drawable/ic_drive_eta_black_24dp" />
 
@@ -166,7 +166,7 @@
         <ImageView
             android:id="@+id/customButtonsLine"
             android:layout_width="0dp"
-            android:layout_height="12dp"
+            android:layout_height="13dp"
             android:src="@drawable/ic_mainactivitycustombuttonline"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -174,8 +174,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main_btnBookedTrips"
-            android:layout_width="180dp"
-            android:layout_height="50dp"
+            android:layout_width="150dp"
+            android:layout_height="45dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:onClick="SelectBookedTrips">
@@ -204,9 +204,9 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main_btnOfferedRides"
-            android:layout_width="200dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="125dp"
+            android:layout_width="160dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="100dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:onClick="SelectOfferedTrips">

@@ -38,26 +38,25 @@ public class SetRideDataParser {
 
                 // Getting bounds
                 JSONObject jBounds = ((JSONObject)jRoutes.get(i)).getJSONObject("bounds");
-                HashMap<String, String> bounds = new HashMap<>();
-
+                HashMap<String, Double> bounds = new HashMap<>();
                 // Bounds are the furthest latitude (east,west) and longitude (north,south) points plus added 5 km (amount may be changed..)
-                double maxLat = Double.parseDouble(((JSONObject)jBounds.get("northeast")).getString("lat")) + AppMath.getDeltaLatitude(Constant.BoundsInKilometers);
-                double minLat = Double.parseDouble(((JSONObject)jBounds.get("southwest")).getString("lat")) - AppMath.getDeltaLatitude(Constant.BoundsInKilometers);
-                double maxLng = Double.parseDouble(((JSONObject)jBounds.get("northeast")).getString("lng")) + AppMath.getDeltaLongitude(Constant.BoundsInKilometers, minLat);
-                double minLng = Double.parseDouble(((JSONObject)jBounds.get("southwest")).getString("lng")) - AppMath.getDeltaLongitude(Constant.BoundsInKilometers, maxLat);
+                double maxLat = ((JSONObject)jBounds.get("northeast")).getDouble("lat") + AppMath.getDeltaLatitude(Constant.BoundsInKilometers);
+                double minLat = ((JSONObject)jBounds.get("southwest")).getDouble("lat") - AppMath.getDeltaLatitude(Constant.BoundsInKilometers);
+                double maxLng = ((JSONObject)jBounds.get("northeast")).getDouble("lng") + AppMath.getDeltaLongitude(Constant.BoundsInKilometers, minLat);
+                double minLng = ((JSONObject)jBounds.get("southwest")).getDouble("lng") - AppMath.getDeltaLongitude(Constant.BoundsInKilometers, maxLat);
 
-                bounds.put("north", String.valueOf(maxLat));
-                bounds.put("east", String.valueOf(minLng));
-                bounds.put("south", String.valueOf(minLat));
-                bounds.put("west", String.valueOf(maxLng));
+                bounds.put("north", maxLat);
+                bounds.put("east", minLng);
+                bounds.put("south", minLat);
+                bounds.put("west", maxLng);
 
                 Log.d("LATLNG: ", "Lats: " + minLat + " " + maxLat + " Longs: " + minLng + " " + maxLng);
 
                 // Getting legs
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
                 Log.d("mytag", "parse: " + jLegs);
-                List<HashMap<String,String>> path = new ArrayList<>();  // Holds all coordinate points of this route
-                List<HashMap<String, String>> myList = new ArrayList<>();   // Holds every 100th coordinate point of this route
+                List<HashMap<String, Double>> path = new ArrayList<>();  // Holds all coordinate points of this route
+                List<HashMap<String, Double>> myList = new ArrayList<>();   // Holds every 100th coordinate point of this route
                 /** Traversing all legs */
                 for (int j = 0; j < jLegs.length(); j++) {
                     jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
@@ -79,9 +78,9 @@ public class SetRideDataParser {
 
                         /** Traversing all points */
                         for (int l = 0; l < list.size(); l++) {
-                            HashMap<String, String> hm = new HashMap<>();
-                            hm.put("lat", Double.toString((list.get(l)).latitude));
-                            hm.put("lng", Double.toString((list.get(l)).longitude));
+                            HashMap<String, Double> hm = new HashMap<>();
+                            hm.put("lat", (list.get(l)).latitude);
+                            hm.put("lng", (list.get(l)).longitude);
                             path.add(hm);
                             if (myIndex % 100 == 0) {
                                 myList.add(hm);

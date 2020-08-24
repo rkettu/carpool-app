@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -151,9 +152,9 @@ public class GetRideActivity extends AppCompatActivity {
                     getRideAdapter.notifyDataSetChanged();
 
                     //takes start and end date, change them to millis so we can search rides between those times
-                    calendar.set(startDateYear, startDateMonth-1, startDateDay, startTimeHour, startTimeMinute);
+                    calendar.set(startDateYear, startDateMonth, startDateDay, startTimeHour, startTimeMinute);
                     date1 = calendar.getTimeInMillis();
-                    calendar.set(endDateYear, endDateMonth-1, endDateDay, endTimeHour, endTimeMinute);
+                    calendar.set(endDateYear, endDateMonth, endDateDay, endTimeHour, endTimeMinute);
                     date2 = calendar.getTimeInMillis();
 
                     //if end time is bigger or equal to start time
@@ -189,6 +190,7 @@ public class GetRideActivity extends AppCompatActivity {
                                             @Override
                                             public void FindRidesResult(ArrayList<RideUser> result) {
                                                 rideUserArrayList.addAll(result);
+                                                Log.d(TAG, "FindRidesResult: " + rideUserArrayList.get(0).getRideId());
                                                 //if else to check does the array list contains any rides
                                                 if(rideUserArrayList.size() != 0)
                                                 {

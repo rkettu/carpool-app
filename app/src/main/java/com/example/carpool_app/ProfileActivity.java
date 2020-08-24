@@ -31,7 +31,7 @@ public class ProfileActivity extends AppCompatActivity {
         profileEmailTextView = findViewById(R.id.profileEmailText);
         profilePhoNumTextView= findViewById(R.id.profilePhoNumText);
         profileBioTextView = findViewById(R.id.profileBioText);
-        profileRatingTextView = findViewById(R.id.profileRatingText);
+        //profileRatingTextView = findViewById(R.id.profileRatingText);
         rating = findViewById(R.id.profile_ratingBar);
 
         Intent i = getIntent();

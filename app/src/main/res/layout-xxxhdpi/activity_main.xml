@@ -166,7 +166,7 @@
         <ImageView
             android:id="@+id/customButtonsLine"
             android:layout_width="0dp"
-            android:layout_height="12dp"
+            android:layout_height="15dp"
             android:src="@drawable/ic_mainactivitycustombuttonline"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -174,8 +174,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main_btnBookedTrips"
-            android:layout_width="180dp"
-            android:layout_height="50dp"
+            android:layout_width="174dp"
+            android:layout_height="51dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:onClick="SelectBookedTrips">
@@ -204,8 +204,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main_btnOfferedRides"
-            android:layout_width="200dp"
-            android:layout_height="50dp"
+            android:layout_width="194dp"
+            android:layout_height="51dp"
             android:layout_marginStart="125dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"

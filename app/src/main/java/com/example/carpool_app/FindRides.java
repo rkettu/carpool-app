@@ -34,9 +34,9 @@ class FindRides
     private CollectionReference rideReference = FirebaseFirestore.getInstance().collection("rides");
     private CollectionReference userReference = FirebaseFirestore.getInstance().collection("users");
     private ArrayList<RideUser> rideUserArrayList = new ArrayList<>();
-    private List<HashMap<String, String>> points;
+    private List<HashMap<String, Double>> points;
     private double pickUpDistance;
-    private HashMap<String, String> bounds;
+    private HashMap<String, Double> bounds;
     private static final String TAG = "FindRides";
     private static final int queryLimit = 100;
     private int counter = 0;
@@ -85,6 +85,7 @@ class FindRides
     //function called when using the db search
     void findRides()
     {
+        Log.d(TAG, "onComplete: latlng: " + date1 + " " + date2 + " " +startLat + " " + startLng + " " + destinationLat + " " + destinationLng);
         //first it will go to else condition to get the first query.
         //the first query will get data to lastVisible and after that
         //program will use getNextQuery, where we take next queryLimit much
@@ -95,6 +96,7 @@ class FindRides
         else {
             search(getFirstQuery());
         }
+
     }
 
     //the first query
@@ -124,18 +126,21 @@ class FindRides
         public void onComplete(@NonNull Task<QuerySnapshot> task) {
             if(task.isSuccessful())
             {
+                Log.d(TAG, "onComplete: " + task.isSuccessful() + task.getResult());
                 //if the task is successful, do forEach to every result
-                for(QueryDocumentSnapshot rideDoc : task.getResult())
+                for(final QueryDocumentSnapshot rideDoc : task.getResult())
                 {
+                    Log.d(TAG, "onComplete: " + task.getResult());
                     try
                     {
-                        bounds = (HashMap<String, String>) rideDoc.get("bounds");
+                        Log.d(TAG, "onComplete: ");
+                        //takes pickUpDistance and points from rides so we can use our algorithm to filter matching routes
+                        bounds = (HashMap<String, Double>) rideDoc.get("bounds");
                         pickUpDistance = (long) rideDoc.get("pickUpDistance");
-                        if(AppMath.areCoordinatesWithinBounds(startLat, startLng, destinationLat, destinationLng, bounds, pickUpDistance))
-                        {
-                            //takes pickUpDistance and points from rides so we can use our algorithm to filter matching routes
-                            points = (List<HashMap<String, String>>) rideDoc.get("points");
+                        Log.d(TAG, "onComplete: ennen points");
+                        points = (ArrayList<HashMap<String, Double>>) rideDoc.get("points");
 
+                        //TODO bounds
                             //algorithm (in appMath class)
                             Log.d(TAG, "onComplete: ollaan ennen appmath if lausetta");
                             if(AppMath.isRouteInRange(pickUpDistance, startLat, startLng, destinationLat, destinationLng, points))
@@ -146,6 +151,8 @@ class FindRides
                                     //places rideDoc (QueryDocumentSnapshot) object into Ride class. foundRide changes from false to true
                                     //and counter add one for one found ride.
                                     final Ride ride = rideDoc.toObject(Ride.class);
+                                    final String rideId = rideDoc.getId();
+                                    Log.d(TAG, "onComplete: " + rideId);
                                     foundRide = true;
                                     counter += 1;
 
@@ -163,7 +170,7 @@ class FindRides
                                                     if(user.getFname() != null)
                                                     {
                                                         //if there is first name in user object, add the ride and user into list.
-                                                        rideUserArrayList.add(new RideUser(ride, user));
+                                                        rideUserArrayList.add(new RideUser(ride, user, rideId));
                                                         Log.d(TAG, "onComplete: " + ride.getLeaveTime() + " " + user.getFname() + " " + ride.getDuration());
                                                     }
                                                 }
@@ -189,16 +196,13 @@ class FindRides
                                         }
                                     });
                                 }
-                                else if(rideDoc.get("uid") == FirebaseHelper.getUid())
-                                {
-                                    //if ride is current users ride
-                                }
+                                //TODO if the user is same
                                 else
                                 {
                                     //if ride doesn't have uid
                                 }
                             }
-                        }
+
                     }
                     catch (Exception e)
                     {
@@ -216,6 +220,7 @@ class FindRides
         @Override
         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
             Log.d(TAG, "queryDocumentSnapshot size in onSuccess: " + queryDocumentSnapshots.size());
+            Log.d(TAG, "onSuccess: " + queryDocumentSnapshots.getQuery() + " " + queryDocumentSnapshots.getDocuments());
             //query size is 0 if there is no more rides in database.
             if(queryDocumentSnapshots.size() == 0)
             {
@@ -247,6 +252,7 @@ class FindRides
             }
         });
     }
+
 }
 
 
@@ -301,8 +307,6 @@ class FindRideDone extends AsyncTask<Void, Void, Boolean>{
             if(findRidesInterface != null)
             {
                 findRidesInterface.FindRidesResult(rideUserArrayList);
-
-
             }
         }
     }

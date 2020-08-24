@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- THIS DOES NOT WORK LIKE THIS ANYMORE IN CURRENT STUDIO VERSION!!! -->
+
     <string name="getride_searchbtn_textsize">16sp</string>
 </resources>

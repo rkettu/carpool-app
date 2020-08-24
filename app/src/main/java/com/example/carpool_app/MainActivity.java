@@ -64,7 +64,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         FirebaseAuth.getInstance().addAuthStateListener(als);
     }
 
-
+    public void  AppSettings(View v)
+    {
+        ActivitySwitcher.GoToProfileActivity(this, FirebaseHelper.getUid());
+    }
 
     public void SelectBookedTrips(View v)
     {
