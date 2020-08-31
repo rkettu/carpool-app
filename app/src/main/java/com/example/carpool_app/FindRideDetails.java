@@ -1,24 +1,16 @@
 package com.example.carpool_app;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -33,29 +25,48 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Interface uses 3 different functions
+ * showDialog(AlertDialog alertDialog) = is for cancelling progress dialog
+ * whenDone() = is called when booking is successful
+ * whenFailed() = is called when error occur in booking
+ */
+
 interface RideDetailsInterface{
     void showDialog(AlertDialog alertDialog);
     void whenDone();
     void whenFailed();
 }
 
+/**
+ * Async is used for fetching image in background
+ * The dialog building happens in pre execute and the dialog is showing in post execute
+ *
+ * if you press book ride button and confirm it, it will execute the BookTrip() function
+ * for database push
+ */
+
+
+//TODO activityId layout initialization
 public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
 
-    private TextView startPointDialog, destinationDialog, leaveTimeDialog, durationDialog, priceDialog, freeSeatsDialog, wayPointsDialog, userNameDialog;
+    private TextView startPointDialog, destinationDialog, leaveTimeDialog, durationDialog, priceDialog, freeSeatsDialog, wayPointsDialog, userNameDialog, distanceDialog, petsDialog;
     private Button bookRideBtn;
     private ImageView profilePicture, closeDialogBtn;
     private Context context;
     private RideDetailsInterface rideDetailsInterface;
     private ArrayList<RideUser> rideUserArrayList;
     private int position;
+    private int activityId;
     private AlertDialog.Builder builder;
 
-    public FindRideDetails(Context context, RideDetailsInterface rideDetailsInterface, ArrayList<RideUser> rideUserArrayList, int position)
+    public FindRideDetails(Context context, RideDetailsInterface rideDetailsInterface, ArrayList<RideUser> rideUserArrayList, int position, int activityId)
     {
         this.context = context;
         this.rideDetailsInterface = rideDetailsInterface;
         this.rideUserArrayList = rideUserArrayList;
         this.position = position;
+        this.activityId = activityId;
     }
 
     @Override
@@ -100,7 +111,7 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
         final AlertDialog alertDialog = builder.show();
         //set profile picture by using bitmap.
         profilePicture.setImageBitmap(bitmap);
-        Log.d("TAG", "onPostExecute: " + rideUserArrayList.get(position).getRideId());
+        Log.d("TAG", "onPostE32424xecute: " + rideUserArrayList.get(position).getRideId());
         //adding listener to back arrow
         closeDialogBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,19 +120,31 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
             }
         });
 
-        bookRideBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(FirebaseHelper.loggedIn)
-                {
-                    bookRideDialog();
+        if(activityId != 200){
+            bookRideBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(FirebaseHelper.loggedIn)
+                    {
+                        bookRideDialog();
+                    }
+                    else
+                    {
+                        FirebaseHelper.GoToLogin(context);
+                    }
                 }
-                else
-                {
-                    FirebaseHelper.GoToLogin(context);
+            });
+        }
+        else{
+            bookRideBtn.setText("Placeholder");
+            bookRideBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO cancel ride
                 }
-            }
-        });
+            });
+        }
+
 
         //show the dialog
         alertDialog.show();
@@ -222,6 +245,9 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
         durationDialog = view.findViewById(R.id.rideDetails_duration);
         String duration = context.getResources().getString(R.string.find_rides_details_est_duration);
         durationDialog.setText(duration + ": " + rideUserArrayList.get(position).getRide().getDuration());
+        distanceDialog = view.findViewById(R.id.rideDetails_distance);
+        String distance = context.getResources().getString(R.string.find_ride_details_distance);
+        distanceDialog.setText(distance + ": " + rideUserArrayList.get(position).getRide().getDistance());
         priceDialog = view.findViewById(R.id.rideDetails_price);
         String pricePer100 = String.format("%.2f", rideUserArrayList.get(position).getRide().getPrice() * 100);
         String price = context.getResources().getString(R.string.find_ride_details_price);
@@ -230,6 +256,13 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
         freeSeatsDialog = view.findViewById(R.id.rideDetails_freeSeats);
         String freeSeat = context.getResources().getString(R.string.find_ride_details_free_seats);
         freeSeatsDialog.setText(freeSeat + ": " + rideUserArrayList.get(position).getRide().getFreeSlots());
+        petsDialog = view.findViewById(R.id.rideDetails_pets);
+        if(rideUserArrayList.get(position).getRide().getPets()){
+            petsDialog.setText(context.getResources().getString(R.string.find_ride_details_pet_true));
+        }
+        else{
+            petsDialog.setText(context.getResources().getString(R.string.find_ride_details_pet_false));
+        }
         wayPointsDialog = view.findViewById(R.id.rideDetails_wayPoints);
         Log.d("TAG", "initDialogLayoutItems1: ");
 

@@ -99,4 +99,7 @@
     <string name="find_ride_details_price">Hinta</string>
     <string name="find_ride_details_free_seats">Vapaat paikat</string>
     <string name="find_ride_details_per_100_km">euroa 100 kilometriä kohti</string>
+    <string name="find_ride_details_distance">Matkan pituus</string>
+    <string name="find_ride_details_pet_false">Ei lemmikkejä</string>
+    <string name="find_ride_details_pet_true">Lemmikit sallittu</string>
 </resources>

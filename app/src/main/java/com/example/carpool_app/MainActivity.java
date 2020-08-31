@@ -232,6 +232,7 @@ public class MainActivity extends FragmentActivity {
         ridesViewPager = findViewById(R.id.main_viewPager);
         fragmentPagerAdapter = new RidesViewPagerAdapter(getSupportFragmentManager());
         ridesViewPager.setAdapter(fragmentPagerAdapter);
+        //page change listener is for header layout background color change
         ridesViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -258,6 +259,7 @@ public class MainActivity extends FragmentActivity {
         });
     }
 
+    //Exits application when pressed back
     @Override
     public void onBackPressed() {
         super.onBackPressed();

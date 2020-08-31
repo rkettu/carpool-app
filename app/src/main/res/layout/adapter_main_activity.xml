@@ -9,16 +9,17 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/custom_button3"
+        android:layout_marginTop="4dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="@id/main_guideline_backleft"
         app:layout_constraintEnd_toEndOf="@id/main_guideline_backright">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/MainAdapter_userPicture"
-        android:layout_width="24sp"
-        android:layout_height="24sp"
+        android:layout_width="36sp"
+        android:layout_height="36dp"
 
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="6dp"
         android:layout_marginBottom="3dp"
         android:layout_marginEnd="3dp"
 
@@ -31,10 +32,11 @@
     <!-- start point and destination -->
     <TextView
         android:id="@+id/MainAdapter_startPointDestinationTextView"
-        android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="24dp"
+        android:textSize="20dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:textColor="@color/green"
         android:layout_marginTop="14dp"
         android:layout_marginBottom="14dp"
         android:gravity="center"
@@ -47,10 +49,11 @@
 
     <TextView
         android:id="@+id/MainAdapter_timeTextView"
-        android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="14dp"
+        android:textSize="12dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:textColor="@color/green"
         android:maxLines="1"
         android:gravity="left"
         android:layout_marginBottom="3dp"
@@ -80,10 +83,11 @@
 
     <TextView
         android:id="@+id/MainAdapter_dateTextView"
-        android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="14dp"
+        android:textSize="12dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:textColor="@color/green"
         android:gravity="left"
         android:maxLines="1"
         android:layout_marginTop="3dp"
@@ -113,11 +117,13 @@
     <!-- user -->
     <TextView
         android:id="@+id/MainAdapter_userNameTextView"
-        android:textColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="14dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:textColor="@color/green"
         android:gravity="right"
+        android:layout_marginBottom="6dp"
         app:layout_constraintTop_toBottomOf="@+id/MainAdapter_userPicture"
         app:layout_constraintRight_toLeftOf="@+id/MainAdapter_arrow"
         app:layout_constraintBottom_toBottomOf="parent"

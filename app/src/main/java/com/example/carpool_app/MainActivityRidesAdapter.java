@@ -1,5 +1,6 @@
 package com.example.carpool_app;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -22,7 +24,13 @@ public class MainActivityRidesAdapter extends BaseAdapter {
     private ArrayList<RideUser> rideUserArrayList = new ArrayList<>();
     private Context context;
     private LayoutInflater inflater;
+    private Constant constant;
 
+    /**
+     *
+     * @param rideUserArrayList is the ArrayList containing all the data seen in lists in MainActivity.java
+     * @param context we need context for picasso picture load
+     */
     public MainActivityRidesAdapter(ArrayList<RideUser> rideUserArrayList, Context context)
     {
         this.rideUserArrayList = rideUserArrayList;
@@ -36,7 +44,7 @@ public class MainActivityRidesAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return rideUserArrayList.get(position);
     }
 
     @Override
@@ -52,7 +60,7 @@ public class MainActivityRidesAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(final int position, View view, ViewGroup parent) {
         final ViewHolderMainActivityRides viewHolder;
         //init view
         if(view == null){
@@ -81,6 +89,41 @@ public class MainActivityRidesAdapter extends BaseAdapter {
         viewHolder.userName.setText(rideUserArrayList.get(position).getUser().getFname());
         viewHolder.date.setText(newDate);
         viewHolder.time.setText(newTime);
+
+        constant = new Constant();
+
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try
+                {
+                    constant.startLoadingDialog(context);
+                    FindRideDetails findRideDetails = new FindRideDetails(context, new RideDetailsInterface() {
+                        @Override
+                        public void showDialog(AlertDialog alertDialog) {
+                            constant.dismissLoadingDialog();
+                        }
+
+                        @Override
+                        public void whenDone() {
+
+                        }
+
+                        @Override
+                        public void whenFailed() {
+
+                        }
+                    }, rideUserArrayList, position, 200);
+                    findRideDetails.execute();
+                }
+                catch (Exception e){
+                    constant.dismissLoadingDialog();
+                    Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+            }
+        });
 
         return view;
     }
