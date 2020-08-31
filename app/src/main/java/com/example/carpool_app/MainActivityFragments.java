@@ -43,6 +43,7 @@ public class MainActivityFragments extends Fragment {
         offeredRideUserArrayList = (ArrayList<RideUser>) getArguments().getSerializable("oRideUser");
         Log.d("TAG", "onCreateView2: " + bookedRideUserArrayList.size() + " " + offeredRideUserArrayList.size() + " " + page);
 
+        //Sorting ride lists from lowest to highest
         Collections.sort(bookedRideUserArrayList, new Comparator<RideUser>() {
             @Override
             public int compare(RideUser o1, RideUser o2) {
@@ -75,7 +76,7 @@ public class MainActivityFragments extends Fragment {
 
         Log.d("TAG", "onCreateView3: " + bookedRideUserArrayList.size() + " " + offeredRideUserArrayList.size() + " " + page);
 
-        //if array list size is not equal to 0, print array list
+        //if booked ride list size is not equal to 0, print array list
         if(bookedRideUserArrayList.size() != 0 && page == 0)
         {
             noRidesTextView.setVisibility(View.GONE);
@@ -83,6 +84,7 @@ public class MainActivityFragments extends Fragment {
             mainActivityRidesAdapter = new MainActivityRidesAdapter(bookedRideUserArrayList, getContext());
             rideListView.setAdapter(mainActivityRidesAdapter);
         }
+        //if offered ride list size is not equal to 0, print array list
         else if(offeredRideUserArrayList.size() != 0 && page == 1)
         {
             noRidesTextView.setVisibility(View.GONE);
