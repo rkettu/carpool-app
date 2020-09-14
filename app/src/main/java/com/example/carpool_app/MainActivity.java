@@ -48,6 +48,7 @@ public class MainActivity extends FragmentActivity {
     private int bookedCounter = 0;
     private int offeredCounter = 0;
 
+
     ImageView bookBackground;
     ImageView offerbackground;
 
