@@ -135,6 +135,9 @@ public class SignUpActivity extends AppCompatActivity {
                     User user = new User(fname, lname, phone, email, "This is my bio", Constant.defaultProfileImageAddress, uid, null, 0, 0);
                     user.setProfCreated(false);
 
+                    // Creating document in firestore for user...
+                    CloudFunctionsInterface.createUserDocument(fname,lname,Constant.defaultProfileImageAddress,phone);
+
                     // Moving to edit profile activity...
                     Intent i = new Intent(getApplicationContext(), EditProfileActivity.class);
                     i.putExtra("USERINFO", user);
