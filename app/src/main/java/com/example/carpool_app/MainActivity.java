@@ -146,10 +146,16 @@ public class MainActivity extends FragmentActivity {
                                         if (task.isSuccessful()) {
                                             DocumentSnapshot doc = task.getResult();
                                             Ride ride = doc.toObject(Ride.class);
-
-                                            if (ride.getUid() != null) {
-                                                bookedRideUserArrayList.add(new RideUser(ride, user, doc.getId()));
-                                                Log.d("TAG", "onComplete: " + bookedRideUserArrayList.size());
+                                            Log.d("TAG", "onComplete: " + bookedCounter);
+                                            try{
+                                                Log.d("TAG", "onComplete: " + ride.getUid());
+                                                if (ride.getUid() != null) {
+                                                    bookedRideUserArrayList.add(new RideUser(ride, user, doc.getId()));
+                                                    Log.d("TAG", "onComplete: " + bookedRideUserArrayList.size());
+                                                }
+                                            }
+                                            catch (Exception e) {
+                                                e.printStackTrace();
                                             }
                                             bookedCounter -= 1;
                                         }
@@ -199,9 +205,14 @@ public class MainActivity extends FragmentActivity {
                                         User user = doc.toObject(User.class);
                                         Log.d("TAG", "onComplete52352525235252: ");
 
-                                        if (user.getFname() != null) {
-                                            //adds rides to RideUser class
-                                            offeredRideUserArrayList.add(new RideUser(ride, user, rideId));
+                                        try {
+                                            if (user.getFname() != null) {
+                                                //adds rides to RideUser class
+                                                offeredRideUserArrayList.add(new RideUser(ride, user, rideId));
+                                            }
+                                        }
+                                        catch (Exception e){
+                                            e.printStackTrace();
                                         }
                                         offeredCounter -= 1;
                                         Log.d("TAG", "onComplete235213: " + offeredCounter);

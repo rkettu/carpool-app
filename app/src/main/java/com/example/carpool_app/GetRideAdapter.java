@@ -176,7 +176,7 @@ public class GetRideAdapter extends BaseAdapter {
                             AlertDialog alertDialog = builder.show();
                             alertDialog.show();
                         }
-                    }, rideUserArrayList, position, 100);
+                    }, rideUserArrayList, position);
                     findRideDetails.execute();
                 }
                 catch (Exception e)

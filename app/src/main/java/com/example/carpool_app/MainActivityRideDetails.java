@@ -3,6 +3,7 @@ package com.example.carpool_app;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -17,13 +18,22 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Interface uses 3 different functions
@@ -32,7 +42,7 @@ import java.util.ArrayList;
  * whenFailed() = is called when error occur in booking
  */
 
-interface RideDetailsInterface{
+interface MainActivityRideDetailsInterface{
     void showDialog(AlertDialog alertDialog);
     void whenDone();
     void whenFailed();
@@ -47,8 +57,7 @@ interface RideDetailsInterface{
  */
 
 
-//TODO activityId layout initialization
-public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
+public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
 
     private TextView startPointDialog, destinationDialog, leaveTimeDialog, durationDialog, priceDialog, freeSeatsDialog, wayPointsDialog, userNameDialog, distanceDialog, petsDialog;
     private Button bookRideBtn;
@@ -57,21 +66,22 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
     private RideDetailsInterface rideDetailsInterface;
     private ArrayList<RideUser> rideUserArrayList;
     private int position;
+    private int page;
     private AlertDialog.Builder builder;
 
-    public FindRideDetails(Context context, RideDetailsInterface rideDetailsInterface, ArrayList<RideUser> rideUserArrayList, int position)
+    public MainActivityRideDetails(Context context, RideDetailsInterface rideDetailsInterface, ArrayList<RideUser> rideUserArrayList, int position, int page)
     {
         this.context = context;
         this.rideDetailsInterface = rideDetailsInterface;
         this.rideUserArrayList = rideUserArrayList;
         this.position = position;
+        this.page = page;
     }
 
     @Override
     protected void onPreExecute()
     {
         super.onPreExecute();
-
         //building the alert dialog and giving it layout.
         builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -121,13 +131,54 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
         bookRideBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(FirebaseHelper.loggedIn)
-                {
-                    bookRideDialog();
+                if(page == 0) {
+                    try{
+                        FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).update(
+                                "bookedRides", FieldValue.arrayRemove(rideUserArrayList.get(position).getRideId()));
+                        rideUserArrayList.remove(position);
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    finally {
+                        MainActivityRidesAdapter adapter = new MainActivityRidesAdapter();
+                        adapter.notifyDataSetChanged();
+                        Intent i = new Intent(context, MainActivity.class);
+                        context.startActivity(i);
+                    }
                 }
-                else
-                {
-                    FirebaseHelper.GoToLogin(context);
+                else {
+                    FirebaseFirestore.getInstance().collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful()) {
+                                try{
+                                    Log.d("TAG", "onComplete: " + task.getResult().getDocuments());
+                                    for(QueryDocumentSnapshot doc : task.getResult()) {
+                                        ArrayList<String> rides = (ArrayList<String>) doc.get("bookedRides");
+                                        if(rides != null) {
+                                            if(rides.contains(rideUserArrayList.get(position).getRideId())) {
+                                                FirebaseFirestore.getInstance().collection("users").document(doc.getId()).update(
+                                                        "bookedRides", FieldValue.arrayRemove(rideUserArrayList.get(position).getRideId())
+                                                );
+                                                rideUserArrayList.remove(position);
+                                            }
+                                        }
+                                    }
+                                }
+                                catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                finally {
+                                    FirebaseFirestore.getInstance().collection("rides").document(rideUserArrayList.get(position).getRideId()).delete();
+                                    MainActivityRidesAdapter adapter = new MainActivityRidesAdapter();
+                                    adapter.notifyDataSetChanged();
+                                    Intent i = new Intent(context, MainActivity.class);
+                                    context.startActivity(i);
+                                }
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -270,9 +321,11 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
             wayPointsDialog.setVisibility(View.GONE);
         }
         bookRideBtn = view.findViewById(R.id.rideDetails_bookRideButton);
+        bookRideBtn.setText(context.getResources().getString(R.string.main_activity_ride_details_cancel_trip));
         closeDialogBtn =  view.findViewById(R.id.rideDetails_backButton);
         profilePicture = view.findViewById(R.id.rideDetails_profileImage);
 
         Log.d("TAG", "initDialogLayoutItems2: ");
     }
 }
+
