@@ -143,7 +143,7 @@
             android:layout_height="match_parent"
             android:fontFamily="@font/montserrat_medium"
             android:gravity="center"
-            android:text="Get A Ride"
+            android:text="@string/main_button_book_ride"
             android:textColor="@color/green"
             android:textSize="14sp" />
 
@@ -172,7 +172,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Offer A Ride"
+            android:text="@string/main_button_offer_ride"
             android:fontFamily="@font/montserrat_medium"
             android:textColor="@color/green"
             android:textSize="14sp"/>
@@ -188,9 +188,12 @@
 
         <ImageView
             android:id="@+id/customButtonsLine"
-            android:layout_width="0dp"
-            android:layout_height="13dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:src="@drawable/ic_mainactivitycustombuttonline"
+            android:adjustViewBounds="true"
+            android:cropToPadding="false"
+            android:scaleType="fitXY"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
@@ -198,7 +201,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main_btnOfferedRides"
             android:layout_width="150dp"
-            android:layout_height="45dp"
+            android:layout_height="44dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:onClick="SelectOfferedTrips">
@@ -213,7 +216,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat_medium"
-                android:text="Offer A Ride"
+                android:text="@string/main_fragment_tab_booked"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 app:layout_constraintHorizontal_bias="0.32"
@@ -228,7 +231,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main_btnBookedTrips"
             android:layout_width="160dp"
-            android:layout_height="45dp"
+            android:layout_height="44dp"
             android:layout_marginStart="100dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -244,7 +247,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat_medium"
-                android:text="Booked trips"
+                android:text="@string/main_fragment_tab_offered"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 app:layout_constraintVertical_bias="0.3"

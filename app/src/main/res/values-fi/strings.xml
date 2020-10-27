@@ -88,10 +88,15 @@
     <string name="setridedetails_km_example"> per kilometri</string>
 
     <string name="myalertdialog_moikka_text">Moikka</string>
+
+    <!-- MainActivity -->
+    <string name="main_button_book_ride">Varaa kyyti</string>
+    <string name="main_button_offer_ride">Tarjoa kyyti</string>
     <string name="main_fragment_tab_booked">Varatut kyydit</string>
-    <string name="main_fragment_tab_offered">Tarjotut matkat</string>
-    <string name="main_fragment_no_booked_rides">Ei varattuja matkoja</string>
-    <string name="main_fragment_no_offered_rides">Ei tarjottuja matkoja</string>
+    <string name="main_fragment_tab_offered">Tarjotut kyydit</string>
+    <string name="main_fragment_no_booked_rides">Ei varattuja kyytejä</string>
+    <string name="main_fragment_no_offered_rides">Ei tarjottuja kyytejä</string>
+
     <string name="find_ride_details_startpoint">Lähtöpiste</string>
     <string name="find_rides_details_destination">Määränpää</string>
     <string name="find_ride_details_est_time">Arvioitu lähtöaika</string>

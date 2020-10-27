@@ -16,8 +16,6 @@
     <string name="rideReferenceString" translatable="false">rides</string>
 
     <!-- localized strings below -->
-    <string name="main_fragment_no_booked_rides">No booked rides</string>
-    <string name="main_fragment_tab_booked">Booked rides</string>
     <string name="editprofile_first_name_text">First Name</string>
     <string name="editprofile_first_name_hint">Firstname*</string>
     <string name="editprofile_last_name_text">Last Name</string>
@@ -107,8 +105,15 @@
 
 
     <string name="myalertdialog_moikka_text">Hello</string>
+
+    <!-- MainActivity -->
+    <string name="main_button_book_ride">Get A Ride</string>
+    <string name="main_button_offer_ride">Offer A Ride</string>
     <string name="main_fragment_tab_offered">Offered rides</string>
     <string name="main_fragment_no_offered_rides">No offered rides</string>
+    <string name="main_fragment_no_booked_rides">No booked rides</string>
+    <string name="main_fragment_tab_booked">Booked rides</string>
+
     <string name="find_ride_details_startpoint">from</string>
     <string name="find_rides_details_destination">to</string>
     <string name="find_ride_details_est_time">Estimated leave time</string>
