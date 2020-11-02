@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -175,7 +176,6 @@ public class MainActivity extends FragmentActivity {
                         e.printStackTrace();
                         loadOfferedRides();
                     }
-
                 }
             }
         });

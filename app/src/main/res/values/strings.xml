@@ -2,10 +2,10 @@
     <string name="app_name">Carpool App</string>
 
     <string-array name="getRideSpinnerItems">
-        <item>Aika (laskeva)</item>
-        <item>Aika (nouseva)</item>
-        <item>Hinta (laskeva)</item>
-        <item>Hinta (nouseva)</item>
+        <item>Time (from lowest to highest)</item>
+        <item>Time (from highest to lowest)</item>
+        <item>Price (from lowest to highest)</item>
+        <item>Price (from highest to lowest)</item>
     </string-array>
 
 
@@ -120,5 +120,16 @@
     <string name="find_ride_details_pet_false">No pets allowed</string>
     <string name="find_ride_details_pet_true">Pets allowed</string>
     <string name="main_activity_ride_details_cancel_trip">Cancel trip</string>
+    <string name="getride_dialog_close">Close</string>
+    <string name="getride_find_matching_route">Finding matching route</string>
+    <string name="getride_rides_not_found">Rides not found</string>
+    <string name="getride_check_startpoint_and_destination">Check start point and destination</string>
+    <string name="getride_check_dates_and_time">Check dates and times</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="getrideadapter_estimated_price_per_100">Estimated price per 100km</string>
+    <string name="getrideadapter_estimated_leave_day">Estimated leave day</string>
+    <string name="getrideadapter_estimated_leave_time">Estimated leave time</string>
+    <string name="getride_success_text">Great! Ride has been booked successfully. Return to main menu by pressing OK.</string>
+    <string name="getride_failed_text">Something went wrong while booking ride, please try again</string>
 
 </resources>

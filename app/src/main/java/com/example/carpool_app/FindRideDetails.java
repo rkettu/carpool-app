@@ -153,6 +153,7 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
             }
         });
         AlertDialog bookRideDialog = bookRideBuilder.show();
+        bookRideDialog.getWindow().setBackgroundDrawable(context.getDrawable(R.drawable.bg_round));
         bookRideDialog.show();
     }
 

@@ -99,7 +99,7 @@ public class GetRideAdapter extends BaseAdapter {
         viewHolder.infoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Arvioitu summa 100km kohti.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.getrideadapter_estimated_price_per_100), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -107,7 +107,7 @@ public class GetRideAdapter extends BaseAdapter {
         viewHolder.dateImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Arvioitu lähtöpäivä.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.getrideadapter_estimated_leave_day), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -115,7 +115,7 @@ public class GetRideAdapter extends BaseAdapter {
         viewHolder.timeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Arvioitu lähtöaika.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.getrideadapter_estimated_leave_time), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -136,15 +136,14 @@ public class GetRideAdapter extends BaseAdapter {
                         }
 
                         //when you press book ride in FindRideDetails.java and the data has been added to database
-                        //TODO own layout
                         @Override
                         public void whenDone() {
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             final LayoutInflater inflater = LayoutInflater.from(context);
-                            View dialogView = inflater.inflate(R.layout.my_alertdialog, null);
+                            View dialogView = inflater.inflate(R.layout.adapter_get_ride_success_dialog, null);
                             builder.setView(dialogView);
 
-                            Button btnOk = (Button) dialogView.findViewById(R.id.my_alertdialog_buttonOk);
+                            Button btnOk = (Button) dialogView.findViewById(R.id.getride_success_buttonOk);
                             btnOk.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -157,19 +156,18 @@ public class GetRideAdapter extends BaseAdapter {
                         }
 
                         //if FindRideDetails.java task is not successful
-                        //TODO own layout
                         @Override
                         public void whenFailed() {
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             final LayoutInflater inflater = LayoutInflater.from(context);
-                            View dialogView = inflater.inflate(R.layout.my_alertdialog2, null);
+                            View dialogView = inflater.inflate(R.layout.adapter_get_ride_failed, null);
                             builder.setView(dialogView);
 
-                            Button btnOk = (Button) dialogView.findViewById(R.id.my_alertdialog2_buttonOk);
+                            Button btnOk = (Button) dialogView.findViewById(R.id.getride_failed_Ok);
                             btnOk.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent = new Intent(context, MainActivity.class);
+                                    Intent intent = new Intent(context, GetRideActivity.class);
                                     context.startActivity(intent);
                                 }
                             });
