@@ -16,8 +16,6 @@
     <string name="rideReferenceString" translatable="false">rides</string>
 
     <!-- localized strings below -->
-    <string name="main_fragment_no_booked_rides">No booked rides</string>
-    <string name="main_fragment_tab_booked">Booked rides</string>
     <string name="editprofile_first_name_text">First Name</string>
     <string name="editprofile_first_name_hint">Firstname*</string>
     <string name="editprofile_last_name_text">Last Name</string>
@@ -66,24 +64,25 @@
     <string name="setride_location_button_positive">Go to settings</string>
     <string name="setride_location_button_negative">Cancel</string>
 
-    <string name="setridedetails_ride_info_title">Ride info</string>
-    <string name="setridedetails_choose_leavetime_text">Pick leavetime</string>
+    <string name="setridedetails_ride_info_title">Ride Info</string>
+    <string name="setridedetails_choose_leavetime_text">Pick Leavetime</string>
     <string name="setridedetails_choose_day_hint">Leaveday</string>
     <string name="setridedetails_choose_time_hint">Estimated leavetime</string>
     <string name="setridedetails_leavetime_may_vary">My leavetime may change?</string>
     <string name="setridedetails_yes">Yes</string>
     <string name="setridedetails_verbal_leavetime_estimate_hint">Verbal estimate of leavetime. Example: I\'m leaving between 12-18 o\'clock.</string>
     <string name="setridedetails_passengers_text">Passengers</string>
-    <string name="setridedetails_freeslots_text">Free slots:</string>
+    <string name="setridedetails_freeslots_text">Free seats:</string>
     <string name="setridedetails_pets_allowed_text">Pets allowed</string>
     <string name="setridedetails_limited_luggage_room_text">Limited luggage room</string>
     <string name="setridedetails_estimated_luggage_hint">Verbal estimate of luggage. Example: My vehicle can only fit small luggage.</string>
+    <string name="setridedetails_distanceandpricing_text">Distances &amp; Pricing</string>
     <string name="setridedetails_max_pickup_dist_text">Max pickup distance</string>
-    <string name="setridedetails_ride_length_text">Kuljettava matka:</string>
-    <string name="setridedetails_example_km_eur_text">Example km: Price 0 eur</string>
+    <string name="setridedetails_ride_length_text">Travel distance</string>
+    <string name="setridedetails_example_km_eur_text">Distance:\nPrice: 0 eur</string>
     <string name="setridedetails_price_hint">Price:</string>
-    <string name="setridedetails_confirm_ride_btn_text">CONFIRM RIDE</string>
-    <string name="setridedetails_distance_example">Example km: </string>
+    <string name="setridedetails_confirm_ride_btn_text">Confirm Ride</string>
+    <string name="setridedetails_distance_example">Distance: </string>
     <string name="setridedetails_price_example">Price: </string>
     <string name="setridedetails_km_example"> per kilometer</string>
 
@@ -107,8 +106,15 @@
 
 
     <string name="myalertdialog_moikka_text">Hello</string>
+
+    <!-- MainActivity -->
+    <string name="main_button_book_ride">Get A Ride</string>
+    <string name="main_button_offer_ride">Offer A Ride</string>
     <string name="main_fragment_tab_offered">Offered rides</string>
     <string name="main_fragment_no_offered_rides">No offered rides</string>
+    <string name="main_fragment_no_booked_rides">No booked rides</string>
+    <string name="main_fragment_tab_booked">Booked rides</string>
+
     <string name="find_ride_details_startpoint">from</string>
     <string name="find_rides_details_destination">to</string>
     <string name="find_ride_details_est_time">Estimated leave time</string>

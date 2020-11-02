@@ -77,29 +77,35 @@
     <string name="setridedetails_yes">Kyllä</string>
     <string name="setridedetails_verbal_leavetime_estimate_hint">Sanallinen arvio lähtöajasta. Esimerkiksi: Lähtöaikani on aikavälillä 12-18</string>
     <string name="setridedetails_choose_day_hint">Lähtöpäivä</string>
-    <string name="setridedetails_choose_leavetime_text">Valitse lähtöaika:</string>
+    <string name="setridedetails_choose_leavetime_text">Valitse Lähtöaika:</string>
     <string name="setridedetails_choose_time_hint">Arvioitu lähtöaika</string>
-    <string name="setridedetails_confirm_ride_btn_text">VAHVISTA KYYTI</string>
+    <string name="setridedetails_confirm_ride_btn_text">Vahvista kyyti</string>
     <string name="setridedetails_estimated_luggage_hint">Sanallinen arvio matkatavaroista. Esimerkiksi: Kyytiin mahtuu vain sylissä kannettavia matkatavaroita.</string>
-    <string name="setridedetails_example_km_eur_text">Esimerkki km: Hinta: 0 euroa</string>
+    <string name="setridedetails_example_km_eur_text">Etaisyys:\nHinta: 0 euroa</string>
     <string name="setridedetails_freeslots_text">Vapaat paikat:</string>
     <string name="setridedetails_leavetime_may_vary">Lähtöaikani voi muuttua?</string>
     <string name="setridedetails_limited_luggage_room_text">Rajallinen tavaratila</string>
+    <string name="setridedetails_distanceandpricing_text">Etäisyydet &amp; Hinnoittelu</string>
     <string name="setridedetails_max_pickup_dist_text">Nouto etäisyys:</string>
     <string name="setridedetails_passengers_text">Matkustajat:</string>
     <string name="setridedetails_pets_allowed_text">Lemmikit sallittu</string>
     <string name="setridedetails_price_hint">Hinta:</string>
-    <string name="setridedetails_ride_info_title">Kyydin tiedot</string>
+    <string name="setridedetails_ride_info_title">Kyydin Tiedot</string>
     <string name="setridedetails_ride_length_text">Kuljettava matka:</string>
-    <string name="setridedetails_distance_example">Esimerkki km: </string>
+    <string name="setridedetails_distance_example">Etäisyys: </string>
     <string name="setridedetails_price_example">Hinta: </string>
     <string name="setridedetails_km_example"> per kilometri</string>
 
     <string name="myalertdialog_moikka_text">Moikka</string>
+
+    <!-- MainActivity -->
+    <string name="main_button_book_ride">Varaa kyyti</string>
+    <string name="main_button_offer_ride">Tarjoa kyyti</string>
     <string name="main_fragment_tab_booked">Varatut kyydit</string>
-    <string name="main_fragment_tab_offered">Tarjotut matkat</string>
-    <string name="main_fragment_no_booked_rides">Ei varattuja matkoja</string>
-    <string name="main_fragment_no_offered_rides">Ei tarjottuja matkoja</string>
+    <string name="main_fragment_tab_offered">Tarjotut kyydit</string>
+    <string name="main_fragment_no_booked_rides">Ei varattuja kyytejä</string>
+    <string name="main_fragment_no_offered_rides">Ei tarjottuja kyytejä</string>
+
     <string name="find_ride_details_startpoint">Lähtöpiste</string>
     <string name="find_rides_details_destination">Määränpää</string>
     <string name="find_ride_details_est_time">Arvioitu lähtöaika</string>
