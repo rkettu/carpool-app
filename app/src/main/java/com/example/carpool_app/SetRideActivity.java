@@ -81,8 +81,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
     private GoogleMap mMap;
     private static int AUTOCOMPLETE_REQUEST_CODE = 1;
 
-    private EditText lahtoEditori;
-    private SearchView  loppuEditori, waypointEditor1, waypointEditor2;
+    private EditText lahtoEditori, loppuEditori, waypointEditor1, waypointEditor2;
+    //private SearchView  loppuEditori, waypointEditor1, waypointEditor2;
 
     private String strLahto, strLoppu, strWaypoint1, strWaypoint2;
 
@@ -164,9 +164,9 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
         //editorit
         lahtoEditori = (EditText) findViewById(R.id.set_ride_lahtoEdit);
-        loppuEditori = (SearchView) findViewById(R.id.set_ride_maaranpaaEdit);
-        waypointEditor1 = (SearchView) findViewById(R.id.set_ride_etappiEdit);
-        waypointEditor2 = (SearchView) findViewById(R.id.set_ride_etappiEdit2);
+        loppuEditori = (EditText) findViewById(R.id.set_ride_maaranpaaEdit);
+        waypointEditor1 = (EditText) findViewById(R.id.set_ride_etappiEdit);
+        waypointEditor2 = (EditText) findViewById(R.id.set_ride_etappiEdit2);
 
         //Kartan asetus set_ride_mapViewiin
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -296,7 +296,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             waypointEditor1.setVisibility(View.GONE);
             waypointRemoveBtn1.setVisibility(View.GONE);
             strWaypoint1 = "";
-            waypointEditor1.setQuery(strWaypoint1, true);
+            waypointEditor1.setText(strWaypoint1);
             lukitus = 0;
         }
         else if (v.getId() == R.id.set_ride_etappiRemoveBtn2)
@@ -304,7 +304,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             waypointEditor2.setVisibility(View.GONE);
             waypointRemoveBtn2.setVisibility(View.GONE);
             strWaypoint2 = "";
-            waypointEditor2.setQuery(strWaypoint2, true);
+            waypointEditor2.setText(strWaypoint2);
         }
         else if(v.getId() == R.id.set_ride_haeButton)
         {
@@ -326,9 +326,9 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             //doAnimation(bttAnim);
 
             strLahto = lahtoEditori.getText().toString();
-            strLoppu = loppuEditori.getQuery().toString();
-            strWaypoint1 = waypointEditor1.getQuery().toString();
-            strWaypoint2 = waypointEditor2.getQuery().toString();
+            strLoppu = loppuEditori.getText().toString();
+            strWaypoint1 = waypointEditor1.getText().toString();
+            strWaypoint2 = waypointEditor2.getText().toString();
 
             //Tarkistaa onko waypoint1 kenttään syötetty osoitetta
             if(strWaypoint1 != null && !strWaypoint1.isEmpty())
@@ -381,7 +381,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 @Override
                 public void getFullAddress(GetCoordinatesUtility getCoordinatesUtility) {
                     String address = getCoordinatesUtility.getFullAddress();
-                    loppuEditori.setQuery(address,false);
+                    loppuEditori.setText(address);
                     if(address == null){
                         Toast.makeText(SetRideActivity.this, R.string.setride_check_destination_position, Toast.LENGTH_LONG).show();
                     }
@@ -407,11 +407,13 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                         place1 = new MarkerOptions().position(new LatLng(startLat, startLng)).title("Location 1");
                         place2 = new MarkerOptions().position(new LatLng(stopLat, stopLng)).title("Location 2");
                         new SetRideFetchURL(SetRideActivity.this).execute(getUrl(place1.getPosition(), place2.getPosition(),"driving"), "driving");
-                        routeDetails.setVisibility(View.VISIBLE);
+
 
                         mMap.addMarker(place1);
                         mMap.addMarker(place2);
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place2.getPosition(),8));
+
+                        routeDetails.setVisibility(View.VISIBLE);
                     }catch (Exception e){
                         //ei toimi
                         Toast.makeText(SetRideActivity.this, R.string.setride_check_start_and_destination, Toast.LENGTH_LONG).show();
@@ -598,7 +600,6 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             currentRoute = route;
             fastestRoute = allPolylines.get(0).getId();
             routeDetails.setVisibility(View.VISIBLE);
-            duration.setTextColor(Color.GREEN);
             distance.setText(currentRoute.rideDistance + " km");
             duration.setText(currentRoute.rideDuration);
             nextBtn.setEnabled(true);
