@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -81,6 +82,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_ride_details);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         mC = new GregorianCalendar();
 
@@ -199,11 +201,11 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
         fetchRange = (TextView) findViewById(R.id.setRideDetails_textView_noutoEtaisyys);
         rangeValueTextView = (TextView) findViewById(R.id.setRideDetails_textView_minmatka);
 
-        examplePriceTxt.setText(getString(R.string.setridedetails_distance_example) + distance + " km \n"
-                + getString(R.string.setridedetails_price_example) + String.format("%.2f", doubleDistance * 0.03) + " eur");
-        rangeValueTextView.setText(getString(R.string.setridedetails_ride_length_text) + minRangeInt + "km");
-        fetchRange.setText(getString(R.string.setridedetails_max_pickup_dist_text) + pickUpDistance + "km");
-        priceTxt.setText(String.format(getString(R.string.setridedetails_price_example) + "%.3f", price) + getString(R.string.setridedetails_km_example));
+        examplePriceTxt.setText(getString(R.string.setridedetails_distance_example) + " " +  distance + " km \n"
+                 + getString(R.string.setridedetails_price_example) + String.format("%.2f", doubleDistance * 0.03) + " eur");
+        rangeValueTextView.setText(getString(R.string.setridedetails_ride_length_text) + " " +  minRangeInt + "km");
+        fetchRange.setText(getString(R.string.setridedetails_max_pickup_dist_text) + " " +  pickUpDistance + "km");
+        priceTxt.setText(String.format(getString(R.string.setridedetails_price_example) + " " +  "%.3f", price) + getString(R.string.setridedetails_km_example));
 
         //Number Picker matkustajien määritys
         numberPicker = findViewById(R.id.setRideDetails_numberPicker_passengers);
@@ -229,7 +231,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
                 float tempDist = ((50 / 100.00f) * progress);
                 pickUpDistance = (int) tempDist;
                 //Log.d("####matka3####", range + ", " + intMatka + ", " + progress + ", " + (intMatka / 100.00f) * progress);
-                fetchRange.setText(getString(R.string.setridedetails_max_pickup_dist_text) + pickUpDistance + "km");
+                fetchRange.setText(getString(R.string.setridedetails_max_pickup_dist_text) + " " + pickUpDistance + "km");
             }
 
             @Override
@@ -248,7 +250,7 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 minRangeInt = (int) ((intDistance / 100.00f) * progress);
                 DecimalFormat df = new DecimalFormat("#.##");
-                rangeValueTextView.setText(getString(R.string.setridedetails_ride_length_text) + minRangeInt + " km");
+                rangeValueTextView.setText(getString(R.string.setridedetails_ride_length_text) + " " +  minRangeInt + " km");
             }
 
             @Override
@@ -266,9 +268,9 @@ public class SetRideDetailsActivity extends AppCompatActivity implements Seriali
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 price = ((float) progress / 1000);
-                priceTxt.setText(getString(R.string.setridedetails_price_hint) + String.format("%.3f", price) + getString(R.string.setridedetails_km_example));
+                priceTxt.setText(getString(R.string.setridedetails_price_hint) + " " + String.format("%.3f", price) + getString(R.string.setridedetails_km_example));
                 //hintaTxt.setTextColor(Color.WHITE);
-                examplePriceTxt.setText(getString(R.string.setridedetails_distance_example) + distance + " km \n" + getString(R.string.setridedetails_price_example) + String.format("%.2f", doubleDistance * price) + " eur");
+                examplePriceTxt.setText(getString(R.string.setridedetails_distance_example) + " " +  distance + " km \n" + getString(R.string.setridedetails_price_example) + " " +  String.format("%.2f", doubleDistance * price) + " eur");
 
             }
 

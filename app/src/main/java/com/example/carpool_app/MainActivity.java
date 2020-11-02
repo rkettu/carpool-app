@@ -9,15 +9,14 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -28,12 +27,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends FragmentActivity {
@@ -45,8 +42,6 @@ public class MainActivity extends FragmentActivity {
     private CollectionReference mUsersColRef = FirebaseFirestore.getInstance().collection("users");
     private ArrayList<RideUser> bookedRideUserArrayList = new ArrayList<>();
     private ArrayList<RideUser> offeredRideUserArrayList = new ArrayList<>();
-    private int bookedCounter = 0;
-    private int offeredCounter = 0;
 
 
     ImageView bookBackground;
@@ -57,6 +52,7 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 
         //findViewById(R.id.main_btnGetRide).setOnClickListener(this);
         //findViewById(R.id.main_btnOfferRide).setOnClickListener(this);
@@ -124,107 +120,135 @@ public class MainActivity extends FragmentActivity {
         startActivity(SetRideIntent);
     }
 
-    //TODO fix array lists
-    //if user is logged in, do db search from booked trips
+    //first get rideId's from current user
+    //then get rides
+    //then get users
+
+    private int NUMBER_OF_BOOKED_TASKS = 0;
+    private int bookedCounter = 0;
+
     private void loadBookedRides() {
-        mUsersColRef.document(FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        final ArrayList<String> curUserRides = new ArrayList<>();
+        Task<DocumentSnapshot> curUserTask = mUsersColRef.document(FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    try {
-                        DocumentSnapshot doc = task.getResult();
-                        final User user = doc.toObject(User.class);
-                        bookedCounter = user.getBookedRides().size();
-
-                        Log.d("TAG", "onComplete: " + bookedCounter);
-
-                        if (user.getBookedRides().size() != 0) {
-                            for (int i = 0; i < user.getBookedRides().size(); i++) {
-                                mRidesColRef.document(user.getBookedRides().get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            DocumentSnapshot doc = task.getResult();
-                                            Ride ride = doc.toObject(Ride.class);
-
-                                            if (ride.getUid() != null) {
-                                                bookedRideUserArrayList.add(new RideUser(ride, user, doc.getId()));
-                                                Log.d("TAG", "onComplete: " + bookedRideUserArrayList.size());
+                if(task.isSuccessful()){
+                    curUserRides.addAll((ArrayList<String>) task.getResult().get("bookedRides"));
+                    NUMBER_OF_BOOKED_TASKS = curUserRides.size();
+                    Log.d("TAG", "12313123: ");
+                }
+                else{
+                    //task is not successful
+                }
+            }
+        });
+        Tasks.whenAll(curUserTask).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    if(curUserRides.size() > 0){
+                        for(int i = 0; i < curUserRides.size(); i++){
+                            final int finalI = i;
+                            mRidesColRef.document(curUserRides.get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if(task.isSuccessful()){
+                                        final Ride ride = task.getResult().toObject(Ride.class);
+                                        final String rideId = task.getResult().getId();
+                                        mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                if(task.isSuccessful()) {
+                                                    User user = task.getResult().toObject(User.class);
+                                                    bookedRideUserArrayList.add(new RideUser(ride, user, rideId));
+                                                    taskCompletedBookedRides();
+                                                }
+                                                else {
+                                                    //task is not successful
+                                                    loadOfferedRides();
+                                                }
                                             }
-                                            bookedCounter -= 1;
-                                        }
-                                        if(bookedCounter == 0)
-                                        {
-                                            loadOfferedRides();
-                                        }
+                                        });
                                     }
-                                });
-                            }
+                                    else{
+                                        //task is not successful
+                                        loadOfferedRides();
+                                    }
+                                }
+                            });
                         }
-                        else {
-                            Log.d("TAG", "onComplet213143141451rewe: ");
-                            loadOfferedRides();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    }
+                    else{
+                        //no booked rides
                         loadOfferedRides();
                     }
-
+                }
+                else{
+                    //task is not successful
+                    loadOfferedRides();
                 }
             }
         });
     }
 
-    //db search for offered rides
+    private synchronized void taskCompletedBookedRides() {
+        bookedCounter ++;
+        if(bookedCounter == NUMBER_OF_BOOKED_TASKS){
+            loadOfferedRides();
+        }
+    }
+
+    private static int NUMBER_OF_OFFERED_TASKS = 0;
+    private int offeredCounter = 0;
+
     private void loadOfferedRides() {
-        Log.d("TAG", "onComplete235252523: ");
-        Query query = mRidesColRef.whereEqualTo("uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        mRidesColRef.whereEqualTo("uid", FirebaseAuth.getInstance().getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    try {
-                        for (QueryDocumentSnapshot doc : task.getResult()) {
-                            Log.d("TAG", "onComplete22: " + doc.exists());
+                if(task.isSuccessful()){
+                    NUMBER_OF_OFFERED_TASKS = task.getResult().size();
+                    Log.d("TAG", "onComplete task size: " + NUMBER_OF_OFFERED_TASKS);
+                    try{
+                        for(QueryDocumentSnapshot doc : task.getResult()){
                             final Ride ride = doc.toObject(Ride.class);
                             final String rideId = doc.getId();
-                            Log.d("TAG", "onComplete: " + rideId);
-                            offeredCounter += 1;
-                            Log.d("TAG", "onComplete: ");
+
                             mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful()) {
+                                    if(task.isSuccessful()){
                                         DocumentSnapshot doc = task.getResult();
                                         User user = doc.toObject(User.class);
-                                        Log.d("TAG", "onComplete52352525235252: ");
-
-                                        if (user.getFname() != null) {
-                                            //adds rides to RideUser class
-                                            offeredRideUserArrayList.add(new RideUser(ride, user, rideId));
-                                        }
-                                        offeredCounter -= 1;
-                                        Log.d("TAG", "onComplete235213: " + offeredCounter);
-                                    }                                        //when done, initializing MainActivity layout elements
-                                    if (offeredCounter == 0) {
-                                        Log.d("TAG", "onComple21314521  5125436tyagz<df §1 te: ");
-                                        initMainLayoutItems();
+                                        offeredRideUserArrayList.add(new RideUser(ride, user, rideId));
+                                        Log.d("TAG", "onComplete: ");
+                                        taskCompletedOfferedRides();
+                                    }
+                                    else{
+                                        //task is not successful
+                                        taskCompletedOfferedRides();
                                     }
                                 }
                             });
                         }
-                        if (task.getResult().getDocuments().size() == 0) {
-                            initMainLayoutItems();
-                        }
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e){
                         e.printStackTrace();
+                        taskCompletedOfferedRides();
                     }
-                    if (task.getResult().getDocuments().size() == 0) {
-                        initMainLayoutItems();
-                    }
+                }
+                else{
+                    taskCompletedOfferedRides();
+                    //task is not successful
                 }
             }
         });
+    }
+
+    private synchronized void taskCompletedOfferedRides() {
+        offeredCounter ++;
+        if(NUMBER_OF_OFFERED_TASKS == offeredCounter) {
+            initMainLayoutItems();
+        }
     }
 
     private void initMainLayoutItems() {
