@@ -25,16 +25,21 @@ public class MainActivityRidesAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater inflater;
     private Constant constant;
+    private int page;
 
     /**
      *
      * @param rideUserArrayList is the ArrayList containing all the data seen in lists in MainActivity.java
      * @param context we need context for picasso picture load
      */
-    public MainActivityRidesAdapter(ArrayList<RideUser> rideUserArrayList, Context context)
+
+    public MainActivityRidesAdapter() {}
+
+    public MainActivityRidesAdapter(ArrayList<RideUser> rideUserArrayList, Context context, int page)
     {
         this.rideUserArrayList = rideUserArrayList;
         this.context = context;
+        this.page = page;
     }
 
     @Override
@@ -99,7 +104,7 @@ public class MainActivityRidesAdapter extends BaseAdapter {
                 try
                 {
                     constant.startLoadingDialog(context);
-                    FindRideDetails findRideDetails = new FindRideDetails(context, new RideDetailsInterface() {
+                    MainActivityRideDetails mainActivityRideDetails = new MainActivityRideDetails(context, new RideDetailsInterface() {
                         @Override
                         public void showDialog(AlertDialog alertDialog) {
                             constant.dismissLoadingDialog();
@@ -114,8 +119,8 @@ public class MainActivityRidesAdapter extends BaseAdapter {
                         public void whenFailed() {
 
                         }
-                    }, rideUserArrayList, position, 200);
-                    findRideDetails.execute();
+                    }, rideUserArrayList, position, page);
+                    mainActivityRideDetails.execute();
                 }
                 catch (Exception e){
                     constant.dismissLoadingDialog();
