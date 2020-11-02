@@ -73,14 +73,15 @@
                     app:layout_constraintEnd_toStartOf="@+id/set_ride_guideline_right"
                     app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"/>
 
-                <SearchView
+                <EditText
                     android:id="@+id/set_ride_lahtoEdit"
+                    android:onClick="startAutocompleteActivity"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/open_sans_semibold"
                     android:inputType="textCapWords"
-                    android:queryHint="@string/setride_startpoint_query_hint"
+                    android:hint="@string/setride_startpoint_query_hint"
                     android:background="@drawable/bg_round"
                     android:iconifiedByDefault="false"
                     android:elevation="5dp"
