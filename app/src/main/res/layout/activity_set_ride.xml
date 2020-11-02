@@ -75,7 +75,6 @@
 
                 <EditText
                     android:id="@+id/set_ride_lahtoEdit"
-                    android:onClick="startAutocompleteActivity"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -89,6 +88,16 @@
                     app:layout_constraintEnd_toStartOf="@+id/set_ride_sijaintiButton"
                     app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"
                     android:layout_marginRight="7dp"/>
+
+                <ListView
+                    android:id="@+id/set_ride_autoComplete_list"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/white"
+                    android:translationZ="10dp"
+                    app:layout_constraintTop_toBottomOf="@+id/set_ride_lahtoEdit"
+                    app:layout_constraintEnd_toStartOf="@+id/set_ride_sijaintiButton"
+                    app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"/>
 
                 <ImageButton
                     android:id="@+id/set_ride_sijaintiButton"

@@ -1,43 +1,41 @@
 package com.example.carpool_app;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.media.audiofx.Equalizer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -51,46 +49,38 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
-import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
-import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 
 public class SetRideActivity extends AppCompatActivity implements Serializable, OnMapReadyCallback, SetRideTaskLoadedCallback, View.OnClickListener, GoogleMap.OnPolylineClickListener {
 
-
     private GoogleMap mMap;
-    private static int AUTOCOMPLETE_REQUEST_CODE = 1;
 
-    private EditText lahtoEditori;
-    private SearchView  loppuEditori, waypointEditor1, waypointEditor2;
+    private static final String TAG = SetRideActivity.class.getSimpleName();
+    ListView AutoCompleteListView;
 
-    private String strLahto, strLoppu, strWaypoint1, strWaypoint2;
+    private EditText startEditor;
+    private SearchView endEditor, waypointEditor1, waypointEditor2;
+
+    private String strStart, strEnd, strWaypoint1, strWaypoint2;
 
     //Layoutin valikon animaation asetukset
     Animation ttbAnim, bttAnim;
     private LinearLayout linearContainer;
     private ConstraintLayout routeDetails;
     private Button drawerButton, nextBtn;
-    private ImageButton sijaintiButton, waypointRemoveBtn1, waypointRemoveBtn2;
+    private ImageButton locationButton, waypointRemoveBtn1, waypointRemoveBtn2;
     private boolean drawer_expand = true;
 
     List<Polyline> allPolylines = new ArrayList<>(); // Contains all currently drawn polyline data, REMEMBER TO CLEAR
@@ -117,39 +107,19 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_ride);
 
-        //TESTI
+
+        //Autocomplete settings
         Places.initialize(getApplicationContext(), getString(R.string.api_key));
         PlacesClient placesClient = Places.createClient(this);
 
-        /*
-        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment) getSupportFragmentManager().
-                findFragmentById(R.id.set_ride_lahtoEdit);
-
-        autocompleteFragment.setTypeFilter(TypeFilter.ESTABLISHMENT);
-        autocompleteFragment.setLocationBias(RectangularBounds.newInstance(
-                new LatLng(-33.880490, 151.184363),
-                new LatLng(-33.858754, 151.229596)));
-        autocompleteFragment.setCountries("IN");
-
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(@NonNull Place place) {
-                Log.d("MÖRÖ", "onPlaceSelected: " + place.getName());
-            }
-
-            @Override
-            public void onError(@NonNull Status status) {
-                Log.d("MÖRÖ", "onError: " + status);
-            }
-        });
-*/
+        AutoCompleteListView = (ListView)findViewById(R.id.set_ride_autoComplete_list);
+        ArrayList<String> values = new ArrayList<>();
+        ArrayAdapter<String>adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, android.R.id.text1,values);
 
 
-        //Buttonien määritykset
-        sijaintiButton = findViewById(R.id.set_ride_sijaintiButton);
-        sijaintiButton.setOnClickListener(this);
+        //Buttons
+        locationButton = findViewById(R.id.set_ride_sijaintiButton);
+        locationButton.setOnClickListener(this);
         findViewById(R.id.set_ride_haeButton).setOnClickListener(this);
         findViewById(R.id.set_ride_etappiBtn).setOnClickListener(this);
         waypointRemoveBtn1 = (ImageButton)findViewById(R.id.set_ride_etappiRemoveBtn);
@@ -160,9 +130,9 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         nextBtn.setOnClickListener(this);
         nextBtn.setEnabled(false);
 
-        //editorit
-        lahtoEditori = (EditText) findViewById(R.id.set_ride_lahtoEdit);
-        loppuEditori = (SearchView) findViewById(R.id.set_ride_maaranpaaEdit);
+        //Editors
+        startEditor = (EditText) findViewById(R.id.set_ride_lahtoEdit);
+        endEditor = (SearchView) findViewById(R.id.set_ride_maaranpaaEdit);
         waypointEditor1 = (SearchView) findViewById(R.id.set_ride_etappiEdit);
         waypointEditor2 = (SearchView) findViewById(R.id.set_ride_etappiEdit2);
 
@@ -196,6 +166,64 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
             }
         });
+
+        //AutoComplete request päivittyy jokaisen kirjaimen jälkeen ja osoitteet hakutuloksista tallentuu "values" arraylistiin.
+        startEditor.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                values.clear();
+                AutoCompleteListView.setVisibility(View.VISIBLE);
+
+                AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
+
+                RectangularBounds bounds = RectangularBounds.newInstance(
+                        new LatLng(-33.880490, 151.184363),
+                        new LatLng(-33.858754, 151.229596));
+
+                FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
+                        .setLocationBias(bounds)
+                        .setCountry("FI") //Finland
+                        .setSessionToken(token)
+                        .setQuery(startEditor.getText().toString())
+                        .build();
+
+
+                placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
+                    for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
+                        values.add(prediction.getFullText(null).toString());
+                        Log.i(TAG, prediction.getPlaceId());
+                        Log.i(TAG, prediction.getPrimaryText(null).toString());
+                    }
+                    AutoCompleteListView.setAdapter(adapter);
+                }).addOnFailureListener((exception) -> {
+                    if (exception instanceof ApiException) {
+                        ApiException apiException = (ApiException) exception;
+                        Log.e(TAG, "Place not found: " + apiException.getStatusCode());
+                        Toast.makeText(SetRideActivity.this, "Place not found", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        //Ehdotettujen osoitteiden listaan setOnClickListener, asettaa klikatun osoitteen startEditor kenttään
+        AutoCompleteListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                startEditor.setText(((TextView) view).getText().toString());
+                values.clear();
+                AutoCompleteListView.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
 
@@ -214,42 +242,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
     private void doAnimation(Animation anim){
         linearContainer.startAnimation(anim);
         drawerButton.startAnimation(anim);
-        sijaintiButton.startAnimation(anim);
+        locationButton.startAnimation(anim);
     }
-
-    public void startAutocompleteActivity(View view){
-        Log.d("MÖRÖ", "startAutocompleteActivity: ");
-        Intent intent = new Autocomplete.IntentBuilder(
-                AutocompleteActivityMode.OVERLAY,
-                Arrays.asList(Place.Field.ID, Place.Field.NAME))
-                .setLocationBias(RectangularBounds.newInstance(
-                new LatLng(-33.880490, 151.184363),
-                new LatLng(-33.858754, 151.229596)))
-                .setCountries(Arrays.asList("FI", "SE"))
-                .build(this);
-
-        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Place place = Autocomplete.getPlaceFromIntent(data);
-                Log.i("MÖRÖ", "Place: " + place.getName() + ", " + place.getAddress());
-                lahtoEditori.setText(place.getName());
-            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                // TODO: Handle the error.
-                Status status = Autocomplete.getStatusFromIntent(data);
-                Log.i("MÖRÖ", status.getStatusMessage());
-            } else if (resultCode == RESULT_CANCELED) {
-                // The user canceled the operation.
-            }
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -323,8 +317,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             //Nostaa reitin tiedot elementin ylös painettua "hae reitti" nappia
             //doAnimation(bttAnim);
 
-            strLahto = lahtoEditori.getText().toString();
-            strLoppu = loppuEditori.getQuery().toString();
+            strStart = startEditor.getText().toString();
+            strEnd = endEditor.getQuery().toString();
             strWaypoint1 = waypointEditor1.getQuery().toString();
             strWaypoint2 = waypointEditor2.getQuery().toString();
 
@@ -366,26 +360,26 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 @Override
                 public void getFullAddress(GetCoordinatesUtility getCoordinatesUtility) {
                     String address = getCoordinatesUtility.getFullAddress();
-                    lahtoEditori.setText(address);
+                    startEditor.setText(address);
                     if(address == null){
                         Toast.makeText(SetRideActivity.this, R.string.setride_check_start_position, Toast.LENGTH_LONG).show();
                     }
                 }
             }, SetRideActivity.this);
-            getFullAddressASync.execute(strLahto);
+            getFullAddressASync.execute(strStart);
 
             //Hakee täydellisen osoitteen ("kaarnatie 5, 90350 Oulu, Suomi") MÄÄRÄNPÄÄ tekstikenttään
             GetFullAddressASync getFullAddressASync2 = new GetFullAddressASync(new GetFullAddressInterface() {
                 @Override
                 public void getFullAddress(GetCoordinatesUtility getCoordinatesUtility) {
                     String address = getCoordinatesUtility.getFullAddress();
-                    loppuEditori.setQuery(address,false);
+                    endEditor.setQuery(address,false);
                     if(address == null){
                         Toast.makeText(SetRideActivity.this, R.string.setride_check_destination_position, Toast.LENGTH_LONG).show();
                     }
                 }
             }, SetRideActivity.this);
-            getFullAddressASync2.execute(strLoppu);
+            getFullAddressASync2.execute(strEnd);
 
             //Getting start and destination coordinates in asynctask
             GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
@@ -418,8 +412,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 }
             }, SetRideActivity.this);
 
-            if(strLahto != null && strLoppu != null){
-                getCoordinatesASync.execute(strLahto, strLoppu);
+            if(strStart != null && strEnd != null){
+                getCoordinatesASync.execute(strStart, strEnd);
             }
             }
 
@@ -439,8 +433,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                     Intent details = new Intent(SetRideActivity.this, SetRideDetailsActivity.class);
 
                     try{
-                        details.putExtra("ALKUOSOITE", strLahto);
-                        details.putExtra("LOPPUOSOITE", strLoppu);
+                        details.putExtra("ALKUOSOITE", strStart);
+                        details.putExtra("LOPPUOSOITE", strEnd);
                         details.putExtra("STARTCITY" , startCity);
                         details.putExtra("ENDCITY", endCity);
                         details.putExtra("DISTANCE", currentRoute.rideDistance);
@@ -456,12 +450,13 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
 
                 }
             }, SetRideActivity.this);
-            getCityASync.execute(strLahto, strLoppu);
+            getCityASync.execute(strStart, strEnd);
         }
 
         //Sijainti napin toiminnallisuus
         else if(v.getId() == R.id.set_ride_sijaintiButton)
         {
+
             if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             {
                 //Location granted
@@ -474,6 +469,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 //Location not granted
                 askLocationPermission();
             }
+
         }
 
     }
@@ -670,7 +666,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                                     location.setLongitude(longitude);
 
                                     geoAddress = geoCoderHelper.fullAddressLocation(location, SetRideActivity.this);
-                                    lahtoEditori.setText(geoAddress);
+                                    startEditor.setText(geoAddress);
                                 }
 
                             }
