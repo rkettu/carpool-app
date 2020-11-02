@@ -47,6 +47,7 @@
     <string name="myalertdialog_ok_btn_text">OK</string>
     <string name="myalertdialog_title">Valmista</string>
     <string name="ridedetailsdialog_book_ride_btn_text">Varaa matka</string>
+
     <string name="setride_choose_destination_text">Valitse määränpää:</string>
     <string name="setride_choose_start_text">Valitse lähtöpiste:</string>
     <string name="setride_check_start_position">Tarkista lähtöosoite</string>
@@ -61,9 +62,11 @@
     <string name="setride_waypoint1_mark_text">Pysähdys 1</string>
     <string name="setride_waypoint2_mark_text">Pysähdys 2</string>
     <string name="setride_search_location">Haetaan sijaintia</string>
+    <string name="setride_continue_button">Jatka kyydin lisätietoihin</string>
     <string name="setride_location_message">Olet kieltänyt sovellusta käyttämästä sijaintia, voit muuttaa sovelluksen oikeuksia asetuksista</string>
     <string name="setride_location_button_positive">Mene asetuksiin</string>
     <string name="setride_location_button_negative">Peruuta</string>
+
     <string name="signup_tos_link">Käyttöehdot täällä</string>
     <string name="signup_tos_checkbox_text">Hyväksyn käyttöehdot.</string>
     <string name="signup_signup_btn_text">Luo tunnukset</string>

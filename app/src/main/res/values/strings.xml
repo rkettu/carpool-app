@@ -46,6 +46,7 @@
     <string name="login_login_btn_text">Log In</string>
     <string name="login_signup_btn_text">Sign Up</string>
     <string name="login_forgot_pw_text">Forgot your password</string>
+
     <string name="setride_choose_start_text">Select starting point:</string>
     <string name="setride_check_start_position">Check starting point</string>
     <string name="setride_check_destination_position">Check destination point</string>
@@ -60,6 +61,7 @@
     <string name="setride_waypoint1_mark_text">Waypoint 1</string>
     <string name="setride_waypoint2_mark_text">Waypoint 2</string>
     <string name="setride_search_location">Search location</string>
+    <string name="setride_continue_button">Continue to details</string>
     <string name="setride_location_message">You have permanently danied this permission, go to settings to enable this permission</string>
     <string name="setride_location_button_positive">Go to settings</string>
     <string name="setride_location_button_negative">Cancel</string>
