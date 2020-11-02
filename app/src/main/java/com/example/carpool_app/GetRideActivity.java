@@ -27,6 +27,9 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.common.io.Resources;
+import com.google.rpc.context.AttributeContext;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -96,10 +99,6 @@ public class GetRideActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sortListSpinner.setAdapter(new GetRideSpinner(spinnerAdapter, R.layout.spinner_title_get_ride, GetRideActivity.this));
-
-        //pre filled for testing
-        startPointEditText.setText("Oulu");
-        destinationEditText.setText("Helsinki");
 
         //sets arrayLists to adapter
         getRideAdapter = new GetRideAdapter(GetRideActivity.this, rideUserArrayList);
@@ -177,12 +176,12 @@ public class GetRideActivity extends AppCompatActivity {
                                     destinationLng = getRideUtility.getDestinationLng();
 
                                     //if start point and destination is same, tell user to check those edit texts.
-                                    if(startLat == destinationLat && startLng == destinationLng)
+                                    if(startLat == destinationLat || startLng == destinationLng)
                                     {
                                         progressDialog.dismiss();
                                         startPointEditText.setTextColor(Color.parseColor("#B75272"));
                                         destinationEditText.setTextColor(Color.parseColor("#B75272"));
-                                        Toast.makeText(getApplicationContext(), "Tarkista Aloituspaikka ja määränpää.", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), getString(R.string.getride_check_startpoint_and_destination), Toast.LENGTH_LONG).show();
                                     }
                                     else
                                     {
@@ -219,7 +218,7 @@ public class GetRideActivity extends AppCompatActivity {
                                                         public void run() {
                                                             //progress dialog will be dismissed and toast will appear to tell user there was no rides.
                                                             progressDialog.dismiss();
-                                                            Toast.makeText(getApplicationContext(), "Kyytejä ei löytynyt.", Toast.LENGTH_LONG).show();
+                                                            Toast.makeText(getApplicationContext(), getString(R.string.getride_rides_not_found), Toast.LENGTH_LONG).show();
                                                         }
                                                     });
                                                 }
@@ -248,7 +247,7 @@ public class GetRideActivity extends AppCompatActivity {
                         else
                         {
                             progressDialog.dismiss();
-                            Toast.makeText(getApplicationContext(), "Ei internet yhteyttä.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -260,7 +259,7 @@ public class GetRideActivity extends AppCompatActivity {
                         endDateEditText.setTextColor(Color.parseColor("#B75272"));
                         estStartTimeEditText.setTextColor(Color.parseColor("#B75272"));
                         estEndTimeEditText.setTextColor(Color.parseColor("#B75272"));
-                        Toast.makeText(GetRideActivity.this, "Tarkista päivämäärät ja kellonajat", Toast.LENGTH_LONG).show();
+                        Toast.makeText(GetRideActivity.this, getString(R.string.getride_check_dates_and_time), Toast.LENGTH_LONG).show();
                     }
                 }
                 catch (Exception e)
@@ -460,9 +459,10 @@ public class GetRideActivity extends AppCompatActivity {
     private void showProgressDialog(Context context)
     {
         progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Finding matching routes");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage(getString(R.string.getride_find_matching_route));
         progressDialog.setCancelable(false);
-        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Sulje", new DialogInterface.OnClickListener() {
+        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.getride_dialog_close), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 progressDialog.dismiss();

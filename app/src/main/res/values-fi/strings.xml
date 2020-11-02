@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <string-array name="getRideSpinnerItems">
+        <item>Aika (nouseva)</item>
+        <item>Aika (laskeva)</item>
+        <item>Hinta (nouseva)</item>
+        <item>Hinta (laskeva)</item>
+    </string-array>
+
     <string name="app_name">Carpool App</string>
     <string name="editprofile_apply_changes_btn_text">Vahvista muutokset</string>
     <string name="editprofile_bio_hint">Max 255</string>
@@ -108,4 +116,16 @@
     <string name="find_ride_details_distance">Matkan pituus</string>
     <string name="find_ride_details_pet_false">Ei lemmikkejä</string>
     <string name="find_ride_details_pet_true">Lemmikit sallittu</string>
+    <string name="main_activity_ride_details_cancel_trip">Peru matka</string>
+    <string name="getride_dialog_close">Sulje</string>
+    <string name="getride_find_matching_route">Etsitään sopivia matkoja</string>
+    <string name="getride_rides_not_found">Kyytejä ei löytynyt</string>
+    <string name="getride_check_startpoint_and_destination">Tarkista lähtöpiste ja määränpää</string>
+    <string name="getride_check_dates_and_time">Tarkista päivämäärät ja kellonajat</string>
+    <string name="no_internet_connection">Ei internet yhteyttä</string>
+    <string name="getrideadapter_estimated_price_per_100">Arvioitu hinta 100km kohti</string>
+    <string name="getrideadapter_estimated_leave_day">Arvioitu lähtöpäivä</string>
+    <string name="getrideadapter_estimated_leave_time">Arvioitu lähtöaika</string>
+    <string name="getride_success_text">Hienoa! Kyyti varattiin onnistuneesti. Palaa etusivulle painamalla OK.</string>
+    <string name="getride_failed_text">Jotain meni pieleen matkaa varatessa, yrittäkää uudelleen</string>
 </resources>
