@@ -31,15 +31,11 @@ class FindRides
     private static float startLat, startLng, destinationLat, destinationLng;
     private static long date1, date2;
     private static FindRidesInterface findRidesInterface;
-    private CollectionReference rideReference = FirebaseFirestore.getInstance().collection("rides");
-    private CollectionReference userReference = FirebaseFirestore.getInstance().collection("users");
+    private final CollectionReference rideReference = FirebaseFirestore.getInstance().collection("rides");
+    private final CollectionReference userReference = FirebaseFirestore.getInstance().collection("users");
     private ArrayList<RideUser> rideUserArrayList = new ArrayList<>();
-    private List<HashMap<String, Double>> points;
-    private double pickUpDistance;
-    private HashMap<String, Double> bounds;
     private static final String TAG = "FindRides";
-    private static final int queryLimit = 100;
-    private int counter = 0;
+    private static final int queryLimit = 2;
     private DocumentSnapshot lastVisible;
     private boolean foundRide = false;
 
@@ -120,93 +116,69 @@ class FindRides
 
     //Database search, algorithm to matching routes(use of appMath class) and listener if there is
     //new rides found in query
+
+    private int counter;
     private void search(final Query query){
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
         @Override
         public void onComplete(@NonNull Task<QuerySnapshot> task) {
             if(task.isSuccessful())
             {
-                Log.d(TAG, "onComplete: " + task.isSuccessful() + task.getResult());
-                //if the task is successful, do forEach to every result
                 for(final QueryDocumentSnapshot rideDoc : task.getResult())
                 {
-                    Log.d(TAG, "onComplete: " + task.getResult());
                     try
                     {
-                        Log.d(TAG, "onComplete: ");
                         //takes pickUpDistance and points from rides so we can use our algorithm to filter matching routes
-                        bounds = (HashMap<String, Double>) rideDoc.get("bounds");
-                        pickUpDistance = (long) rideDoc.get("pickUpDistance");
-                        Log.d(TAG, "onComplete: ennen points");
-                        points = (ArrayList<HashMap<String, Double>>) rideDoc.get("points");
+                        //bounds = (HashMap<String, Double>) rideDoc.get("bounds");
                         if((long) rideDoc.get("freeSlots") >= 1){
-                            Log.d(TAG, "onComplete: freesltos");
-                            Log.d(TAG, "onComplete: bounds");
-                            //algorithm (in appMath class)
-                            Log.d(TAG, "onComplete: ollaan ennen appmath if lausetta");
-                            if(AppMath.isRouteInRange(pickUpDistance, startLat, startLng, destinationLat, destinationLng, points))
+                            if(AppMath.isRouteInRange((long) rideDoc.get("pickUpDistance"), startLat, startLng, destinationLat, destinationLng, (ArrayList<HashMap<String, Double>>) rideDoc.get("points")))
                             {
-                                //checks if there is user id in ride
-                                if(rideDoc.get("uid") != null)
-                                {
-                                    //places rideDoc (QueryDocumentSnapshot) object into Ride class. foundRide changes from false to true
-                                    //and counter add one for one found ride.
-                                    final Ride ride = rideDoc.toObject(Ride.class);
-                                    final String rideId = rideDoc.getId();
-                                    Log.d(TAG, "onComplete: " + rideId);
-                                    foundRide = true;
-                                    counter += 1;
+                                //places rideDoc (QueryDocumentSnapshot) object into Ride class. foundRide changes from false to true
+                                //and counter add one for one found ride.
+                                final Ride ride = rideDoc.toObject(Ride.class);
+                                final String rideId = rideDoc.getId();
+                                foundRide = true;
+                                counter += 1;
 
-                                    userReference.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                userReference.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if(task.isSuccessful())
+                                        {
                                             counter -= 1;
-                                            if(task.isSuccessful())
+                                            DocumentSnapshot userDoc = task.getResult();
+                                            if(userDoc.exists())
                                             {
-                                                DocumentSnapshot userDoc = task.getResult();
-                                                if(userDoc.exists())
-                                                {
-                                                    //if task is successful and DocumentSnapshot exists in this ride, add user
-                                                    final User user = userDoc.toObject(User.class);
-                                                    if(user.getFname() != null)
-                                                    {
-                                                        //if there is first name in user object, add the ride and user into list.
-                                                        rideUserArrayList.add(new RideUser(ride, user, rideId));
-                                                        Log.d(TAG, "onComplete: " + ride.getLeaveTime() + " " + user.getFname() + " " + ride.getDuration());
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    //userDoc doesn't exist.
-                                                    Log.d(TAG, "userDoc.exist(): " + userDoc.exists());
-                                                }
+                                                User user = userDoc.toObject(User.class);
+                                                rideUserArrayList.add(new RideUser(ride, user, rideId));
+                                                Log.d(TAG, "Added object to array list");
                                             }
                                             else
                                             {
-                                                //task is not successful
-                                                Log.d(TAG, "userReference onComplete task.getException(): " + task.getException());
-                                            }
-
-                                            //the counter is integer to indicate how many rides have been added to list.
-                                            //counter += 1 when adding ride object to Ride class
-                                            if(counter == 0)
-                                            {
-                                                FindRideDone findRideDone = new FindRideDone(rideUserArrayList, findRidesInterface, lastVisible, false);
-                                                findRideDone.execute();
+                                                //userDoc doesn't exist.
+                                                Log.d(TAG, "userDoc.exist(): " + userDoc.exists());
                                             }
                                         }
-                                    });
-                                }
-                                //TODO if the user is same
-                                else
-                                {
-                                    //if ride doesn't have uid
-                                }
+                                        else
+                                        {
+                                            //task is not successful
+                                            counter -= 1;
+                                            Log.d(TAG, "userReference onComplete task.getException(): " + task.getException());
+                                        }
+                                        //the counter is integer to indicate how many rides have been added to list.
+                                        if(counter == 0)
+                                        {
+                                            FindRideDone findRideDone = new FindRideDone(rideUserArrayList, findRidesInterface, lastVisible, false);
+                                            findRideDone.execute();
+                                        }
+                                    }
+                                });
                             }
                         }
                     }
                     catch (Exception e)
                     {
+                        counter -= 1;
                         e.printStackTrace();
                     }
                 }
@@ -269,7 +241,7 @@ class FindRideDone extends AsyncTask<Void, Void, Boolean>{
      * //TODO when ready, use value of 50 instead of 1.
      * //Use value 1 if you dont want your db to get many search per time
      * */
-    private final int arrayListMinSize = 1;
+    private final int arrayListMinSize = 50;
 
     FindRideDone(ArrayList<RideUser> rideUserArrayList, FindRidesInterface findRidesInterface, DocumentSnapshot lastVisible, boolean hasDone)
     {
