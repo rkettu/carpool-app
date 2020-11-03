@@ -202,6 +202,7 @@ public class GetRideActivity extends AppCompatActivity {
                                                                 @Override
                                                                 public void run() {
                                                                     //showing the data and dismissing the progress dialog.
+                                                                    Log.d(TAG, "after sorting: ");
                                                                     getRideAdapter.notifyDataSetChanged();
                                                                     progressDialog.dismiss();
                                                                 }
