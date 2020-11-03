@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:onClick="anywhereClicked"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SetRideActivity">
@@ -9,6 +10,7 @@
 
     <fragment
         android:id="@+id/set_ride_mapView"
+        android:onClick="anywhereClicked"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,6 +22,7 @@
 
     <LinearLayout
         android:id="@+id/set_ride_outherLayout"
+        android:onClick="anywhereClicked"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
@@ -68,7 +71,7 @@
                     android:fontFamily="@font/montserrat_medium"
                     android:textSize="24sp"
                     android:text="@string/setride_choose_start_text"
-                    android:textColor="@color/green"
+                    android:textColor="@color/gray"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/set_ride_guideline_right"
                     app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"/>
@@ -79,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="10dp"
-                    android:padding="5dp"
+                    android:padding="10dp"
                     android:paddingStart="15dp"
                     android:fontFamily="@font/open_sans_semibold"
                     android:inputType="textCapWords"
@@ -90,8 +93,7 @@
                     android:elevation="5dp"
                     app:layout_constraintTop_toBottomOf="@+id/set_ride_lahtoText"
                     app:layout_constraintEnd_toStartOf="@+id/set_ride_guideline_center_right"
-                    app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"
-                    android:onClick="startAutocompleteActivity"/>
+                    app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left" />
 
                 <ListView
                     android:id="@+id/set_ride_autoComplete_list"
@@ -122,7 +124,7 @@
                     android:fontFamily="@font/montserrat_medium"
                     android:textSize="24sp"
                     android:text="@string/setride_waypoints_text"
-                    android:textColor="@color/green"
+                    android:textColor="@color/gray"
                     app:layout_constraintTop_toBottomOf="@+id/set_ride_lahtoEdit"
                     app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"
                     app:layout_constraintEnd_toStartOf="@id/set_ride_guideline_center_right"/>
@@ -218,7 +220,7 @@
                     android:fontFamily="@font/montserrat_medium"
                     android:textSize="24sp"
                     android:text="@string/setride_choose_destination_text"
-                    android:textColor="@color/green"
+                    android:textColor="@color/gray"
                     app:layout_constraintTop_toBottomOf="@+id/set_ride_etappiEdit2"
                     app:layout_constraintEnd_toStartOf="@+id/set_ride_guideline_right"
                     app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"/>
@@ -229,7 +231,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:padding="5dp"
+                    android:padding="10dp"
                     android:paddingStart="15dp"
                     android:inputType="textCapWords"
                     android:fontFamily="@font/open_sans_semibold"

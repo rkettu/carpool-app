@@ -74,7 +74,6 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
     private EditText startEditor;
     private EditText endEditor, waypointEditor1, waypointEditor2;
 
-
     private String strStart, strEnd, strWaypoint1, strWaypoint2;
 
     //Layoutin valikon animaation asetukset
@@ -224,7 +223,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 startEditor.setText(((TextView) view).getText().toString());
                 values.clear();
-                AutoCompleteListView.setVisibility(View.INVISIBLE);
+                AutoCompleteListView.setVisibility(View.GONE);
             }
         });
     }
@@ -316,6 +315,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             Constant.hideKeyboard(SetRideActivity.this);
 
             routeDetails.setVisibility(View.GONE);
+            //AutoCompleteListView.setVisibility(View.GONE);
 
             //Nostaa reitin tiedot elementin ylös painettua "hae reitti" nappia
             //doAnimation(bttAnim);
@@ -364,6 +364,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 public void getFullAddress(GetCoordinatesUtility getCoordinatesUtility) {
                     String address = getCoordinatesUtility.getFullAddress();
                     startEditor.setText(address);
+                    AutoCompleteListView.setVisibility(View.INVISIBLE);
                     if(address == null){
                         Toast.makeText(SetRideActivity.this, R.string.setride_check_start_position, Toast.LENGTH_LONG).show();
                     }
@@ -635,6 +636,12 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
             }
         }
 
+    }
+
+    // Set autocomplete lisviews invisible if user click anywhere out of listview
+    public void anywhereClicked(View view) {
+        Log.d("CLICK", "constrainClicked: ");
+        AutoCompleteListView.setVisibility(View.INVISIBLE);
     }
 
 
