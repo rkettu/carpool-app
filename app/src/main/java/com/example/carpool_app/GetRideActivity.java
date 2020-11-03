@@ -64,7 +64,6 @@ public class GetRideActivity extends AppCompatActivity {
     private int mYear, mMonth, mDay, newHour, newMinute;
     private int startDateDay, startDateMonth, startDateYear, startTimeHour, startTimeMinute;
     private int endDateDay, endDateMonth, endDateYear, endTimeHour, endTimeMinute;
-    private long queryLimit = 0;
     private long date1, date2;
     private Calendar calendar;
     private int spinnerCase = 0;
