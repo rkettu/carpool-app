@@ -139,8 +139,10 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
                                 "bookedRides", FieldValue.arrayRemove(rideUserArrayList.get(position).getRideId()));
                         //Add one free seat to database
                         FirebaseFirestore.getInstance().collection("rides").document(rideUserArrayList.get(position).getRideId()).update(
-                                "freeSlots", (rideUserArrayList.get(position).getRide().getFreeSlots() + 1)
-                        );
+                                "freeSlots", (rideUserArrayList.get(position).getRide().getFreeSlots() + 1));
+                        //Remove the current user from participants in ride collection
+                        FirebaseFirestore.getInstance().collection("rides").document(rideUserArrayList.get(position).getRideId()).update(
+                                "participants", FieldValue.arrayRemove(FirebaseAuth.getInstance().getCurrentUser().getUid()));
                         rideUserArrayList.remove(position);
                     }
                     catch (Exception e){
@@ -238,22 +240,26 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
         }
         wayPointsDialog = view.findViewById(R.id.rideDetails_wayPoints);
         Log.d("TAG", "initDialogLayoutItems1: ");
-
+        Log.d("TAG", "initDialogLayoutItems: " + rideUserArrayList.get(position).getRide().getWaypointAddresses());
         //checks is the 0, 1 or 2 way points and print them if there is way points.
         if(rideUserArrayList.get(position).getRide().getWaypointAddresses().size() != 0)
         {
+            wayPointsDialog.setVisibility(View.VISIBLE);
             if(rideUserArrayList.get(position).getRide().getWaypointAddresses().size() == 1)
             {
+                Log.d("TAG", "initDialogLayoutItems: if lause");
                 wayPointsDialog.setText(rideUserArrayList.get(position).getRide().getWaypointAddresses().get(0));
             }
             else
             {
+                Log.d("TAG", "initDialogLayoutItems: else lause");
                 wayPointsDialog.setText(rideUserArrayList.get(position).getRide().getWaypointAddresses().get(0) + "\n" +
                         rideUserArrayList.get(position).getRide().getWaypointAddresses().get(1));
             }
         }
         else
         {
+            Log.d("TAG", "initDialogLayoutItems: visibility gone");
             wayPointsDialog.setVisibility(View.GONE);
         }
         bookRideBtn = view.findViewById(R.id.rideDetails_bookRideButton);

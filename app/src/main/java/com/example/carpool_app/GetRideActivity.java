@@ -64,7 +64,6 @@ public class GetRideActivity extends AppCompatActivity {
     private int mYear, mMonth, mDay, newHour, newMinute;
     private int startDateDay, startDateMonth, startDateYear, startTimeHour, startTimeMinute;
     private int endDateDay, endDateMonth, endDateYear, endTimeHour, endTimeMinute;
-    private long queryLimit = 0;
     private long date1, date2;
     private Calendar calendar;
     private int spinnerCase = 0;
@@ -202,6 +201,7 @@ public class GetRideActivity extends AppCompatActivity {
                                                                 @Override
                                                                 public void run() {
                                                                     //showing the data and dismissing the progress dialog.
+                                                                    Log.d(TAG, "after sorting: ");
                                                                     getRideAdapter.notifyDataSetChanged();
                                                                     progressDialog.dismiss();
                                                                 }

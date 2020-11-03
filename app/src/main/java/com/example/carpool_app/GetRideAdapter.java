@@ -24,10 +24,6 @@ public class GetRideAdapter extends BaseAdapter {
     public static final String TAG = "GetRideAdapter";
     private Constant constant;
 
-    public GetRideAdapter(){
-        //Needs constructor for notifyDataSetChanges function
-    }
-
     public GetRideAdapter(Context context, ArrayList<RideUser> rideUserArrayList) {
         this.context = context;
         this.rideUserArrayList = rideUserArrayList;
@@ -92,8 +88,6 @@ public class GetRideAdapter extends BaseAdapter {
         viewHolder.dateTextView.setText(newDate);
         viewHolder.timeTextView.setText(newTime);
         viewHolder.priceTextView.setText(price + "€");
-
-        Log.d(TAG, "getView: " + rideUserArrayList.get(position).getRideId());
 
         //if you press info image next to price, do this
         viewHolder.infoImageView.setOnClickListener(new View.OnClickListener() {
