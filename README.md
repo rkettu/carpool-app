@@ -7,8 +7,9 @@ This is a [WIP] carpooling app made for Android versions 6 and above. The app of
 
 Furthermore the app enables matching rides that start and/or end in the middle of another, longer ride - making it ideal to use even for people living in less populated areas.
 
-### APIs/services used:
-- a
-- b
-- c
+### APIs & services used:
+- Google Maps SDK for android
+- Google Directions API
+- Google Places API
+- Google Cloud Firestore - Firebase
 - And more
