@@ -3,7 +3,7 @@
 
     <item >
         <shape>
-            <solid android:color="@color/green"/>
+            <solid android:color="@color/pastelGreen"/>
             <corners android:bottomRightRadius="24dp"/>
         </shape>
     </item>

@@ -264,7 +264,6 @@
 
         </LinearLayout>
 
-
         <Button
             android:id="@+id/set_ride_drawer_bottom"
             android:layout_width="match_parent"
