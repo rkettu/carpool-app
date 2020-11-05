@@ -84,7 +84,7 @@ public class GetRideActivity extends AppCompatActivity {
     //Initializing all xml, TextViews, EditText and ListView + sets adapter to ListView + add current time as placeholder in start time/date
     private void initGetRideLayoutElements() {
         searchRideButton = findViewById(R.id.getRide_btnSearch);
-        backButton = findViewById(R.id.getRide_btnBack);
+        //backButton = findViewById(R.id.getRide_btnBack);
         startPointEditText = findViewById(R.id.getRide_startPointEditText);
         destinationEditText = findViewById(R.id.getRide_destinationEditText);
         startDateEditText = findViewById(R.id.getRide_startDate);
@@ -447,12 +447,14 @@ public class GetRideActivity extends AppCompatActivity {
         });
 
         //if you press Back Arrow on top of activity
+        /*
         backButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 onBackPressed();
             }
         });
+         */
     }
 
     //progress dialog. shows when called. used when app is finding matches
