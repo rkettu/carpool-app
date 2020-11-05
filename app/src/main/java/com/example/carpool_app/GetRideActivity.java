@@ -104,6 +104,8 @@ public class GetRideActivity extends AppCompatActivity {
         rideListView.setAdapter(getRideAdapter);
 
         //setting placeholder time in edit texts
+        startPointEditText.setText("Oulu");
+        destinationEditText.setText("Liminka");
         startDateEditText.setText(CalendarHelper.getDateTimeString(systemTime));
         estStartTimeEditText.setText("00:00");
         endDateEditText.setText(CalendarHelper.getDateTimeString(systemTime + 604800000));
@@ -148,9 +150,6 @@ public class GetRideActivity extends AppCompatActivity {
                     showProgressDialog(GetRideActivity.this);
                     Constant.hideKeyboard(GetRideActivity.this);
 
-                    //show 0 data in list
-                    getRideAdapter.notifyDataSetChanged();
-
                     //takes start and end date, change them to millis so we can search rides between those times
                     calendar.set(startDateYear, startDateMonth, startDateDay, startTimeHour, startTimeMinute);
                     date1 = calendar.getTimeInMillis();
@@ -165,6 +164,7 @@ public class GetRideActivity extends AppCompatActivity {
                         {
                             //clearing array lists old information
                             rideUserArrayList.clear();
+                            getRideAdapter.notifyDataSetChanged();
                             //Getting start and destination coordinates in async task
                             GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
                                 @Override
@@ -196,12 +196,11 @@ public class GetRideActivity extends AppCompatActivity {
                                                     //calling the sorting algorithm to sort rides
                                                     GetRideSorting getRideSorting = new GetRideSorting(new GetRideSortingInterface() {
                                                         @Override
-                                                        public void GetRideSorting(ArrayList<RideUser> rideUserArrayList) {
+                                                        public void GetRideSorting(final ArrayList<RideUser> rideUserArrayList) {
                                                             runOnUiThread(new Runnable() {
                                                                 @Override
                                                                 public void run() {
                                                                     //showing the data and dismissing the progress dialog.
-                                                                    Log.d(TAG, "after sorting: ");
                                                                     getRideAdapter.notifyDataSetChanged();
                                                                     progressDialog.dismiss();
                                                                 }

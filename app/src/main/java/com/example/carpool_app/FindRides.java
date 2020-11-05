@@ -80,11 +80,13 @@ class FindRides {
     //function called when using the db search
     void findRides() {
         Log.d(TAG, "onComplete: latlng: " + date1 + " " + date2 + " " + startLat + " " + startLng + " " + destinationLat + " " + destinationLng);
+        Log.d(TAG, "findRides: lastvisible: " + lastVisible);
+        Log.d(TAG, "findRides: siuze: " + rideUserArrayList.size());
         //first it will go to else condition to get the first query.
         //the first query will get data to lastVisible and after that
         //program will use getNextQuery, where we take next queryLimit much
         //data from database.
-        if (lastVisible != null || rideUserArrayList.size() != 0) {
+        if (lastVisible != null) {
             search(getNextQuery(lastVisible));
         } else {
             search(getFirstQuery());
@@ -113,101 +115,109 @@ class FindRides {
 
     //Database search, algorithm to matching routes(use of appMath class) and listener if there is
     //new rides found in query
-
-    private int counter;
-
+    private int countOfTasks;
     private void search(final Query query) {
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (final QueryDocumentSnapshot rideDoc : task.getResult()) {
-                        try {
-                            //takes pickUpDistance and points from rides so we can use our algorithm to filter matching routes
-                            //bounds = (HashMap<String, Double>) rideDoc.get("bounds");
-                            if ((long) rideDoc.get("freeSlots") >= 1) {
-                                if (AppMath.isRouteInRange((long) rideDoc.get("pickUpDistance"), startLat, startLng, destinationLat, destinationLng, (ArrayList<HashMap<String, Double>>) rideDoc.get("points"))) {
-                                    //places rideDoc (QueryDocumentSnapshot) object into Ride class. foundRide changes from false to true
-                                    //and counter add one for one found ride.
+                if(task.isSuccessful()){
+                    final QuerySnapshot querySnapshot = task.getResult();
+                    countOfTasks = task.getResult().size();
+                    for(final QueryDocumentSnapshot rideDoc : task.getResult()){
+                        try{
+                            if((long) rideDoc.get("freeSlots") > 0){
+                                if(AppMath.isRouteInRange((long) rideDoc.get("pickUpDistance"), startLat, startLng, destinationLat, destinationLng, (ArrayList<HashMap<String, Double>>) rideDoc.get("points"))){
                                     final Ride ride = rideDoc.toObject(Ride.class);
                                     final String rideId = rideDoc.getId();
-                                    foundRide = true;
-                                    counter += 1;
-
-                                    Task<DocumentSnapshot> myTask2 = userReference.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    Log.d(TAG, "onComplete: after first db");
+                                    Task<DocumentSnapshot> docTask = userReference.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                         @Override
                                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                            if (task.isSuccessful()) {
-                                                counter -= 1;
+                                            if(task.isSuccessful()){
                                                 DocumentSnapshot userDoc = task.getResult();
-                                                if (userDoc.exists()) {
+                                                if(userDoc.exists()){
                                                     User user = userDoc.toObject(User.class);
                                                     rideUserArrayList.add(new RideUser(ride, user, rideId));
-                                                    Log.d(TAG, "Added object to array list");
-                                                } else {
-                                                    //userDoc doesn't exist.
-                                                    Log.d(TAG, "userDoc.exist(): " + userDoc.exists());
                                                 }
-                                            } else {
-                                                //task is not successful
-                                                counter -= 1;
-                                                Log.d(TAG, "userReference onComplete task.getException(): " + task.getException());
+                                                else{
+                                                    //Doc doesn't exist
+                                                }
                                             }
-                                            //the counter is integer to indicate how many rides have been added to list.
-                                            if (counter == 0) {
-                                                FindRideDone findRideDone = new FindRideDone(rideUserArrayList, findRidesInterface, lastVisible, false);
-                                                findRideDone.execute();
+                                            else{
+                                                //Task is not successful
                                             }
+                                        }
+                                    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            countOfTasks -= 1;
+                                            isDone(querySnapshot, countOfTasks);
+                                            Log.d(TAG, "onComplete: doc task complete: " + countOfTasks);
                                         }
                                     });
                                 }
+                                else{
+                                    //Ride's route is not in range
+                                    countOfTasks -= 1;
+                                    isDone(querySnapshot, countOfTasks);
+                                    Log.d(TAG, "Route is not in range: " + countOfTasks);
+                                }
                             }
-                        } catch (Exception e) {
-                            counter -= 1;
+                            else{
+                                //no free slots in that ride
+                                countOfTasks -= 1;
+                                isDone(querySnapshot, countOfTasks);
+                                Log.d(TAG, "No free slots in ride: " + countOfTasks);
+                            }
+                        }
+                        catch (Exception e){
+                            //Exception
+                            countOfTasks -= 1;
+                            isDone(querySnapshot, countOfTasks);
                             e.printStackTrace();
                         }
                     }
-                } else {
-                    //Task is not successful
-                    Log.d(TAG, "onComplete: " + task.getException());
                 }
-            }
-        }).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                Log.d(TAG, "queryDocumentSnapshot size in onSuccess: " + queryDocumentSnapshots.size());
-                Log.d(TAG, "onSuccess: " + queryDocumentSnapshots.getQuery() + " " + queryDocumentSnapshots.getDocuments());
-                //query size is 0 if there is no more rides in database.
-                if(queryDocumentSnapshots.size() == 0)
-                {
-                    FindRideDone findRideDone = new FindRideDone(rideUserArrayList, findRidesInterface, lastVisible, true);
-                    findRideDone.execute();
-                }
-                //if there is information in query
-                else
-                {
-                    //lastVisible is query size - 1, because size 0 is when there is no data but getDocument 0 is the first document
-                    lastVisible = queryDocumentSnapshots.getDocuments().get(queryDocumentSnapshots.size() - 1);
-                    if(!foundRide)
-                    {
-                        //if foundRide is false (it is true if one ride passes algorithm) so we run search() with new query using lastVisible.
-                        Log.d(TAG, "onSuccess: !foundRide " + lastVisible);
-                        FindRides findRides = new FindRides(rideUserArrayList, lastVisible);
-                        findRides.findRides();
+                else {
+                    if(findRidesInterface != null){
+                        findRidesInterface.FindRidesFailed(task.getException().toString());
                     }
                 }
             }
-        }).addOnFailureListener(new OnFailureListener() {
+        }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onFailure(@NonNull Exception e) {
-                e.printStackTrace();
-                if(findRidesInterface != null)
-                {
-                    findRidesInterface.FindRidesFailed(e.toString());
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.getResult().size() == 0){
+                    isDone(task.getResult(), 0);
                 }
             }
         });
     }
+
+    private void isDone(QuerySnapshot qs, int count){
+        if(qs.size() == 0){
+            Log.d(TAG, "isDone: qs size");
+            FindRideDone findRideDone = new FindRideDone(rideUserArrayList, findRidesInterface, lastVisible, true);
+            findRideDone.execute();
+        }
+        else if(qs.size() != 0 && count == 0){
+            Log.d(TAG, "isDone: qs.size != 0, count == 0");
+            lastVisible = qs.getDocuments().get(qs.size() -1);
+            if(!foundRide){
+                FindRides findRides = new FindRides(rideUserArrayList, lastVisible);
+                findRides.findRides();
+            }
+        }
+        else if(count == 0){
+            Log.d(TAG, "isDone: count");
+            FindRideDone findRideDone = new FindRideDone(rideUserArrayList, findRidesInterface, lastVisible, false);
+            findRideDone.execute();
+        }
+        else{
+            Log.d(TAG, "isDone: else");
+        }
+    }
+
 }
 
 class FindRideDone extends AsyncTask<Void, Void, Boolean>{
@@ -260,6 +270,7 @@ class FindRideDone extends AsyncTask<Void, Void, Boolean>{
         {
             if(findRidesInterface != null)
             {
+                Log.d(TAG, "onPostExecute: " + rideUserArrayList.size());
                 findRidesInterface.FindRidesResult(rideUserArrayList);
             }
         }
