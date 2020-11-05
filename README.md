@@ -11,5 +11,8 @@ Furthermore the app enables matching rides that start and/or end in the middle o
 - Google Maps SDK for android
 - Google Directions API
 - Google Places API
-- Google Cloud Firestore - Firebase
+- Google Firebase Cloud Firestore
+- Google Firebase Auth
 - And more
+
+### Images
