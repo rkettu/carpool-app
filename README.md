@@ -1,5 +1,5 @@
 # Drop Me Off - an Android carpooling app
-This is is a [WIP] carpooling app made for Android versions 6 and above. The app offers features such as: 
+This is a [WIP] carpooling app made for Android versions 6 and above. The app offers features such as: 
 - Creating, viewing and editing user profiles 
 - Offering rides (with a handy Google Maps UI)
 - Searching for rides based on various parameters
