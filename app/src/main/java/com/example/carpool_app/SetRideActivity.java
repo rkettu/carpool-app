@@ -245,7 +245,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
     private void doAnimation(Animation anim){
         linearContainer.startAnimation(anim);
         drawerButton.startAnimation(anim);
-        locationButton.startAnimation(anim);
+       // locationButton.startAnimation(anim);
     }
 
     @Override

@@ -25,16 +25,20 @@
     <string name="editprofile_old_password_hint">Vanha salasana</string>
     <string name="editprofile_phone_hint">Puhelin numero</string>
     <string name="editprofile_phone_text">Puhelin numero</string>
+
+    <string name="getride_header">Varaa Kyyti</string>
     <string name="getride_and">ja</string>
     <string name="getride_leavetime1_date_hint">dd/mm/yyyy</string>
     <string name="getride_leavetime1_hour_hint">hh:mm</string>
     <string name="getride_leavetime1_text">Lähtöaika välille</string>
+    <string name="getride_leavetime2_text">Sijainnit</string>
     <string name="getride_leavetime2_date_hint">dd/mm/yyyy</string>
     <string name="getride_leavetime2_hour_hint">hh:mm</string>
     <string name="getride_search_btn_text">Hae matka</string>
     <string name="getride_set_ending_point_text">Aseta määränpää</string>
     <string name="getride_set_starting_point_text">Aseta lähtöpiste</string>
     <string name="getridespinner_order_rides_text">Järjestä kyydit</string>
+
     <string name="login_forgot_pw_text">Unohtuiko salasana</string>
     <string name="login_login_btn_text">Kirjaudu</string>
     <string name="login_password_hint">Salasana</string>
