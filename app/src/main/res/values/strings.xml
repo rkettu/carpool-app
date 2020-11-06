@@ -32,15 +32,19 @@
     <string name="editprofile_new_password_hint">New Password</string>
     <string name="editprofile_confirm_password_hint">Confirm Password</string>
     <string name="editprofile_change_password_btn_text">Change Password</string>
+
+    <string name="getride_header">Get Ride</string>
     <string name="getride_leavetime1_text">Leavetime between</string>
     <string name="getride_leavetime1_date_hint">dd/mm/yyyy</string>
     <string name="getride_leavetime1_hour_hint">hh:mm</string>
     <string name="getride_and">and</string>
+    <string name="getride_leavetime2_text">Locations</string>
     <string name="getride_leavetime2_date_hint">dd/mm/yyyy</string>
     <string name="getride_leavetime2_hour_hint">hh:mm</string>
     <string name="getride_set_starting_point_text">Set starting location</string>
     <string name="getride_set_ending_point_text">Set destination</string>
     <string name="getride_search_btn_text">Search for ride</string>
+
     <string name="login_username_hint">Username</string>
     <string name="login_password_hint">Password</string>
     <string name="login_login_btn_text">Log In</string>
