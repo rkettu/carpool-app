@@ -19,13 +19,13 @@ Furthermore the app enables matching rides that start and/or end in the middle o
 
 ### Home page:
 
-![main_muutettu](https://user-images.githubusercontent.com/59020875/98344803-72ac4e00-201c-11eb-8709-58c44f009c66.jpg)
+![main_muutettu2](https://user-images.githubusercontent.com/59020875/98346064-26faa400-201e-11eb-8a0a-a086d5baf2ff.jpg)
 
 
 ### Offer a Ride:
 
-![setRide_muutettu](https://user-images.githubusercontent.com/59020875/98344811-76d86b80-201c-11eb-9834-422106f5e01e.jpg)
+![setRide_muutettu2](https://user-images.githubusercontent.com/59020875/98346076-2a8e2b00-201e-11eb-929b-3f1d309f5348.jpg)
 
 
 ### Find a Ride:
-![getRide_muutettu](https://user-images.githubusercontent.com/59020875/98344819-793ac580-201c-11eb-9167-2d830e1b8cc1.jpg)
+![getRide_muutettu2](https://user-images.githubusercontent.com/59020875/98346083-2cf08500-201e-11eb-9f8e-472213576db7.jpg)
