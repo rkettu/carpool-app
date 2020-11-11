@@ -67,7 +67,7 @@
                     android:layout_marginTop="24dp"
                     android:fontFamily="@font/montserrat_medium"
                     android:textSize="24sp"
-                    android:text="333"
+                    android:text="@string/setride_choose_start_text"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/set_ride_guideline_right"
                     app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"/>
@@ -285,7 +285,7 @@
 
     </LinearLayout>
 
-<!-- android:visibility="gone" -->
+    <!-- android:visibility="gone" -->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
