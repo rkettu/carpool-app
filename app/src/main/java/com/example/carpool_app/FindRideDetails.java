@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.text.method.ScrollingMovementMethod;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -50,7 +53,8 @@ interface RideDetailsInterface{
 //TODO activityId layout initialization
 public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
 
-    private TextView startPointDialog, destinationDialog, leaveTimeDialog, durationDialog, priceDialog, freeSeatsDialog, wayPointsDialog, userNameDialog, distanceDialog, petsDialog;
+    private TextView startPointDialog, destinationDialog, leaveTimeDialog, durationDialog, priceDialog, freeSeatsDialog,
+                wayPointsDialog, userNameDialog, distanceDialog, petsDialog, departureTxt, luggageTxt;
     private Button bookRideBtn;
     private ImageView profilePicture, closeDialogBtn;
     private Context context;
@@ -270,6 +274,25 @@ public class FindRideDetails extends AsyncTask<Void, Void, Bitmap> {
         {
             wayPointsDialog.setVisibility(View.GONE);
         }
+
+        departureTxt = view.findViewById(R.id.rideDetails_departureTxt);
+        if(rideUserArrayList.get(position).getRide().getDepartureTxt() != null){
+            departureTxt.setMovementMethod(new ScrollingMovementMethod());
+            departureTxt.setText(rideUserArrayList.get(position).getRide().getDepartureTxt());
+        }
+        else{
+            departureTxt.setText(context.getResources().getString(R.string.find_ride_details_no_departure));
+        }
+
+        luggageTxt = view.findViewById(R.id.rideDetails_luggageTxt);
+        if(rideUserArrayList.get(position).getRide().getLuggageTxt() != null){
+            luggageTxt.setMovementMethod(new ScrollingMovementMethod());
+            luggageTxt.setText(rideUserArrayList.get(position).getRide().getLuggageTxt());
+        }
+        else{
+            luggageTxt.setText(context.getResources().getString(R.string.find_ride_details_no_luggage));
+        }
+
         bookRideBtn = view.findViewById(R.id.rideDetails_bookRideButton);
         closeDialogBtn =  view.findViewById(R.id.rideDetails_backButton);
         profilePicture = view.findViewById(R.id.rideDetails_profileImage);

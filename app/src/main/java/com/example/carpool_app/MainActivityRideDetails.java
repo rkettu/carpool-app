@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,7 +60,8 @@ interface MainActivityRideDetailsInterface{
 
 public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
 
-    private TextView startPointDialog, destinationDialog, leaveTimeDialog, durationDialog, priceDialog, freeSeatsDialog, wayPointsDialog, userNameDialog, distanceDialog, petsDialog;
+    private TextView startPointDialog, destinationDialog, leaveTimeDialog, durationDialog, priceDialog,
+                freeSeatsDialog, wayPointsDialog, userNameDialog, distanceDialog, petsDialog, departureTxt, luggageTxt;
     private Button bookRideBtn;
     private ImageView profilePicture, closeDialogBtn;
     private Context context;
@@ -242,7 +244,7 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
         Log.d("TAG", "initDialogLayoutItems1: ");
         Log.d("TAG", "initDialogLayoutItems: " + rideUserArrayList.get(position).getRide().getWaypointAddresses());
         //checks is the 0, 1 or 2 way points and print them if there is way points.
-        if(rideUserArrayList.get(position).getRide().getWaypointAddresses().size() != 0)
+        if(rideUserArrayList.get(position).getRide().getWaypointAddresses().size() > 0)
         {
             wayPointsDialog.setVisibility(View.VISIBLE);
             if(rideUserArrayList.get(position).getRide().getWaypointAddresses().size() == 1)
@@ -262,6 +264,25 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
             Log.d("TAG", "initDialogLayoutItems: visibility gone");
             wayPointsDialog.setVisibility(View.GONE);
         }
+
+        departureTxt = view.findViewById(R.id.rideDetails_departureTxt);
+        if(rideUserArrayList.get(position).getRide().getDepartureTxt() != null){
+            departureTxt.setMovementMethod(new ScrollingMovementMethod());
+            departureTxt.setText(rideUserArrayList.get(position).getRide().getDepartureTxt());
+        }
+        else{
+            departureTxt.setText(context.getResources().getString(R.string.find_ride_details_no_departure));
+        }
+
+        luggageTxt = view.findViewById(R.id.rideDetails_luggageTxt);
+        if(rideUserArrayList.get(position).getRide().getLuggageTxt() != null){
+            luggageTxt.setMovementMethod(new ScrollingMovementMethod());
+            luggageTxt.setText(rideUserArrayList.get(position).getRide().getLuggageTxt());
+        }
+        else{
+            luggageTxt.setText(context.getResources().getString(R.string.find_ride_details_no_luggage));
+        }
+
         bookRideBtn = view.findViewById(R.id.rideDetails_bookRideButton);
         bookRideBtn.setText(context.getResources().getString(R.string.main_activity_ride_details_cancel_trip));
         closeDialogBtn =  view.findViewById(R.id.rideDetails_backButton);

@@ -135,4 +135,8 @@
     <string name="getrideadapter_estimated_leave_time">Arvioitu lähtöaika</string>
     <string name="getride_success_text">Hienoa! Kyyti varattiin onnistuneesti. Palaa etusivulle painamalla OK.</string>
     <string name="getride_failed_text">Jotain meni pieleen matkaa varatessa, yrittäkää uudelleen</string>
+    <string name="find_ride_details_luggage">Matkatavara huomautus</string>
+    <string name="find_ride_details_departure">Lähtöaika huomautus</string>
+    <string name="find_ride_details_no_departure">Kyydillä ei ole huomautuksia lähtöaikaa koskien.</string>
+    <string name="find_ride_details_no_luggage">Kyydillä ei ole huomautuksia koskien matkatavaroita.</string>
 </resources>

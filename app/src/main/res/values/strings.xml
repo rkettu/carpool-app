@@ -143,5 +143,9 @@
     <string name="getrideadapter_estimated_leave_time">Estimated leave time</string>
     <string name="getride_success_text">Great! Ride has been booked successfully. Return to main menu by pressing OK.</string>
     <string name="getride_failed_text">Something went wrong while booking ride, please try again</string>
+    <string name="find_ride_details_luggage">Luggage notes</string>
+    <string name="find_ride_details_departure">Leavetime notes</string>
+    <string name="find_ride_details_no_departure">The ride has no comments regarding departure time.</string>
+    <string name="find_ride_details_no_luggage">The ride has no comments regarding luggage.</string>
 
 </resources>
