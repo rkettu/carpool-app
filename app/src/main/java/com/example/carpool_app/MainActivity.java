@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class MainActivity extends FragmentActivity {
@@ -133,12 +134,19 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
-                    curUserRides.addAll((ArrayList<String>) task.getResult().get("bookedRides"));
-                    NUMBER_OF_BOOKED_TASKS = curUserRides.size();
-                    Log.d("TAG", "12313123: ");
+                    try{
+                        curUserRides.addAll((ArrayList<String>) task.getResult().get("bookedRides"));
+                        NUMBER_OF_BOOKED_TASKS = curUserRides.size();
+                        Log.d("TAG", "12313123: ");
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                        loadOfferedRides();
+                    }
                 }
                 else{
                     //task is not successful
+                    loadOfferedRides();
                 }
             }
         });
@@ -146,40 +154,44 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-                    if(curUserRides.size() > 0){
-                        for(int i = 0; i < curUserRides.size(); i++){
-                            final int finalI = i;
-                            mRidesColRef.document(curUserRides.get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if(task.isSuccessful()){
-                                        final Ride ride = task.getResult().toObject(Ride.class);
-                                        final String rideId = task.getResult().getId();
-                                        mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                if(task.isSuccessful()) {
-                                                    User user = task.getResult().toObject(User.class);
-                                                    bookedRideUserArrayList.add(new RideUser(ride, user, rideId));
-                                                    taskCompletedBookedRides();
+                    try{
+                        if(curUserRides.size() > 0){
+                            for(int i = 0; i < curUserRides.size(); i++){
+                                mRidesColRef.document(curUserRides.get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if(task.isSuccessful()){
+                                            final Ride ride = task.getResult().toObject(Ride.class);
+                                            final String rideId = task.getResult().getId();
+                                            mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    if(task.isSuccessful()) {
+                                                        User user = task.getResult().toObject(User.class);
+                                                        bookedRideUserArrayList.add(new RideUser(ride, user, rideId));
+                                                        taskCompletedBookedRides();
+                                                    }
+                                                    else {
+                                                        //task is not successful
+                                                        loadOfferedRides();
+                                                    }
                                                 }
-                                                else {
-                                                    //task is not successful
-                                                    loadOfferedRides();
-                                                }
-                                            }
-                                        });
+                                            });
+                                        }
+                                        else{
+                                            //task is not successful
+                                            loadOfferedRides();
+                                        }
                                     }
-                                    else{
-                                        //task is not successful
-                                        loadOfferedRides();
-                                    }
-                                }
-                            });
+                                });
+                            }
                         }
-                    }
-                    else{
-                        //no booked rides
+                        else{
+                            //no booked rides
+                            loadOfferedRides();
+                        }
+                    } catch (Exception e){
+                        e.printStackTrace();
                         loadOfferedRides();
                     }
                 }
@@ -206,38 +218,47 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
-                    NUMBER_OF_OFFERED_TASKS = task.getResult().size();
-                    Log.d("TAG", "onComplete task size: " + NUMBER_OF_OFFERED_TASKS);
-                    try{
-                        for(QueryDocumentSnapshot doc : task.getResult()){
-                            final Ride ride = doc.toObject(Ride.class);
-                            final String rideId = doc.getId();
+                    try {
+                        NUMBER_OF_OFFERED_TASKS = task.getResult().size();
+                        if (NUMBER_OF_OFFERED_TASKS > 0) {
+                            Log.d("TAG", "onComplete task size: " + NUMBER_OF_OFFERED_TASKS);
+                            try {
+                                for (QueryDocumentSnapshot doc : task.getResult()) {
+                                    final Ride ride = doc.toObject(Ride.class);
+                                    final String rideId = doc.getId();
 
-                            mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if(task.isSuccessful()){
-                                        DocumentSnapshot doc = task.getResult();
-                                        User user = doc.toObject(User.class);
-                                        offeredRideUserArrayList.add(new RideUser(ride, user, rideId));
-                                        Log.d("TAG", "onComplete: ");
-                                        taskCompletedOfferedRides();
-                                    }
-                                    else{
-                                        //task is not successful
-                                        taskCompletedOfferedRides();
-                                    }
+                                    mUsersColRef.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                DocumentSnapshot doc = task.getResult();
+                                                User user = doc.toObject(User.class);
+                                                offeredRideUserArrayList.add(new RideUser(ride, user, rideId));
+                                                Log.d("TAG", "onComplete: ");
+                                                taskCompletedOfferedRides();
+                                            } else {
+                                                //task is not successful
+                                                initMainLayoutItems();
+                                            }
+                                        }
+                                    });
                                 }
-                            });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                taskCompletedOfferedRides();
+                            }
+                        } else {
+                            initMainLayoutItems();
+                            //No offered rides
                         }
                     }
                     catch (Exception e){
                         e.printStackTrace();
-                        taskCompletedOfferedRides();
+                        initMainLayoutItems();
                     }
                 }
                 else{
-                    taskCompletedOfferedRides();
+                    initMainLayoutItems();
                     //task is not successful
                 }
             }

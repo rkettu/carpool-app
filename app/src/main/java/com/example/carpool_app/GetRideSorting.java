@@ -34,7 +34,6 @@ public class GetRideSorting extends AsyncTask<Void, Integer, ArrayList<RideUser>
 
     @Override
     protected ArrayList<RideUser> doInBackground(Void... objects) {
-
         return timeSorting(rideUserArrayList, sortingInteger);
     }
 

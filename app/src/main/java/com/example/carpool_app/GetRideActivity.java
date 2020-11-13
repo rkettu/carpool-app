@@ -1,6 +1,7 @@
 package com.example.carpool_app;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -16,12 +17,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
@@ -35,6 +40,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 /**
  * GetRideActivity is the activity, which is used in the app to find matching rides to user from database.
@@ -51,7 +59,7 @@ import java.util.Comparator;
 
 public class GetRideActivity extends AppCompatActivity {
 
-    private Button searchRideButton;
+    private Button searchRideButton, drawerButton;
     private ImageView backButton;
     private EditText startPointEditText, destinationEditText, startDateEditText, endDateEditText, estStartTimeEditText, estEndTimeEditText;
     private Spinner sortListSpinner;
@@ -64,17 +72,20 @@ public class GetRideActivity extends AppCompatActivity {
     private int mYear, mMonth, mDay, newHour, newMinute;
     private int startDateDay, startDateMonth, startDateYear, startTimeHour, startTimeMinute;
     private int endDateDay, endDateMonth, endDateYear, endTimeHour, endTimeMinute;
-    private long queryLimit = 0;
     private long date1, date2;
     private Calendar calendar;
     private int spinnerCase = 0;
     private float startLat, startLng, destinationLat, destinationLng;
     private long systemTime = System.currentTimeMillis();
+    private LinearLayout linearContainer, listContainer;
+    Animation ttbAnim, bttAnim;
+    private boolean drawer_expand = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_ride);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         initGetRideLayoutElements();
         initCalendarTimes();
@@ -94,6 +105,13 @@ public class GetRideActivity extends AppCompatActivity {
         rideListView = findViewById(R.id.getRide_rideListView);
         sortListSpinner = findViewById(R.id.getRide_sortListSpinner);
 
+        //animation
+        ttbAnim = new AnimationUtils().loadAnimation(this, R.anim.toptobottomanimation);
+        bttAnim = new AnimationUtils().loadAnimation(this, R.anim.bottomtotopanimation);
+        drawerButton = findViewById(R.id.get_ride_drawer_bottom);
+        linearContainer = (LinearLayout) findViewById(R.id.get_ride_linearLayout);
+        listContainer = (LinearLayout) findViewById(R.id.get_ride_listcontainer);
+
         //simply spinner which is used to sort rides
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(GetRideActivity.this, R.array.getRideSpinnerItems,
                 android.R.layout.simple_spinner_item);
@@ -105,10 +123,48 @@ public class GetRideActivity extends AppCompatActivity {
         rideListView.setAdapter(getRideAdapter);
 
         //setting placeholder time in edit texts
+        startPointEditText.setText("Oulu");
+        destinationEditText.setText("Liminka");
         startDateEditText.setText(CalendarHelper.getDateTimeString(systemTime));
         estStartTimeEditText.setText("00:00");
         endDateEditText.setText(CalendarHelper.getDateTimeString(systemTime + 604800000));
         estEndTimeEditText.setText(CalendarHelper.getHHMMString(systemTime));
+
+        bttAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                linearContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 0));
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    //Layoutin valikon animaation toiminnot
+    public void expandableDrawer(View view) { animationHandler(); }
+    private void animationHandler(){
+        if (!drawer_expand){
+            linearContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            doAnimation(ttbAnim);
+            drawer_expand = true;
+        }else{
+            doAnimation(bttAnim);
+            drawer_expand = false;
+        }
+    }
+    private void doAnimation(Animation anim){
+        linearContainer.startAnimation(anim);
+        drawerButton.startAnimation(anim);
+        listContainer.startAnimation(anim);
+        // locationButton.startAnimation(anim);
     }
 
     private void initCalendarTimes()
@@ -149,9 +205,6 @@ public class GetRideActivity extends AppCompatActivity {
                     showProgressDialog(GetRideActivity.this);
                     Constant.hideKeyboard(GetRideActivity.this);
 
-                    //show 0 data in list
-                    getRideAdapter.notifyDataSetChanged();
-
                     //takes start and end date, change them to millis so we can search rides between those times
                     calendar.set(startDateYear, startDateMonth, startDateDay, startTimeHour, startTimeMinute);
                     date1 = calendar.getTimeInMillis();
@@ -166,6 +219,7 @@ public class GetRideActivity extends AppCompatActivity {
                         {
                             //clearing array lists old information
                             rideUserArrayList.clear();
+                            getRideAdapter.notifyDataSetChanged();
                             //Getting start and destination coordinates in async task
                             GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
                                 @Override
@@ -197,7 +251,7 @@ public class GetRideActivity extends AppCompatActivity {
                                                     //calling the sorting algorithm to sort rides
                                                     GetRideSorting getRideSorting = new GetRideSorting(new GetRideSortingInterface() {
                                                         @Override
-                                                        public void GetRideSorting(ArrayList<RideUser> rideUserArrayList) {
+                                                        public void GetRideSorting(final ArrayList<RideUser> rideUserArrayList) {
                                                             runOnUiThread(new Runnable() {
                                                                 @Override
                                                                 public void run() {
