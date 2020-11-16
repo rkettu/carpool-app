@@ -3,8 +3,6 @@ package com.example.carpool_app;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -123,7 +121,7 @@ public class GetRideAdapter extends BaseAdapter {
                     //use async task to show alert dialog with ride details.
                     //using async because of picture fetch from database takes time.
                     constant.startLoadingDialog(context);
-                    FindRideDetails findRideDetails = new FindRideDetails(context, new RideDetailsInterface() {
+                    GetRideRideDetails getRideRideDetails = new GetRideRideDetails(context, new GetRideRideDetailsInterface() {
                         @Override
                         public void showDialog(AlertDialog alertDialog) {
                             constant.dismissLoadingDialog();
@@ -169,7 +167,7 @@ public class GetRideAdapter extends BaseAdapter {
                             alertDialog.show();
                         }
                     }, rideUserArrayList, position);
-                    findRideDetails.execute();
+                    getRideRideDetails.execute();
                 }
                 catch (Exception e)
                 {

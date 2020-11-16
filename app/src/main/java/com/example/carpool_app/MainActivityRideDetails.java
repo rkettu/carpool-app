@@ -1,8 +1,8 @@
 package com.example.carpool_app;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -19,22 +19,14 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Document;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Interface uses 3 different functions
@@ -62,19 +54,19 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
 
     private TextView startPointDialog, destinationDialog, leaveTimeDialog, durationDialog, priceDialog,
                 freeSeatsDialog, wayPointsDialog, userNameDialog, distanceDialog, petsDialog, departureTxt, luggageTxt;
-    private Button bookRideBtn;
+    private Button posBtn, negBtn;
     private ImageView profilePicture, closeDialogBtn;
     private Context context;
-    private RideDetailsInterface rideDetailsInterface;
+    private GetRideRideDetailsInterface getRideRideDetailsInterface;
     private ArrayList<RideUser> rideUserArrayList;
     private int position;
     private int page;
     private AlertDialog.Builder builder;
 
-    public MainActivityRideDetails(Context context, RideDetailsInterface rideDetailsInterface, ArrayList<RideUser> rideUserArrayList, int position, int page)
+    public MainActivityRideDetails(Context context, GetRideRideDetailsInterface getRideRideDetailsInterface, ArrayList<RideUser> rideUserArrayList, int position, int page)
     {
         this.context = context;
-        this.rideDetailsInterface = rideDetailsInterface;
+        this.getRideRideDetailsInterface = getRideRideDetailsInterface;
         this.rideUserArrayList = rideUserArrayList;
         this.position = position;
         this.page = page;
@@ -87,7 +79,7 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
         //building the alert dialog and giving it layout.
         builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View dialogLayout = inflater.inflate(R.layout.dialog_ride_details, null);
+        View dialogLayout = inflater.inflate(R.layout.dialog_main_activity_ride_details, null);
 
         builder.setView(dialogLayout);
         initDialogLayoutItems(dialogLayout, rideUserArrayList, position);
@@ -121,7 +113,6 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
         final AlertDialog alertDialog = builder.show();
         //set profile picture by using bitmap.
         profilePicture.setImageBitmap(bitmap);
-        Log.d("TAG", "onPostE32424xecute: " + rideUserArrayList.get(position).getRideId());
         //adding listener to back arrow
         closeDialogBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,7 +121,7 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
             }
         });
 
-        bookRideBtn.setOnClickListener(new View.OnClickListener() {
+        posBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Booked rides list page
@@ -196,51 +187,59 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
             }
         });
 
+        negBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.cancel();
+            }
+        });
+
         //show the dialog
         alertDialog.show();
         alertDialog.getWindow().setBackgroundDrawableResource(R.drawable.background_rating);
-        if(rideDetailsInterface != null)
+
+        if(getRideRideDetailsInterface != null)
         {
-            rideDetailsInterface.showDialog(alertDialog);
+            getRideRideDetailsInterface.showDialog(alertDialog);
         }
     }
 
     //initializing layout items to alert dialog and give them correct texts.
     private void initDialogLayoutItems(View view, ArrayList<RideUser> rideUserArrayList, int position) {
-        userNameDialog = view.findViewById(R.id.rideDetails_userName);
+        userNameDialog = view.findViewById(R.id.main_ride_details_user_name);
         String userName = rideUserArrayList.get(position).getUser().getFname() + " " + rideUserArrayList.get(position).getUser().getLname();
         userNameDialog.setText(userName);
-        startPointDialog = view.findViewById(R.id.rideDetails_startPoint);
+        startPointDialog = view.findViewById(R.id.main_ride_details_start_point);
         String startPoint = context.getResources().getString(R.string.find_ride_details_startpoint);
         startPointDialog.setText(startPoint + ": " + rideUserArrayList.get(position).getRide().getStartAddress());
-        destinationDialog = view.findViewById(R.id.rideDetails_destination);
+        destinationDialog = view.findViewById(R.id.main_ride_details_destination);
         String destination = context.getResources().getString(R.string.find_rides_details_destination);
         destinationDialog.setText(destination + ": " + rideUserArrayList.get(position).getRide().getEndAddress());
-        leaveTimeDialog = view.findViewById(R.id.rideDetails_leaveTime);
+        leaveTimeDialog = view.findViewById(R.id.main_ride_details_leave_time);
         String leaveTime = context.getResources().getString(R.string.find_ride_details_est_time);
         leaveTimeDialog.setText(leaveTime + ": " + CalendarHelper.getDateTimeString(rideUserArrayList.get(position).getRide().getLeaveTime()));
-        durationDialog = view.findViewById(R.id.rideDetails_duration);
+        durationDialog = view.findViewById(R.id.main_ride_details_duration);
         String duration = context.getResources().getString(R.string.find_rides_details_est_duration);
         durationDialog.setText(duration + ": " + rideUserArrayList.get(position).getRide().getDuration());
-        distanceDialog = view.findViewById(R.id.rideDetails_distance);
+        distanceDialog = view.findViewById(R.id.main_ride_details_distance);
         String distance = context.getResources().getString(R.string.find_ride_details_distance);
         distanceDialog.setText(distance + ": " + rideUserArrayList.get(position).getRide().getDistance());
-        priceDialog = view.findViewById(R.id.rideDetails_price);
+        priceDialog = view.findViewById(R.id.main_ride_details_price);
         String pricePer100 = String.format("%.2f", rideUserArrayList.get(position).getRide().getPrice() * 100);
         String price = context.getResources().getString(R.string.find_ride_details_price);
         String per100 = context.getResources().getString(R.string.find_ride_details_per_100_km);
         priceDialog.setText(price + ": " + pricePer100 + " " + per100);
-        freeSeatsDialog = view.findViewById(R.id.rideDetails_freeSeats);
+        freeSeatsDialog = view.findViewById(R.id.main_ride_details_free_seats);
         String freeSeat = context.getResources().getString(R.string.find_ride_details_free_seats);
         freeSeatsDialog.setText(freeSeat + ": " + rideUserArrayList.get(position).getRide().getFreeSlots());
-        petsDialog = view.findViewById(R.id.rideDetails_pets);
+        petsDialog = view.findViewById(R.id.main_ride_details_pets);
         if(rideUserArrayList.get(position).getRide().getPets()){
             petsDialog.setText(context.getResources().getString(R.string.find_ride_details_pet_true));
         }
         else{
             petsDialog.setText(context.getResources().getString(R.string.find_ride_details_pet_false));
         }
-        wayPointsDialog = view.findViewById(R.id.rideDetails_wayPoints);
+        wayPointsDialog = view.findViewById(R.id.main_ride_details_way_points);
         Log.d("TAG", "initDialogLayoutItems1: ");
         Log.d("TAG", "initDialogLayoutItems: " + rideUserArrayList.get(position).getRide().getWaypointAddresses());
         //checks is the 0, 1 or 2 way points and print them if there is way points.
@@ -265,7 +264,7 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
             wayPointsDialog.setVisibility(View.GONE);
         }
 
-        departureTxt = view.findViewById(R.id.rideDetails_departureTxt);
+        departureTxt = view.findViewById(R.id.main_ride_details_departure_txt);
         if(rideUserArrayList.get(position).getRide().getDepartureTxt() != null){
             departureTxt.setMovementMethod(new ScrollingMovementMethod());
             departureTxt.setText(rideUserArrayList.get(position).getRide().getDepartureTxt());
@@ -274,7 +273,7 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
             departureTxt.setText(context.getResources().getString(R.string.find_ride_details_no_departure));
         }
 
-        luggageTxt = view.findViewById(R.id.rideDetails_luggageTxt);
+        luggageTxt = view.findViewById(R.id.main_ride_details_luggage_txt);
         if(rideUserArrayList.get(position).getRide().getLuggageTxt() != null){
             luggageTxt.setMovementMethod(new ScrollingMovementMethod());
             luggageTxt.setText(rideUserArrayList.get(position).getRide().getLuggageTxt());
@@ -283,10 +282,13 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
             luggageTxt.setText(context.getResources().getString(R.string.find_ride_details_no_luggage));
         }
 
-        bookRideBtn = view.findViewById(R.id.rideDetails_bookRideButton);
-        bookRideBtn.setText(context.getResources().getString(R.string.main_activity_ride_details_cancel_trip));
-        closeDialogBtn =  view.findViewById(R.id.rideDetails_backButton);
-        profilePicture = view.findViewById(R.id.rideDetails_profileImage);
+        posBtn = view.findViewById(R.id.main_ride_details_pos_btn);
+        posBtn.setText(context.getResources().getString(R.string.main_activity_ride_details_cancel_trip));
+        negBtn = view.findViewById(R.id.main_ride_details_neg_btn);
+        negBtn.setText(context.getResources().getString(R.string.getride_dialog_close));
+
+        closeDialogBtn =  view.findViewById(R.id.main_ride_details_back_arrow);
+        profilePicture = view.findViewById(R.id.main_ride_details_picture);
 
         Log.d("TAG", "initDialogLayoutItems2: ");
     }

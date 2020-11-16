@@ -139,4 +139,6 @@
     <string name="find_ride_details_departure">Lähtöaika huomautus</string>
     <string name="find_ride_details_no_departure">Kyydillä ei ole huomautuksia lähtöaikaa koskien.</string>
     <string name="find_ride_details_no_luggage">Kyydillä ei ole huomautuksia koskien matkatavaroita.</string>
+    <string name="ride_details_confirm_booking">Vahvista matkan varaus</string>
+    <string name="book">Varaa</string>
 </resources>

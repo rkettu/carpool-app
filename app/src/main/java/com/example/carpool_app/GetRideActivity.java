@@ -226,7 +226,7 @@ public class GetRideActivity extends AppCompatActivity {
                                     else
                                     {
                                         //calling findRides function where is db search with algorithm
-                                        FindRides findRides = new FindRides(startLat, startLng, destinationLat, destinationLng, date1, date2, new FindRidesInterface()
+                                        GetRideFindRides getRideFindRides = new GetRideFindRides(startLat, startLng, destinationLat, destinationLng, date1, date2, new GetRideFindRideInterface()
                                         {
                                             @Override
                                             public void FindRidesResult(ArrayList<RideUser> result) {
@@ -277,7 +277,7 @@ public class GetRideActivity extends AppCompatActivity {
                                             }
                                         });
 
-                                        findRides.findRides();
+                                        getRideFindRides.findRides();
                                     }
                                 }
                             }, GetRideActivity.this);

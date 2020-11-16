@@ -1,16 +1,12 @@
 package com.example.carpool_app;
 
 import android.os.AsyncTask;
-import android.os.Debug;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -20,17 +16,16 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-interface FindRidesInterface{
+interface GetRideFindRideInterface {
     void FindRidesResult(ArrayList<RideUser> result);
     void FindRidesFailed(String report);
 }
 
-class FindRides {
+class GetRideFindRides {
     private static float startLat, startLng, destinationLat, destinationLng;
     private static long date1, date2;
-    private static FindRidesInterface findRidesInterface;
+    private static GetRideFindRideInterface getRideFindRideInterface;
     private final CollectionReference rideReference = FirebaseFirestore.getInstance().collection("rides");
     private final CollectionReference userReference = FirebaseFirestore.getInstance().collection("users");
     private ArrayList<RideUser> rideUserArrayList = new ArrayList<>();
@@ -60,21 +55,21 @@ class FindRides {
 
 
     //use this call if you are looping
-    FindRides(ArrayList<RideUser> rideUserArrayList, DocumentSnapshot lastVisible) {
+    GetRideFindRides(ArrayList<RideUser> rideUserArrayList, DocumentSnapshot lastVisible) {
         this.lastVisible = lastVisible;
         this.rideUserArrayList = rideUserArrayList;
     }
 
     //use when called first time to save algorithm objects
-    FindRides(float startLat, float startLng, float destinationLat, float destinationLng,
-              long date1, long date2, FindRidesInterface findRidesInterface) {
-        FindRides.startLat = startLat;
-        FindRides.startLng = startLng;
-        FindRides.destinationLat = destinationLat;
-        FindRides.destinationLng = destinationLng;
-        FindRides.date1 = date1;
-        FindRides.date2 = date2;
-        FindRides.findRidesInterface = findRidesInterface;
+    GetRideFindRides(float startLat, float startLng, float destinationLat, float destinationLng,
+                     long date1, long date2, GetRideFindRideInterface getRideFindRideInterface) {
+        GetRideFindRides.startLat = startLat;
+        GetRideFindRides.startLng = startLng;
+        GetRideFindRides.destinationLat = destinationLat;
+        GetRideFindRides.destinationLng = destinationLng;
+        GetRideFindRides.date1 = date1;
+        GetRideFindRides.date2 = date2;
+        GetRideFindRides.getRideFindRideInterface = getRideFindRideInterface;
     }
 
     //function called when using the db search
@@ -179,8 +174,8 @@ class FindRides {
                     }
                 }
                 else {
-                    if(findRidesInterface != null){
-                        findRidesInterface.FindRidesFailed(task.getException().toString());
+                    if(getRideFindRideInterface != null){
+                        getRideFindRideInterface.FindRidesFailed(task.getException().toString());
                     }
                 }
             }
@@ -197,21 +192,21 @@ class FindRides {
     private void isDone(QuerySnapshot qs, int count){
         if(qs.size() == 0){
             Log.d(TAG, "isDone: qs size");
-            FindRideDone findRideDone = new FindRideDone(rideUserArrayList, findRidesInterface, lastVisible, true);
-            findRideDone.execute();
+            GetRideFindRidesDone getRideFindRidesDone = new GetRideFindRidesDone(rideUserArrayList, getRideFindRideInterface, lastVisible, true);
+            getRideFindRidesDone.execute();
         }
         else if(qs.size() != 0 && count == 0){
             Log.d(TAG, "isDone: qs.size != 0, count == 0");
             lastVisible = qs.getDocuments().get(qs.size() -1);
             if(!foundRide){
-                FindRides findRides = new FindRides(rideUserArrayList, lastVisible);
-                findRides.findRides();
+                GetRideFindRides getRideFindRides = new GetRideFindRides(rideUserArrayList, lastVisible);
+                getRideFindRides.findRides();
             }
         }
         else if(count == 0){
             Log.d(TAG, "isDone: count");
-            FindRideDone findRideDone = new FindRideDone(rideUserArrayList, findRidesInterface, lastVisible, false);
-            findRideDone.execute();
+            GetRideFindRidesDone getRideFindRidesDone = new GetRideFindRidesDone(rideUserArrayList, getRideFindRideInterface, lastVisible, false);
+            getRideFindRidesDone.execute();
         }
         else{
             Log.d(TAG, "isDone: else");
@@ -220,25 +215,24 @@ class FindRides {
 
 }
 
-class FindRideDone extends AsyncTask<Void, Void, Boolean>{
+class GetRideFindRidesDone extends AsyncTask<Void, Void, Boolean>{
 
     private ArrayList<RideUser> rideUserArrayList;
     private static final String TAG = "FindRideDone";
     private Boolean hasDone;
-    private FindRidesInterface findRidesInterface;
+    private GetRideFindRideInterface getRideFindRideInterface;
     private DocumentSnapshot lastVisible;
 
-    /** Use the arrayListMaxSize integer for the minimum array list size.
-     * //TODO when ready, use value of 50 instead of 1.
-     * //Use value 1 if you dont want your db to get many search per time
+    /** Use the arrayListMaxSize integer for the minimum array list size
+     * Use value 1 if you dont want your db to get many search per time
      * */
     private final int arrayListMinSize = 50;
 
-    FindRideDone(ArrayList<RideUser> rideUserArrayList, FindRidesInterface findRidesInterface, DocumentSnapshot lastVisible, boolean hasDone)
+    GetRideFindRidesDone(ArrayList<RideUser> rideUserArrayList, GetRideFindRideInterface getRideFindRideInterface, DocumentSnapshot lastVisible, boolean hasDone)
     {
         this.hasDone = hasDone;
         this.rideUserArrayList = rideUserArrayList;
-        this.findRidesInterface = findRidesInterface;
+        this.getRideFindRideInterface = getRideFindRideInterface;
         this.lastVisible = lastVisible;
     }
 
@@ -255,8 +249,8 @@ class FindRideDone extends AsyncTask<Void, Void, Boolean>{
         else
         {
             //There is need to run database search again
-            FindRides findRides = new FindRides(rideUserArrayList, lastVisible);
-            findRides.findRides();
+            GetRideFindRides getRideFindRides = new GetRideFindRides(rideUserArrayList, lastVisible);
+            getRideFindRides.findRides();
         }
         return hasDone;
     }
@@ -268,10 +262,10 @@ class FindRideDone extends AsyncTask<Void, Void, Boolean>{
         //if all the db data is ran through algorithm or the array list size is bigger than minimum value, do this.
         if(result)
         {
-            if(findRidesInterface != null)
+            if(getRideFindRideInterface != null)
             {
                 Log.d(TAG, "onPostExecute: " + rideUserArrayList.size());
-                findRidesInterface.FindRidesResult(rideUserArrayList);
+                getRideFindRideInterface.FindRidesResult(rideUserArrayList);
             }
         }
     }
