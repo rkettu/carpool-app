@@ -99,7 +99,7 @@ public class GetRideActivity extends AppCompatActivity {
         listContainer = (LinearLayout) findViewById(R.id.get_ride_listcontainer);
 
         //simply spinner which is used to sort rides
-        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(GetRideActivity.this, R.array.getRideSpinnerItems,
+        spinnerAdapter = ArrayAdapter.createFromResource(GetRideActivity.this, R.array.getRideSpinnerItems,
                 android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sortListSpinner.setAdapter(new GetRideSpinner(spinnerAdapter, R.layout.spinner_title_get_ride, GetRideActivity.this));
