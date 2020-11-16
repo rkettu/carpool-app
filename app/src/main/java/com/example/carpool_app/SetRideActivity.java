@@ -439,6 +439,10 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         else if(v.getId() == R.id.set_ride_sijaintiButton)
         {
 
+            Intent startIntro = new Intent(SetRideActivity.this, StartIntroActivity.class);
+            startActivity(startIntro);
+
+            /*
             if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             {
                 //Location granted
@@ -451,6 +455,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 //Location not granted
                 askLocationPermission();
             }
+             */
         }
     }
 
