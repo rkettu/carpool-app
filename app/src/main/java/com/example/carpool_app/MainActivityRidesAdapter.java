@@ -2,8 +2,6 @@ package com.example.carpool_app;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +11,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -104,7 +100,7 @@ public class MainActivityRidesAdapter extends BaseAdapter {
                 try
                 {
                     constant.startLoadingDialog(context);
-                    MainActivityRideDetails mainActivityRideDetails = new MainActivityRideDetails(context, new RideDetailsInterface() {
+                    MainActivityRideDetails mainActivityRideDetails = new MainActivityRideDetails(context, new GetRideRideDetailsInterface() {
                         @Override
                         public void showDialog(AlertDialog alertDialog) {
                             constant.dismissLoadingDialog();

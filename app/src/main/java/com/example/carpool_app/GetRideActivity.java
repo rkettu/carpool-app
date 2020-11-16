@@ -1,21 +1,15 @@
 package com.example.carpool_app;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.FragmentManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -32,17 +26,9 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.google.common.io.Resources;
-import com.google.rpc.context.AttributeContext;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 
 /**
  * GetRideActivity is the activity, which is used in the app to find matching rides to user from database.
@@ -113,7 +99,7 @@ public class GetRideActivity extends AppCompatActivity {
         listContainer = (LinearLayout) findViewById(R.id.get_ride_listcontainer);
 
         //simply spinner which is used to sort rides
-        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(GetRideActivity.this, R.array.getRideSpinnerItems,
+        spinnerAdapter = ArrayAdapter.createFromResource(GetRideActivity.this, R.array.getRideSpinnerItems,
                 android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sortListSpinner.setAdapter(new GetRideSpinner(spinnerAdapter, R.layout.spinner_title_get_ride, GetRideActivity.this));
@@ -240,7 +226,7 @@ public class GetRideActivity extends AppCompatActivity {
                                     else
                                     {
                                         //calling findRides function where is db search with algorithm
-                                        FindRides findRides = new FindRides(startLat, startLng, destinationLat, destinationLng, date1, date2, new FindRidesInterface()
+                                        GetRideFindRides getRideFindRides = new GetRideFindRides(startLat, startLng, destinationLat, destinationLng, date1, date2, new GetRideFindRideInterface()
                                         {
                                             @Override
                                             public void FindRidesResult(ArrayList<RideUser> result) {
@@ -291,7 +277,7 @@ public class GetRideActivity extends AppCompatActivity {
                                             }
                                         });
 
-                                        findRides.findRides();
+                                        getRideFindRides.findRides();
                                     }
                                 }
                             }, GetRideActivity.this);
