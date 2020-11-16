@@ -53,7 +53,6 @@ class GetRideFindRides {
      * 3.1. if there is no matching rides, GetRideActivity toasts "no matching rides"
      */
 
-
     //use this call if you are looping
     GetRideFindRides(ArrayList<RideUser> rideUserArrayList, DocumentSnapshot lastVisible) {
         this.lastVisible = lastVisible;
@@ -74,9 +73,6 @@ class GetRideFindRides {
 
     //function called when using the db search
     void findRides() {
-        Log.d(TAG, "onComplete: latlng: " + date1 + " " + date2 + " " + startLat + " " + startLng + " " + destinationLat + " " + destinationLng);
-        Log.d(TAG, "findRides: lastvisible: " + lastVisible);
-        Log.d(TAG, "findRides: siuze: " + rideUserArrayList.size());
         //first it will go to else condition to get the first query.
         //the first query will get data to lastVisible and after that
         //program will use getNextQuery, where we take next queryLimit much
@@ -121,41 +117,48 @@ class GetRideFindRides {
                     for(final QueryDocumentSnapshot rideDoc : task.getResult()){
                         try{
                             if((long) rideDoc.get("freeSlots") > 0){
-                                if(AppMath.isRouteInRange((long) rideDoc.get("pickUpDistance"), startLat, startLng, destinationLat, destinationLng, (ArrayList<HashMap<String, Double>>) rideDoc.get("points"))){
-                                    final Ride ride = rideDoc.toObject(Ride.class);
-                                    final String rideId = rideDoc.getId();
-                                    Log.d(TAG, "onComplete: after first db");
-                                    Task<DocumentSnapshot> docTask = userReference.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                            if(task.isSuccessful()){
-                                                DocumentSnapshot userDoc = task.getResult();
-                                                if(userDoc.exists()){
-                                                    User user = userDoc.toObject(User.class);
-                                                    rideUserArrayList.add(new RideUser(ride, user, rideId));
-                                                }
-                                                else{
-                                                    //Doc doesn't exist
+                                if(AppMath.areCoordinatesWithinBounds(startLat, startLng, destinationLat, destinationLng, (HashMap<String, Double>) rideDoc.get("bounds"))) {
+                                    if (AppMath.isRouteInRange((long) rideDoc.get("pickUpDistance"), startLat, startLng, destinationLat, destinationLng, (ArrayList<HashMap<String, Double>>) rideDoc.get("points"))) {
+                                        final Ride ride = rideDoc.toObject(Ride.class);
+                                        final String rideId = rideDoc.getId();
+                                        Log.d(TAG, "onComplete: after first db");
+                                        userReference.document(ride.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    DocumentSnapshot userDoc = task.getResult();
+                                                    if (userDoc.exists()) {
+                                                        User user = userDoc.toObject(User.class);
+                                                        rideUserArrayList.add(new RideUser(ride, user, rideId));
+                                                    } else {
+                                                        //Doc doesn't exist
+                                                    }
+                                                } else {
+                                                    //Task is not successful
                                                 }
                                             }
-                                            else{
-                                                //Task is not successful
+                                        }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                countOfTasks -= 1;
+                                                isDone(querySnapshot, countOfTasks);
+                                                Log.d(TAG, "onComplete: doc task complete: " + countOfTasks);
                                             }
-                                        }
-                                    }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                            countOfTasks -= 1;
-                                            isDone(querySnapshot, countOfTasks);
-                                            Log.d(TAG, "onComplete: doc task complete: " + countOfTasks);
-                                        }
-                                    });
-                                }
-                                else{
-                                    //Ride's route is not in range
+                                        });
+                                    } else {
+                                        //Ride's route is not in range
+                                        countOfTasks -= 1;
+                                        isDone(querySnapshot, countOfTasks);
+                                        Log.d(TAG, "Route is not in range: " + countOfTasks);
+                                    }
+                                } else {
+                                    //Ride's route is not in bounds
                                     countOfTasks -= 1;
                                     isDone(querySnapshot, countOfTasks);
-                                    Log.d(TAG, "Route is not in range: " + countOfTasks);
+                                    Log.d(TAG, "onComplete: " + rideDoc.getId());
+                                    Log.d(TAG, "onComplete: " + startLat + " " + startLng + " " + destinationLat + " " + destinationLng);
+                                    Log.d(TAG, "onComplete: " + rideDoc.get("bounds"));
+                                    Log.d(TAG, "Route is not in bounds: " + countOfTasks);
                                 }
                             }
                             else{

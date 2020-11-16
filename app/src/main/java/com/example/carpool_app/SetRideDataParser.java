@@ -46,9 +46,9 @@ public class SetRideDataParser {
                 double minLng = ((JSONObject)jBounds.get("southwest")).getDouble("lng") - AppMath.getDeltaLongitude(Constant.BoundsInKilometers, maxLat);
 
                 bounds.put("north", maxLat);
-                bounds.put("east", minLng);
+                bounds.put("east", maxLng);
                 bounds.put("south", minLat);
-                bounds.put("west", maxLng);
+                bounds.put("west", minLng);
 
                 Log.d("LATLNG: ", "Lats: " + minLat + " " + maxLat + " Longs: " + minLng + " " + maxLng);
 
