@@ -40,7 +40,7 @@ public class GetRideAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return rideUserArrayList.get(position);
     }
 
     @Override

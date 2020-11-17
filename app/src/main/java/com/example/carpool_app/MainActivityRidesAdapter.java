@@ -2,6 +2,7 @@ package com.example.carpool_app;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +29,6 @@ public class MainActivityRidesAdapter extends BaseAdapter {
      * @param rideUserArrayList is the ArrayList containing all the data seen in lists in MainActivity.java
      * @param context we need context for picasso picture load
      */
-
-    public MainActivityRidesAdapter() {}
 
     public MainActivityRidesAdapter(ArrayList<RideUser> rideUserArrayList, Context context, int page)
     {
@@ -78,8 +77,6 @@ public class MainActivityRidesAdapter extends BaseAdapter {
             viewHolder = (ViewHolderMainActivityRides) view.getTag();
         }
 
-        //set data to list
-
         //uses calendarHelper class to change time in millis to date time
         long date = rideUserArrayList.get(position).getRide().getLeaveTime();
         String newDate = CalendarHelper.getDateTimeString(date);
@@ -92,15 +89,13 @@ public class MainActivityRidesAdapter extends BaseAdapter {
         viewHolder.time.setText(newTime);
 
         constant = new Constant();
-
-
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try
                 {
                     constant.startLoadingDialog(context);
-                    MainActivityRideDetails mainActivityRideDetails = new MainActivityRideDetails(context, new GetRideRideDetailsInterface() {
+                    MainActivityRideDetails mainActivityRideDetails = new MainActivityRideDetails(context, new MainActivityRideDetailsInterface() {
                         @Override
                         public void showDialog(AlertDialog alertDialog) {
                             constant.dismissLoadingDialog();
@@ -108,12 +103,14 @@ public class MainActivityRidesAdapter extends BaseAdapter {
 
                         @Override
                         public void whenDone() {
-
+                            notifyDataSetChanged();
+                            endDialog();
                         }
 
                         @Override
                         public void whenFailed() {
-
+                            notifyDataSetChanged();
+                            endDialog();
                         }
                     }, rideUserArrayList, position, page);
                     mainActivityRideDetails.execute();
@@ -125,7 +122,17 @@ public class MainActivityRidesAdapter extends BaseAdapter {
                 }
             }
         });
-
         return view;
+    }
+
+    public void endDialog(){
+        if(page == 0){
+            Toast.makeText(context, context.getResources().getString(R.string.main_activity_adapter_delete_booked_ride), Toast.LENGTH_LONG).show();
+        }
+        else{
+            Toast.makeText(context, context.getResources().getString(R.string.main_activity_adapter_delete_offered_ride), Toast.LENGTH_LONG).show();
+        }
+        Intent i = new Intent(context, MainActivity.class);
+        context.startActivity(i);
     }
 }

@@ -149,5 +149,12 @@
     <string name="find_ride_details_no_luggage">The ride has no comments regarding luggage.</string>
     <string name="ride_details_confirm_booking">Confirm the trip booking</string>
     <string name="book">Book</string>
+    <string name="warning">Warning</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="main_activity_ride_details_delete_booked_ride">Are you sure you want to cancel the booking for this trip?</string>
+    <string name="main_activity_ride_details_delete_offered_ride">Are you sure you want to cancel the ride you have offered?</string>
+    <string name="main_activity_adapter_delete_booked_ride">You have canceled the booked trip</string>
+    <string name="main_activity_adapter_delete_offered_ride">You have canceled the offered ride</string>
 
 </resources>

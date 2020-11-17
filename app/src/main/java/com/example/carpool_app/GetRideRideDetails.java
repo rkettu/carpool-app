@@ -145,7 +145,7 @@ public class GetRideRideDetails extends AsyncTask<Void, Void, Bitmap> {
     {
         AlertDialog.Builder bookRideBuilder = new AlertDialog.Builder(context);
         bookRideBuilder.setTitle(context.getResources().getString(R.string.ride_details_confirm_booking));
-        bookRideBuilder.setCancelable(false);
+        bookRideBuilder.setCancelable(true);
         bookRideBuilder.setPositiveButton(context.getResources().getString(R.string.book), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
