@@ -148,4 +148,5 @@
     <string name="main_activity_ride_details_delete_offered_ride">Oletko varma, että haluat poistaa tarjoamasi kyydin?</string>
     <string name="main_activity_adapter_delete_booked_ride">Poistit matkan varauksen</string>
     <string name="main_activity_adapter_delete_offered_ride">Poistit tarjoamasi matkan</string>
+    <string name="get_ride_details_confirm_ride_msg">Vahvistamalla tämän matkan varauksen hyväksyt myös kaikki sovellukseen liittyvät käyttöehdot</string>
 </resources>

@@ -147,7 +147,7 @@
     <string name="find_ride_details_departure">Leavetime notes</string>
     <string name="find_ride_details_no_departure">The ride has no comments regarding departure time.</string>
     <string name="find_ride_details_no_luggage">The ride has no comments regarding luggage.</string>
-    <string name="ride_details_confirm_booking">Confirm the trip booking</string>
+    <string name="ride_details_confirm_booking">Confirm the booking</string>
     <string name="book">Book</string>
     <string name="warning">Warning</string>
     <string name="no">No</string>
@@ -156,5 +156,6 @@
     <string name="main_activity_ride_details_delete_offered_ride">Are you sure you want to cancel the ride you have offered?</string>
     <string name="main_activity_adapter_delete_booked_ride">You have canceled the booked trip</string>
     <string name="main_activity_adapter_delete_offered_ride">You have canceled the offered ride</string>
+    <string name="get_ride_details_confirm_ride_msg">By confirming the booking of this trip you also accept all the terms of use related to the application</string>
 
 </resources>

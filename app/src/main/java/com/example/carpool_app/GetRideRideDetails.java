@@ -145,6 +145,7 @@ public class GetRideRideDetails extends AsyncTask<Void, Void, Bitmap> {
     {
         AlertDialog.Builder bookRideBuilder = new AlertDialog.Builder(context);
         bookRideBuilder.setTitle(context.getResources().getString(R.string.ride_details_confirm_booking));
+        bookRideBuilder.setMessage(context.getResources().getString(R.string.get_ride_details_confirm_ride_msg));
         bookRideBuilder.setCancelable(true);
         bookRideBuilder.setPositiveButton(context.getResources().getString(R.string.book), new DialogInterface.OnClickListener() {
             @Override
@@ -159,7 +160,6 @@ public class GetRideRideDetails extends AsyncTask<Void, Void, Bitmap> {
             }
         });
         AlertDialog bookRideDialog = bookRideBuilder.show();
-        bookRideDialog.getWindow().setBackgroundDrawable(context.getDrawable(R.drawable.bg_round));
         bookRideDialog.show();
     }
 
