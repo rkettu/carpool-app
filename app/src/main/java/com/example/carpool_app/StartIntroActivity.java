@@ -5,6 +5,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -47,7 +48,15 @@ public class StartIntroActivity extends AppCompatActivity {
         mNextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSlideViewPager.setCurrentItem(mCurrentPage + 1);
+                Log.d("INTRO", "mCurrentPage: " + mCurrentPage);
+                if(mCurrentPage == 2)
+                {
+                    finish();
+                }else
+                {
+                    mSlideViewPager.setCurrentItem(mCurrentPage + 1);
+                }
+
             }
         });
 
@@ -68,13 +77,13 @@ public class StartIntroActivity extends AppCompatActivity {
             mDots[i] = new TextView(this);
             mDots[i].setText(Html.fromHtml("&#8226;"));
             mDots[i].setTextSize(35);
-            mDots[i].setTextColor(getResources().getColor(R.color.colorTransparentWhite));
+            mDots[i].setTextColor(getResources().getColor(R.color.white));
 
             mDotLayout.addView(mDots[i]);
         }
 
         if(mDots.length > 0){
-            mDots[position].setTextColor(getResources().getColor(R.color.white));
+            mDots[position].setTextColor(getResources().getColor(R.color.pastelGreen));
         }
     }
 
@@ -103,7 +112,7 @@ public class StartIntroActivity extends AppCompatActivity {
                 mBackBtn.setEnabled(true);
                 mBackBtn.setVisibility(View.VISIBLE);
 
-                mNextBtn.setText("Lopeta");
+                mNextBtn.setText("Jatka");
                 mBackBtn.setText("Takaisin");
             }else{
                 mNextBtn.setEnabled(true);

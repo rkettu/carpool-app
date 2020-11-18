@@ -12,12 +12,11 @@
             android:id="@+id/startIntro_slide_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginBottom="100dp"
-            app:srcCompat="@drawable/dropme" />
+            android:layout_marginTop="50dp"
+            app:srcCompat="@drawable/beta_logo3_500x500" />
 
         <TextView
             android:id="@+id/startIntro_slide_heading"
@@ -29,7 +28,10 @@
             android:fontFamily="@font/montserrat_medium"
             android:textColor="@color/black"
             android:textSize="20dp"
+            android:textAlignment="center"
             android:layout_marginTop="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:text="HEADING" />
 
         <TextView
@@ -39,6 +41,8 @@
             app:layout_constraintTop_toBottomOf="@+id/startIntro_slide_heading"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:textColor="@color/black"
             android:textAlignment="center"
             android:layout_marginTop="40dp"
