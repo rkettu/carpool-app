@@ -107,4 +107,5 @@
     <string name="find_ride_details_distance">Matkan pituus</string>
     <string name="find_ride_details_pet_false">Ei lemmikkejä</string>
     <string name="find_ride_details_pet_true">Lemmikit sallittu</string>
+    <string name="cancel">Cancel</string>
 </resources>

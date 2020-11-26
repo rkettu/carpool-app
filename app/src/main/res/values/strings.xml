@@ -124,5 +124,6 @@
     <string name="find_ride_details_distance">Ride distance</string>
     <string name="find_ride_details_pet_false">No pets allowed</string>
     <string name="find_ride_details_pet_true">Pets allowed</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

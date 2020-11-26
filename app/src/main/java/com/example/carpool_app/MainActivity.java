@@ -8,11 +8,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -116,8 +119,14 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void SelectGetARide(View v) {
+        // COMMENTED OUT FOR TESTING PURPOSES => REMEMBER TO UNCOMMENT
+        /*
         Intent GetRideIntent = new Intent(MainActivity.this, GetRideActivity.class);
         startActivity(GetRideIntent);
+         */
+        // REMOVE THIS AND ADD TO PROPER BUTTON / LOCATIOIN
+        new Constant().startLoadingDialog(MainActivity.this);
+
     }
 
     public void SelectOfferARide(View v) {
