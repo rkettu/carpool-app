@@ -619,8 +619,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
     // Set autocomplete lisviews invisible if user click anywhere out of listview
     public void anywhereClicked(View view) {
         Log.d("CLICK", "constrainClicked: ");
-        AutoCompleteStartpointListView.setVisibility(View.INVISIBLE);
-        AutoCompleteDestinationListView.setVisibility(View.INVISIBLE);
+        AutoCompleteStartpointListView.setVisibility(View.GONE);
+        AutoCompleteDestinationListView.setVisibility(View.GONE);
     }
 
     //This funktio will called when user add character in start- or destination editor.

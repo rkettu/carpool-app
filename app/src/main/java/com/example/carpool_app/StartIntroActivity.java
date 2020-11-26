@@ -49,6 +49,7 @@ public class StartIntroActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("INTRO", "mCurrentPage: " + mCurrentPage);
+                Log.d("IMAGE", "onClick: " + getDrawable(R.drawable.beta_logo3).getMinimumHeight() + " + " + getResources().getDisplayMetrics().heightPixels);
                 if(mCurrentPage == 2)
                 {
                     finish();

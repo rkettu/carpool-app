@@ -21,21 +21,21 @@ public class StartIntroSliderAdapter extends PagerAdapter {
     }
 
     public int[] slide_images = {
-            R.drawable.main_logo3_500x500,
-            R.drawable.beta_logo3_500x500,
-            R.drawable.detailstesti
+            R.drawable.main_logo3,
+            R.drawable.beta_logo3,
+            R.drawable.feedback
     };
 
     public String[] slide_headings = {
             "Kiitos kun valitsit sovelluksemme",
             "Tämä on beta -versio",
-            "Testi2"
+            "Palautteesi on meille tärkeä"
     };
 
     public String[] slide_descs = {
             "Sovelluksen idea on edistää ympäristöystävällistä liikkumista ja tarjota edullisempi tapa matkustaa",
             "Ethän syötä henkilökohtaisia tietoja tähän versioon. Voit kuitenkin käyttää sovellusta normaalisti käyttäjätunnuksella",
-            "toinen testihommaaa"
+            "Teemme tutkimusta olisiko tämänkaltaiselle sovellukselle käyttöä, joten olemme kiitollisia palautteestasi"
     };
 
     @Override
