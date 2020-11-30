@@ -8,17 +8,18 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-// For doing something after giving the rating
-public interface RatingCallback
-{
-    public void doAfterRating();
-}
+
 
 // Move to CLoud Functions OR set very firm firestore rules
 public class RatingGiver {
     private static int minRating = 1;
     private static int maxRating = 5;
 
+    // For doing something after giving the rating
+    public interface RatingCallback
+    {
+        public void doAfterRating();
+    }
 
     public static void rateRide(int givenRating, String userId, final RatingCallback ratingCallback)
     {

@@ -1,19 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    >
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/ratings_list_item_joku_1"
-        tools:ignore="MissingConstraints" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/ratings_list_item_joku_2"
-        tools:ignore="MissingConstraints" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ratings_list_joku_img"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="10dp"
+        android:src="@drawable/ic_person_black_100dp"
+        app:civ_border_color="@color/white"
+        app:civ_border_width="2dp"
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        >
+
+        <TextView
+            android:id="@+id/ratings_list_item_joku_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="etunimi"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/ratings_list_item_joku_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ratingi"
+            tools:ignore="MissingConstraints" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_weight="0"
+        android:layout_marginRight="10dp"
+    >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ratings_list_rideStartDestination"
+            android:text="OULU _ TURKU"
+            android:textSize="18dp"
+            android:layout_gravity="right|center"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ratings_list_rideTime"
+            android:text="12.12.2012"
+            android:textSize="12dp"
+            android:layout_gravity="right|center"
+            />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>
