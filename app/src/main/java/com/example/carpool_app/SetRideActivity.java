@@ -352,7 +352,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 public void getFullAddress(GetCoordinatesUtility getCoordinatesUtility) {
                     String address = getCoordinatesUtility.getFullAddress();
                     startEditor.setText(address);
-                    AutoCompleteStartpointListView.setVisibility(View.INVISIBLE);
+                    AutoCompleteStartpointListView.setVisibility(View.GONE);
                     if(address == null){
                         Toast.makeText(SetRideActivity.this, R.string.setride_check_start_position, Toast.LENGTH_LONG).show();
                     }
@@ -366,7 +366,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 public void getFullAddress(GetCoordinatesUtility getCoordinatesUtility) {
                     String address = getCoordinatesUtility.getFullAddress();
                     destinationEditor.setText(address);
-                    AutoCompleteDestinationListView.setVisibility(View.INVISIBLE);
+                    AutoCompleteDestinationListView.setVisibility(View.GONE);
                     if(address == null){
                         Toast.makeText(SetRideActivity.this, R.string.setride_check_destination_position, Toast.LENGTH_LONG).show();
                     }

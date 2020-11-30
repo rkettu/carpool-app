@@ -65,7 +65,6 @@ public class MainActivity extends FragmentActivity {
             getPreferences(MODE_PRIVATE).edit().putBoolean(tutorialKey, false).apply();
         }
 
-
         //findViewById(R.id.main_btnGetRide).setOnClickListener(this);
         //findViewById(R.id.main_btnOfferRide).setOnClickListener(this);
 
