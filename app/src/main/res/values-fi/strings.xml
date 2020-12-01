@@ -123,6 +123,9 @@
     <string name="find_ride_details_distance">Matkan pituus</string>
     <string name="find_ride_details_pet_false">Ei lemmikkejä</string>
     <string name="find_ride_details_pet_true">Lemmikit sallittu</string>
+
+    <string name="cancel">Cancel</string>
+
     <string name="main_activity_ride_details_cancel_trip">Peru matka</string>
     <string name="getride_dialog_close">Sulje</string>
     <string name="getride_find_matching_route">Etsitään sopivia matkoja</string>
@@ -141,4 +144,5 @@
     <string name="find_ride_details_no_luggage">Kyydillä ei ole huomautuksia koskien matkatavaroita.</string>
     <string name="ride_details_confirm_booking">Vahvista matkan varaus</string>
     <string name="book">Varaa</string>
+
 </resources>

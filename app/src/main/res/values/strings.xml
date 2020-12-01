@@ -131,6 +131,9 @@
     <string name="find_ride_details_distance">Ride distance</string>
     <string name="find_ride_details_pet_false">No pets allowed</string>
     <string name="find_ride_details_pet_true">Pets allowed</string>
+
+    <string name="cancel">Cancel</string>
+
     <string name="main_activity_ride_details_cancel_trip">Cancel trip</string>
     <string name="getride_dialog_close">Close</string>
     <string name="getride_find_matching_route">Finding matching route</string>
@@ -149,5 +152,6 @@
     <string name="find_ride_details_no_luggage">The ride has no comments regarding luggage.</string>
     <string name="ride_details_confirm_booking">Confirm the trip booking</string>
     <string name="book">Book</string>
+
 
 </resources>

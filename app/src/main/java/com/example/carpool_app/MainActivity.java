@@ -8,12 +8,19 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+
 import android.content.SharedPreferences;
+
 import android.os.Bundle;
 
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import com.google.android.gms.tasks.OnCanceledListener;
@@ -57,6 +64,7 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+
         // Introduce first-time users to your app
         String tutorialKey = "SOME_KEY";
         Boolean firstTime = getPreferences(MODE_PRIVATE).getBoolean(tutorialKey, true);
@@ -65,6 +73,7 @@ public class MainActivity extends FragmentActivity {
             startActivity(startIntro);
             getPreferences(MODE_PRIVATE).edit().putBoolean(tutorialKey, false).apply();
         }
+
 
         //findViewById(R.id.main_btnGetRide).setOnClickListener(this);
         //findViewById(R.id.main_btnOfferRide).setOnClickListener(this);
@@ -123,8 +132,14 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void SelectGetARide(View v) {
+        // COMMENTED OUT FOR TESTING PURPOSES => REMEMBER TO UNCOMMENT
+        /*
         Intent GetRideIntent = new Intent(MainActivity.this, GetRideActivity.class);
         startActivity(GetRideIntent);
+         */
+        // REMOVE THIS AND ADD TO PROPER BUTTON / LOCATIOIN
+        new Constant().startLoadingDialog(MainActivity.this);
+
     }
 
     public void SelectOfferARide(View v) {
