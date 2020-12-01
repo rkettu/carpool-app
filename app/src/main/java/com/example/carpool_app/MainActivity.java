@@ -2,7 +2,6 @@ package com.example.carpool_app;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -12,16 +11,14 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.opengl.Visibility;
 import android.os.Bundle;
 
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -30,7 +27,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -38,12 +34,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toolbar;
 
 import java.util.ArrayList;
-import java.util.Objects;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class MainActivity extends FragmentActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -76,8 +68,20 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
         drawer =  findViewById(R.id.drawer_layout);
         navigationView =  findViewById(R.id.nav_view);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        Menu menu = navigationView.getMenu();
+        MenuItem logged_item = menu.findItem(R.id.nav_loginfo);
+        if (FirebaseAuth.getInstance().getCurrentUser() != null){
+            //navigationView.getMenu().clear(); // tyhjää itemit
 
+            logged_item.setTitle("LOGGED IN");
+            navigationView.inflateHeaderView(R.layout.navi_header_loggedin);
+        }else {
+            //navigationView.getMenu().clear(); // tyhjää itemit
+
+            logged_item.setTitle("LOGGED OUT");
+            navigationView.inflateHeaderView(R.layout.navi_header_loggedout);
+        }
+        navigationView.setNavigationItemSelectedListener(this);
 
         // Introduce first-time users to your app
         String tutorialKey = "SOME_KEY";

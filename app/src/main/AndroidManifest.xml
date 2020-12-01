@@ -17,7 +17,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".NaviHeader"></activity>
         <activity android:name=".StartIntroActivity" />
         <activity android:name=".SetRideDetailsActivity" />
         <activity android:name=".SetRideActivity" />
