@@ -83,17 +83,17 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/profilestats"
             android:layout_width="0dp"
-            android:layout_height="80dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@drawable/profile_status"
             android:clipToPadding="false"
             android:elevation="5dp"
-            android:paddingBottom="10dp"
             app:layout_constraintEnd_toStartOf="@id/profile_guideline_right"
             app:layout_constraintStart_toEndOf="@id/profile_guideline_left"
             app:layout_constraintTop_toBottomOf="@id/profile_ratingBar">
 
             <TextView
+                android:id="@+id/profile_offertext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
@@ -106,6 +106,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/profile_ordertext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
@@ -118,6 +119,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/profile_revtext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
@@ -134,39 +136,42 @@
                 android:layout_width="2dp"
                 android:layout_height="0dp"
                 android:background="@color/lightgray"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/stastline2"
-                app:layout_constraintHorizontal_chainStyle="spread"
+                android:layout_margin="5dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintEnd_toStartOf="@id/stastline2"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <View
                 android:id="@+id/stastline2"
                 android:layout_width="2dp"
                 android:layout_height="0dp"
+                android:layout_margin="5dp"
                 android:background="@color/lightgray"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/stastline1"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/open_sans_regular"
-                android:text="12"
+                android:paddingBottom="10dp"
+                android:text="0"
                 android:textColor="@color/green"
                 android:textSize="30sp"
                 app:layout_constraintEnd_toStartOf="@id/stastline1"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/profile_offertext" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
+                android:paddingBottom="10dp"
                 android:fontFamily="@font/open_sans_regular"
-                android:text="32"
+                android:text="0"
                 android:textColor="@color/green"
                 android:textSize="30sp"
                 app:layout_constraintEnd_toEndOf="@id/stastline2"
@@ -177,8 +182,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
+                android:paddingBottom="10dp"
                 android:fontFamily="@font/open_sans_regular"
-                android:text="74"
+                android:text="0"
                 android:textColor="@color/green"
                 android:textSize="30sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -252,7 +258,7 @@
                 android:fontFamily="@font/open_sans_regular"
                 android:textColor="@color/black"
                 android:textSize="18sp"
-                android:text="Bio Text JKHJLHÖKHLLKHLKHLKHLKHLKHLKHLKH LKHLKHLKHLKHLKHJLJGLJGLJGLJG LJGLJGLJGLJ GLJGLJGLJG LJGLJGL LKHLKHLK HLLKHLKH LHLKHLKHLKHLKH LJGKJGLJGLJGLJGLJGLJ GLJGLJGLJGLJG LJGLJGLJGLJGLJ GLJGLJGLJGL JGLJGLJGLJGLJGLJKHL"
+                android:text=""
                 app:layout_constraintTop_toBottomOf="@id/bioh1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>

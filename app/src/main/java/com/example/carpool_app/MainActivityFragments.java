@@ -81,7 +81,7 @@ public class MainActivityFragments extends Fragment {
         {
             noRidesTextView.setVisibility(View.GONE);
             rideListView.setVisibility(View.VISIBLE);
-            mainActivityRidesAdapter = new MainActivityRidesAdapter(bookedRideUserArrayList, getContext());
+            mainActivityRidesAdapter = new MainActivityRidesAdapter(bookedRideUserArrayList, getContext(), page);
             rideListView.setAdapter(mainActivityRidesAdapter);
         }
         //if offered ride list size is not equal to 0, print array list
@@ -89,7 +89,7 @@ public class MainActivityFragments extends Fragment {
         {
             noRidesTextView.setVisibility(View.GONE);
             rideListView.setVisibility(View.VISIBLE);
-            mainActivityRidesAdapter = new MainActivityRidesAdapter(offeredRideUserArrayList, getContext());
+            mainActivityRidesAdapter = new MainActivityRidesAdapter(offeredRideUserArrayList, getContext(), page);
             rideListView.setAdapter(mainActivityRidesAdapter);
         }
         //if array list size is 0, print "no booked rides" and "no offered rides" depends on fragment (integer used in switch case

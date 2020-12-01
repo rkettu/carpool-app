@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <string-array name="getRideSpinnerItems">
+        <item>Aika (nouseva)</item>
+        <item>Aika (laskeva)</item>
+        <item>Hinta (nouseva)</item>
+        <item>Hinta (laskeva)</item>
+    </string-array>
+
     <string name="app_name">Carpool App</string>
     <string name="editprofile_apply_changes_btn_text">Vahvista muutokset</string>
     <string name="editprofile_bio_hint">Max 255</string>
@@ -17,16 +25,20 @@
     <string name="editprofile_old_password_hint">Vanha salasana</string>
     <string name="editprofile_phone_hint">Puhelin numero</string>
     <string name="editprofile_phone_text">Puhelin numero</string>
+
+    <string name="getride_header">Varaa Kyyti</string>
     <string name="getride_and">ja</string>
     <string name="getride_leavetime1_date_hint">dd/mm/yyyy</string>
     <string name="getride_leavetime1_hour_hint">hh:mm</string>
     <string name="getride_leavetime1_text">Lähtöaika välille</string>
+    <string name="getride_leavetime2_text">Sijainnit</string>
     <string name="getride_leavetime2_date_hint">dd/mm/yyyy</string>
     <string name="getride_leavetime2_hour_hint">hh:mm</string>
     <string name="getride_search_btn_text">Hae matka</string>
     <string name="getride_set_ending_point_text">Aseta määränpää</string>
     <string name="getride_set_starting_point_text">Aseta lähtöpiste</string>
     <string name="getridespinner_order_rides_text">Järjestä kyydit</string>
+
     <string name="login_forgot_pw_text">Unohtuiko salasana</string>
     <string name="login_login_btn_text">Kirjaudu</string>
     <string name="login_password_hint">Salasana</string>
@@ -39,6 +51,7 @@
     <string name="myalertdialog_ok_btn_text">OK</string>
     <string name="myalertdialog_title">Valmista</string>
     <string name="ridedetailsdialog_book_ride_btn_text">Varaa matka</string>
+
     <string name="setride_choose_destination_text">Valitse määränpää:</string>
     <string name="setride_choose_start_text">Valitse lähtöpiste:</string>
     <string name="setride_check_start_position">Tarkista lähtöosoite</string>
@@ -53,9 +66,11 @@
     <string name="setride_waypoint1_mark_text">Pysähdys 1</string>
     <string name="setride_waypoint2_mark_text">Pysähdys 2</string>
     <string name="setride_search_location">Haetaan sijaintia</string>
+    <string name="setride_continue_button">Jatka kyydin lisätietoihin</string>
     <string name="setride_location_message">Olet kieltänyt sovellusta käyttämästä sijaintia, voit muuttaa sovelluksen oikeuksia asetuksista</string>
     <string name="setride_location_button_positive">Mene asetuksiin</string>
     <string name="setride_location_button_negative">Peruuta</string>
+
     <string name="signup_tos_link">Käyttöehdot täällä</string>
     <string name="signup_tos_checkbox_text">Hyväksyn käyttöehdot.</string>
     <string name="signup_signup_btn_text">Luo tunnukset</string>
@@ -69,21 +84,22 @@
     <string name="setridedetails_yes">Kyllä</string>
     <string name="setridedetails_verbal_leavetime_estimate_hint">Sanallinen arvio lähtöajasta. Esimerkiksi: Lähtöaikani on aikavälillä 12-18</string>
     <string name="setridedetails_choose_day_hint">Lähtöpäivä</string>
-    <string name="setridedetails_choose_leavetime_text">Valitse lähtöaika:</string>
+    <string name="setridedetails_choose_leavetime_text">Valitse Lähtöaika:</string>
     <string name="setridedetails_choose_time_hint">Arvioitu lähtöaika</string>
-    <string name="setridedetails_confirm_ride_btn_text">VAHVISTA KYYTI</string>
+    <string name="setridedetails_confirm_ride_btn_text">Vahvista kyyti</string>
     <string name="setridedetails_estimated_luggage_hint">Sanallinen arvio matkatavaroista. Esimerkiksi: Kyytiin mahtuu vain sylissä kannettavia matkatavaroita.</string>
-    <string name="setridedetails_example_km_eur_text">Esimerkki km: Hinta: 0 euroa</string>
+    <string name="setridedetails_example_km_eur_text">Etaisyys:\nHinta: 0 euroa</string>
     <string name="setridedetails_freeslots_text">Vapaat paikat:</string>
     <string name="setridedetails_leavetime_may_vary">Lähtöaikani voi muuttua?</string>
     <string name="setridedetails_limited_luggage_room_text">Rajallinen tavaratila</string>
+    <string name="setridedetails_distanceandpricing_text">Etäisyydet &amp; Hinnoittelu</string>
     <string name="setridedetails_max_pickup_dist_text">Nouto etäisyys:</string>
     <string name="setridedetails_passengers_text">Matkustajat:</string>
     <string name="setridedetails_pets_allowed_text">Lemmikit sallittu</string>
     <string name="setridedetails_price_hint">Hinta:</string>
-    <string name="setridedetails_ride_info_title">Kyydin tiedot</string>
+    <string name="setridedetails_ride_info_title">Kyydin Tiedot</string>
     <string name="setridedetails_ride_length_text">Kuljettava matka:</string>
-    <string name="setridedetails_distance_example">Esimerkki km: </string>
+    <string name="setridedetails_distance_example">Etäisyys: </string>
     <string name="setridedetails_price_example">Hinta: </string>
     <string name="setridedetails_km_example"> per kilometri</string>
 
@@ -107,5 +123,26 @@
     <string name="find_ride_details_distance">Matkan pituus</string>
     <string name="find_ride_details_pet_false">Ei lemmikkejä</string>
     <string name="find_ride_details_pet_true">Lemmikit sallittu</string>
+
     <string name="cancel">Cancel</string>
+
+    <string name="main_activity_ride_details_cancel_trip">Peru matka</string>
+    <string name="getride_dialog_close">Sulje</string>
+    <string name="getride_find_matching_route">Etsitään sopivia matkoja</string>
+    <string name="getride_rides_not_found">Kyytejä ei löytynyt</string>
+    <string name="getride_check_startpoint_and_destination">Tarkista lähtöpiste ja määränpää</string>
+    <string name="getride_check_dates_and_time">Tarkista päivämäärät ja kellonajat</string>
+    <string name="no_internet_connection">Ei internet yhteyttä</string>
+    <string name="getrideadapter_estimated_price_per_100">Arvioitu hinta 100km kohti</string>
+    <string name="getrideadapter_estimated_leave_day">Arvioitu lähtöpäivä</string>
+    <string name="getrideadapter_estimated_leave_time">Arvioitu lähtöaika</string>
+    <string name="getride_success_text">Hienoa! Kyyti varattiin onnistuneesti. Palaa etusivulle painamalla OK.</string>
+    <string name="getride_failed_text">Jotain meni pieleen matkaa varatessa, yrittäkää uudelleen</string>
+    <string name="find_ride_details_luggage">Matkatavara huomautus</string>
+    <string name="find_ride_details_departure">Lähtöaika huomautus</string>
+    <string name="find_ride_details_no_departure">Kyydillä ei ole huomautuksia lähtöaikaa koskien.</string>
+    <string name="find_ride_details_no_luggage">Kyydillä ei ole huomautuksia koskien matkatavaroita.</string>
+    <string name="ride_details_confirm_booking">Vahvista matkan varaus</string>
+    <string name="book">Varaa</string>
+
 </resources>

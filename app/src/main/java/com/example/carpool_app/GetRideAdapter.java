@@ -3,8 +3,6 @@ package com.example.carpool_app;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +21,6 @@ public class GetRideAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     public static final String TAG = "GetRideAdapter";
     private Constant constant;
-
-    public GetRideAdapter(){
-        //Needs constructor for notifyDataSetChanges function
-    }
 
     public GetRideAdapter(Context context, ArrayList<RideUser> rideUserArrayList) {
         this.context = context;
@@ -93,13 +87,11 @@ public class GetRideAdapter extends BaseAdapter {
         viewHolder.timeTextView.setText(newTime);
         viewHolder.priceTextView.setText(price + "€");
 
-        Log.d(TAG, "getView: " + rideUserArrayList.get(position).getRideId());
-
         //if you press info image next to price, do this
         viewHolder.infoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Arvioitu summa 100km kohti.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.getrideadapter_estimated_price_per_100), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -107,7 +99,7 @@ public class GetRideAdapter extends BaseAdapter {
         viewHolder.dateImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Arvioitu lähtöpäivä.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.getrideadapter_estimated_leave_day), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -115,7 +107,7 @@ public class GetRideAdapter extends BaseAdapter {
         viewHolder.timeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Arvioitu lähtöaika.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getResources().getString(R.string.getrideadapter_estimated_leave_time), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -129,22 +121,21 @@ public class GetRideAdapter extends BaseAdapter {
                     //use async task to show alert dialog with ride details.
                     //using async because of picture fetch from database takes time.
                     constant.startLoadingDialog(context);
-                    FindRideDetails findRideDetails = new FindRideDetails(context, new RideDetailsInterface() {
+                    GetRideRideDetails getRideRideDetails = new GetRideRideDetails(context, new GetRideRideDetailsInterface() {
                         @Override
                         public void showDialog(AlertDialog alertDialog) {
                             constant.dismissLoadingDialog();
                         }
 
                         //when you press book ride in FindRideDetails.java and the data has been added to database
-                        //TODO own layout
                         @Override
                         public void whenDone() {
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             final LayoutInflater inflater = LayoutInflater.from(context);
-                            View dialogView = inflater.inflate(R.layout.my_alertdialog, null);
+                            View dialogView = inflater.inflate(R.layout.adapter_get_ride_success_dialog, null);
                             builder.setView(dialogView);
 
-                            Button btnOk = (Button) dialogView.findViewById(R.id.my_alertdialog_buttonOk);
+                            Button btnOk = (Button) dialogView.findViewById(R.id.getride_success_buttonOk);
                             btnOk.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -157,27 +148,26 @@ public class GetRideAdapter extends BaseAdapter {
                         }
 
                         //if FindRideDetails.java task is not successful
-                        //TODO own layout
                         @Override
                         public void whenFailed() {
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             final LayoutInflater inflater = LayoutInflater.from(context);
-                            View dialogView = inflater.inflate(R.layout.my_alertdialog2, null);
+                            View dialogView = inflater.inflate(R.layout.adapter_get_ride_failed, null);
                             builder.setView(dialogView);
 
-                            Button btnOk = (Button) dialogView.findViewById(R.id.my_alertdialog2_buttonOk);
+                            Button btnOk = (Button) dialogView.findViewById(R.id.getride_failed_Ok);
                             btnOk.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent = new Intent(context, MainActivity.class);
+                                    Intent intent = new Intent(context, GetRideActivity.class);
                                     context.startActivity(intent);
                                 }
                             });
                             AlertDialog alertDialog = builder.show();
                             alertDialog.show();
                         }
-                    }, rideUserArrayList, position, 100);
-                    findRideDetails.execute();
+                    }, rideUserArrayList, position);
+                    getRideRideDetails.execute();
                 }
                 catch (Exception e)
                 {

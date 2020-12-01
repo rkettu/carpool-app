@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SetRideActivity">
+
+
+    <fragment
+        android:id="@+id/set_ride_mapView"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:context="com.example.polygons.PolyActivity" />
+
+    <LinearLayout
+        android:id="@+id/set_ride_outherLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:id="@+id/set_ride_linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/alphawhite"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/set_ride_guideline_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="24dp" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/set_ride_guideline_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="24dp" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/set_ride_guideline_center_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="68dp" />
+
+                <TextView
+                    android:id="@+id/set_ride_lahtoText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:textSize="20sp"
+                    android:text="@string/setride_choose_start_text"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/set_ride_guideline_right"
+                    app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"/>
+
+                <EditText
+                    android:id="@+id/set_ride_lahtoEdit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="5dp"
+                    android:padding="5dp"
+                    android:paddingStart="15dp"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:inputType="textCapWords"
+                    android:hint="@string/setride_startpoint_query_hint"
+                    android:background="@drawable/bg_round"
+                    android:iconifiedByDefault="false"
+                    android:textSize="15sp"
+                    android:elevation="5dp"
+                    app:layout_constraintTop_toBottomOf="@+id/set_ride_lahtoText"
+                    app:layout_constraintEnd_toStartOf="@+id/set_ride_guideline_center_right"
+                    app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"/>
+
+                <ListView
+                    android:id="@+id/set_ride_autoComplete_startpointListView"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/white"
+                    android:translationZ="10dp"
+                    app:layout_constraintTop_toBottomOf="@+id/set_ride_lahtoEdit"
+                    app:layout_constraintEnd_toEndOf="@+id/set_ride_lahtoEdit"
+                    app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"/>
+
+                <ImageButton
+                    android:id="@+id/set_ride_sijaintiButton"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/ic_my_location_blue_24dp"
+                    android:tint="@color/lightBlue"
+                    app:layout_constraintBottom_toBottomOf="@id/set_ride_lahtoEdit"
+                    app:layout_constraintStart_toEndOf="@id/set_ride_guideline_center_right"
+                    app:layout_constraintEnd_toStartOf="@id/set_ride_guideline_right"
+                    app:layout_constraintTop_toTopOf="@+id/set_ride_lahtoEdit" />
+
+                <TextView
+                    android:id="@+id/set_ride_valietappiTxt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:textSize="20sp"
+                    android:text="@string/setride_waypoints_text"
+                    app:layout_constraintTop_toBottomOf="@+id/set_ride_lahtoEdit"
+                    app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"
+                    app:layout_constraintEnd_toStartOf="@id/set_ride_guideline_center_right"/>
+
+                <ImageButton
+                    android:id="@+id/set_ride_etappiBtn"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:padding="10dp"
+                    android:background="@drawable/bs_round"
+                    android:src="@drawable/ic_add_black_18dp"
+                    android:tint="@color/colorPrimaryDark"
+                    app:layout_constraintTop_toTopOf="@+id/set_ride_valietappiTxt"
+                    app:layout_constraintBottom_toBottomOf="@id/set_ride_valietappiTxt"
+                    app:layout_constraintStart_toEndOf="@+id/set_ride_guideline_center_right"
+                    app:layout_constraintEnd_toStartOf="@+id/set_ride_guideline_right"/>
+
+                <!-- android:visibility="gone" -->
+
+                <EditText
+                    android:id="@+id/set_ride_etappiEdit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:padding="5dp"
+                    android:paddingStart="15dp"
+                    android:inputType="textCapWords"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:hint="@string/setride_waypoint1_hint"
+                    android:textSize="15sp"
+                    android:background="@drawable/bg_round"
+                    android:iconifiedByDefault="false"
+                    android:elevation="5dp"
+                    app:layout_constraintTop_toBottomOf="@+id/set_ride_etappiBtn"
+                    app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"
+                    app:layout_constraintEnd_toStartOf="@id/set_ride_guideline_center_right"
+                    android:visibility="gone"/>
+
+                <ImageButton
+                    android:id="@+id/set_ride_etappiRemoveBtn"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:padding="10dp"
+                    android:background="@drawable/bs_round"
+                    android:src="@drawable/ic_remove_black_18dp"
+                    android:tint="@color/colorPrimaryDark"
+                    app:layout_constraintTop_toTopOf="@+id/set_ride_etappiEdit"
+                    app:layout_constraintBottom_toBottomOf="@+id/set_ride_etappiEdit"
+                    app:layout_constraintStart_toEndOf="@+id/set_ride_guideline_center_right"
+                    app:layout_constraintEnd_toStartOf="@+id/set_ride_guideline_right"
+                    android:visibility="gone"/>
+
+                <EditText
+                    android:id="@+id/set_ride_etappiEdit2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:padding="5dp"
+                    android:paddingStart="15dp"
+                    android:inputType="textCapWords"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:hint="@string/setride_waypoint2_hint"
+                    android:textSize="15sp"
+                    android:background="@drawable/bg_round"
+                    android:iconifiedByDefault="false"
+                    android:elevation="5dp"
+                    app:layout_constraintTop_toBottomOf="@+id/set_ride_etappiEdit"
+                    app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"
+                    app:layout_constraintEnd_toStartOf="@id/set_ride_guideline_center_right"
+                    android:visibility="gone"/>
+
+                <ImageButton
+                    android:id="@+id/set_ride_etappiRemoveBtn2"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:padding="10dp"
+                    android:background="@drawable/bs_round"
+                    android:src="@drawable/ic_remove_black_18dp"
+                    android:tint="@color/colorPrimaryDark"
+                    app:layout_constraintTop_toTopOf="@+id/set_ride_etappiEdit2"
+                    app:layout_constraintBottom_toBottomOf="@+id/set_ride_etappiEdit2"
+                    app:layout_constraintStart_toEndOf="@+id/set_ride_guideline_center_right"
+                    app:layout_constraintEnd_toStartOf="@+id/set_ride_guideline_right"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/set_ride_maaranpaaText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:textSize="20sp"
+                    android:text="@string/setride_choose_destination_text"
+                    app:layout_constraintTop_toBottomOf="@+id/set_ride_etappiEdit2"
+                    app:layout_constraintEnd_toStartOf="@+id/set_ride_guideline_right"
+                    app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"/>
+
+
+                <EditText
+                    android:id="@+id/set_ride_maaranpaaEdit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:padding="5dp"
+                    android:paddingStart="15dp"
+                    android:inputType="textCapWords"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:hint="@string/setride_destination_query_hint"
+                    android:textSize="15sp"
+                    android:background="@drawable/bg_round"
+                    android:iconifiedByDefault="false"
+                    android:elevation="5dp"
+                    app:layout_constraintTop_toBottomOf="@+id/set_ride_maaranpaaText"
+                    app:layout_constraintEnd_toStartOf="@+id/set_ride_guideline_right"
+                    app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"/>
+
+                <ListView
+                    android:id="@+id/set_ride_autoComplete_destinationListView"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/white"
+                    android:translationZ="10dp"
+                    app:layout_constraintTop_toBottomOf="@+id/set_ride_maaranpaaEdit"
+                    app:layout_constraintEnd_toStartOf="@+id/set_ride_guideline_right"
+                    app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"/>
+
+                <Button
+                    android:id="@+id/set_ride_haeButton"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/setride_get_route_btn_text"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:textSize="15sp"
+                    android:background="@drawable/custom_button2"
+                    app:layout_constraintTop_toBottomOf="@+id/set_ride_maaranpaaEdit"
+                    app:layout_constraintEnd_toStartOf="@+id/set_ride_guideline_right"
+                    app:layout_constraintStart_toStartOf="@+id/set_ride_guideline_left"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/set_ride_drawer_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:background="@drawable/hiden_drawer_bottom"
+            android:drawableTop="@drawable/ic_dehaze_black_24dp"
+            android:drawablePadding="5dp"
+            app:layout_constraintTop_toBottomOf="@+id/set_ride_linearLayout"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:onClick="expandableDrawer"/>
+
+
+    </LinearLayout>
+
+    <!-- android:visibility="gone" -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:id="@+id/set_ride_routeDetails"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@drawable/info_round"
+        android:visibility="gone">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/set_ride_guideline_left2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="24dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/set_ride_guideline_right2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="24dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/set_ride_guideline_center_right2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.6" />
+
+        <Button
+            android:id="@+id/set_ride_nextBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:padding="10dp"
+            android:text="@string/setride_continue_button"
+            android:fontFamily="@font/montserrat_medium"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:background="@drawable/custom_button2"
+            android:drawableRight="@drawable/ic_arrow_forward_black_24dp"
+            android:drawableTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/set_ride_guideline_left2"
+            app:layout_constraintRight_toLeftOf="@id/set_ride_guideline_center_right2"/>
+
+        <TextView
+            android:id="@+id/set_ride_infoTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="5dp"
+            android:textSize="15sp"
+            android:drawableStart="@drawable/ic_drive_eta_black_24dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/set_ride_infoTxt2"
+            app:layout_constraintStart_toEndOf="@id/set_ride_guideline_center_right2"/>
+
+        <TextView
+            android:id="@+id/set_ride_infoTxt2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="5dp"
+            android:textSize="15sp"
+            android:drawableStart="@drawable/ic_access_time_black_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/set_ride_guideline_center_right2"
+            app:layout_constraintTop_toBottomOf="@id/set_ride_infoTxt"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

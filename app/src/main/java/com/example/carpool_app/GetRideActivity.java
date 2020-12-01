@@ -1,27 +1,26 @@
 package com.example.carpool_app;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
@@ -30,8 +29,6 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * GetRideActivity is the activity, which is used in the app to find matching rides to user from database.
@@ -48,7 +45,7 @@ import java.util.Comparator;
 
 public class GetRideActivity extends AppCompatActivity {
 
-    private Button searchRideButton;
+    private Button searchRideButton, drawerButton;
     private ImageView backButton;
     private EditText startPointEditText, destinationEditText, startDateEditText, endDateEditText, estStartTimeEditText, estEndTimeEditText;
     private Spinner sortListSpinner;
@@ -61,17 +58,20 @@ public class GetRideActivity extends AppCompatActivity {
     private int mYear, mMonth, mDay, newHour, newMinute;
     private int startDateDay, startDateMonth, startDateYear, startTimeHour, startTimeMinute;
     private int endDateDay, endDateMonth, endDateYear, endTimeHour, endTimeMinute;
-    private long queryLimit = 0;
     private long date1, date2;
     private Calendar calendar;
     private int spinnerCase = 0;
     private float startLat, startLng, destinationLat, destinationLng;
     private long systemTime = System.currentTimeMillis();
+    private LinearLayout linearContainer, listContainer;
+    Animation ttbAnim, bttAnim;
+    private boolean drawer_expand = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_ride);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         initGetRideLayoutElements();
         initCalendarTimes();
@@ -81,7 +81,7 @@ public class GetRideActivity extends AppCompatActivity {
     //Initializing all xml, TextViews, EditText and ListView + sets adapter to ListView + add current time as placeholder in start time/date
     private void initGetRideLayoutElements() {
         searchRideButton = findViewById(R.id.getRide_btnSearch);
-        backButton = findViewById(R.id.getRide_btnBack);
+        //backButton = findViewById(R.id.getRide_btnBack);
         startPointEditText = findViewById(R.id.getRide_startPointEditText);
         destinationEditText = findViewById(R.id.getRide_destinationEditText);
         startDateEditText = findViewById(R.id.getRide_startDate);
@@ -91,25 +91,66 @@ public class GetRideActivity extends AppCompatActivity {
         rideListView = findViewById(R.id.getRide_rideListView);
         sortListSpinner = findViewById(R.id.getRide_sortListSpinner);
 
+        //animation
+        ttbAnim = new AnimationUtils().loadAnimation(this, R.anim.toptobottomanimation);
+        bttAnim = new AnimationUtils().loadAnimation(this, R.anim.bottomtotopanimation);
+        drawerButton = findViewById(R.id.get_ride_drawer_bottom);
+        linearContainer = (LinearLayout) findViewById(R.id.get_ride_linearLayout);
+        listContainer = (LinearLayout) findViewById(R.id.get_ride_listcontainer);
+
         //simply spinner which is used to sort rides
-        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(GetRideActivity.this, R.array.getRideSpinnerItems,
+        spinnerAdapter = ArrayAdapter.createFromResource(GetRideActivity.this, R.array.getRideSpinnerItems,
                 android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sortListSpinner.setAdapter(new GetRideSpinner(spinnerAdapter, R.layout.spinner_title_get_ride, GetRideActivity.this));
-
-        //pre filled for testing
-        startPointEditText.setText("Oulu");
-        destinationEditText.setText("Helsinki");
 
         //sets arrayLists to adapter
         getRideAdapter = new GetRideAdapter(GetRideActivity.this, rideUserArrayList);
         rideListView.setAdapter(getRideAdapter);
 
         //setting placeholder time in edit texts
+        startPointEditText.setText("Oulu");
+        destinationEditText.setText("Liminka");
         startDateEditText.setText(CalendarHelper.getDateTimeString(systemTime));
         estStartTimeEditText.setText("00:00");
         endDateEditText.setText(CalendarHelper.getDateTimeString(systemTime + 604800000));
         estEndTimeEditText.setText(CalendarHelper.getHHMMString(systemTime));
+
+        bttAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                linearContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 0));
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    //Layoutin valikon animaation toiminnot
+    public void expandableDrawer(View view) { animationHandler(); }
+    private void animationHandler(){
+        if (!drawer_expand){
+            linearContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            doAnimation(ttbAnim);
+            drawer_expand = true;
+        }else{
+            doAnimation(bttAnim);
+            drawer_expand = false;
+        }
+    }
+    private void doAnimation(Animation anim){
+        linearContainer.startAnimation(anim);
+        drawerButton.startAnimation(anim);
+        listContainer.startAnimation(anim);
+        // locationButton.startAnimation(anim);
     }
 
     private void initCalendarTimes()
@@ -142,6 +183,7 @@ public class GetRideActivity extends AppCompatActivity {
                 //clearing array list
                 try
                 {
+                    animationHandler();
                     //takes start point and destination to String, so we can use them on search
                     String startPoint = startPointEditText.getText().toString();
                     String destination = destinationEditText.getText().toString();
@@ -149,9 +191,6 @@ public class GetRideActivity extends AppCompatActivity {
                     //shoW progress dialog when doing search and hide keyboard when pressing search button
                     showProgressDialog(GetRideActivity.this);
                     Constant.hideKeyboard(GetRideActivity.this);
-
-                    //show 0 data in list
-                    getRideAdapter.notifyDataSetChanged();
 
                     //takes start and end date, change them to millis so we can search rides between those times
                     calendar.set(startDateYear, startDateMonth, startDateDay, startTimeHour, startTimeMinute);
@@ -167,6 +206,7 @@ public class GetRideActivity extends AppCompatActivity {
                         {
                             //clearing array lists old information
                             rideUserArrayList.clear();
+                            getRideAdapter.notifyDataSetChanged();
                             //Getting start and destination coordinates in async task
                             GetCoordinatesASync getCoordinatesASync = new GetCoordinatesASync(new GetCoordinatesInterface() {
                                 @Override
@@ -177,17 +217,17 @@ public class GetRideActivity extends AppCompatActivity {
                                     destinationLng = getRideUtility.getDestinationLng();
 
                                     //if start point and destination is same, tell user to check those edit texts.
-                                    if(startLat == destinationLat && startLng == destinationLng)
+                                    if(startLat == destinationLat || startLng == destinationLng)
                                     {
                                         progressDialog.dismiss();
                                         startPointEditText.setTextColor(Color.parseColor("#B75272"));
                                         destinationEditText.setTextColor(Color.parseColor("#B75272"));
-                                        Toast.makeText(getApplicationContext(), "Tarkista Aloituspaikka ja määränpää.", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), getString(R.string.getride_check_startpoint_and_destination), Toast.LENGTH_LONG).show();
                                     }
                                     else
                                     {
                                         //calling findRides function where is db search with algorithm
-                                        FindRides findRides = new FindRides(startLat, startLng, destinationLat, destinationLng, date1, date2, new FindRidesInterface()
+                                        GetRideFindRides getRideFindRides = new GetRideFindRides(startLat, startLng, destinationLat, destinationLng, date1, date2, new GetRideFindRideInterface()
                                         {
                                             @Override
                                             public void FindRidesResult(ArrayList<RideUser> result) {
@@ -198,7 +238,7 @@ public class GetRideActivity extends AppCompatActivity {
                                                     //calling the sorting algorithm to sort rides
                                                     GetRideSorting getRideSorting = new GetRideSorting(new GetRideSortingInterface() {
                                                         @Override
-                                                        public void GetRideSorting(ArrayList<RideUser> rideUserArrayList) {
+                                                        public void GetRideSorting(final ArrayList<RideUser> rideUserArrayList) {
                                                             runOnUiThread(new Runnable() {
                                                                 @Override
                                                                 public void run() {
@@ -219,7 +259,7 @@ public class GetRideActivity extends AppCompatActivity {
                                                         public void run() {
                                                             //progress dialog will be dismissed and toast will appear to tell user there was no rides.
                                                             progressDialog.dismiss();
-                                                            Toast.makeText(getApplicationContext(), "Kyytejä ei löytynyt.", Toast.LENGTH_LONG).show();
+                                                            Toast.makeText(getApplicationContext(), getString(R.string.getride_rides_not_found), Toast.LENGTH_LONG).show();
                                                         }
                                                     });
                                                 }
@@ -238,7 +278,7 @@ public class GetRideActivity extends AppCompatActivity {
                                             }
                                         });
 
-                                        findRides.findRides();
+                                        getRideFindRides.findRides();
                                     }
                                 }
                             }, GetRideActivity.this);
@@ -248,7 +288,7 @@ public class GetRideActivity extends AppCompatActivity {
                         else
                         {
                             progressDialog.dismiss();
-                            Toast.makeText(getApplicationContext(), "Ei internet yhteyttä.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -260,7 +300,7 @@ public class GetRideActivity extends AppCompatActivity {
                         endDateEditText.setTextColor(Color.parseColor("#B75272"));
                         estStartTimeEditText.setTextColor(Color.parseColor("#B75272"));
                         estEndTimeEditText.setTextColor(Color.parseColor("#B75272"));
-                        Toast.makeText(GetRideActivity.this, "Tarkista päivämäärät ja kellonajat", Toast.LENGTH_LONG).show();
+                        Toast.makeText(GetRideActivity.this, getString(R.string.getride_check_dates_and_time), Toast.LENGTH_LONG).show();
                     }
                 }
                 catch (Exception e)
@@ -448,21 +488,24 @@ public class GetRideActivity extends AppCompatActivity {
         });
 
         //if you press Back Arrow on top of activity
+        /*
         backButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 onBackPressed();
             }
         });
+         */
     }
 
     //progress dialog. shows when called. used when app is finding matches
     private void showProgressDialog(Context context)
     {
         progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Finding matching routes");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage(getString(R.string.getride_find_matching_route));
         progressDialog.setCancelable(false);
-        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Sulje", new DialogInterface.OnClickListener() {
+        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.getride_dialog_close), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 progressDialog.dismiss();

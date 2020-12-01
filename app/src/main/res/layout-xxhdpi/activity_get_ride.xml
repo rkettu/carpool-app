@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightgray"
+    android:orientation="vertical"
+    tools:context=".GetRideActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/getRide_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/green"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/getRide_btnBack"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="24dp"
+            android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="@string/getride_header"
+            android:textColor="@color/white"
+            android:textSize="40sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/get_ride_outherLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/getRide_header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/get_ride_linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/getRide_backGround"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/get_ride_guideline_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="24dp" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/get_ride_guideline_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="24dp" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/get_ride_guideLine07"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.7" />
+
+                <TextView
+                    android:id="@+id/getRide_startTimeTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="@string/getride_leavetime1_text"
+                    android:textColor="@color/black"
+                    android:textSize="25sp"
+                    app:layout_constraintStart_toEndOf="@id/get_ride_guideline_left"
+                    app:layout_constraintEnd_toStartOf="@id/get_ride_guideline_right"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!--
+                        <ImageView
+                            android:layout_width="43dp"
+                            android:layout_height="wrap_content"
+                            app:srcCompat="@drawable/ic_today_black_24dp" />
+                            -->
+                <EditText
+                    android:id="@+id/getRide_startDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:backgroundTint="@color/black"
+                    android:focusableInTouchMode="false"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:gravity="center"
+                    android:hint="@string/getride_leavetime1_date_hint"
+                    android:inputType="date"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toEndOf="@id/get_ride_guideline_left"
+                    app:layout_constraintTop_toBottomOf="@id/getRide_startTimeTextView"/>
+
+                <!--
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:srcCompat="@drawable/ic_access_time_black_24dp" />
+                            -->
+
+                <EditText
+                    android:id="@+id/getRide_estimateStartTimeEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/black"
+                    android:focusableInTouchMode="false"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:gravity="center"
+                    android:hint="@string/getride_leavetime1_hour_hint"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toEndOf="@+id/getRide_startDate"
+                    app:layout_constraintTop_toTopOf="@+id/getRide_startDate" />
+
+                <TextView
+                    android:id="@+id/getRide_andTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:backgroundTint="@color/black"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="@string/getride_and"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toEndOf="@+id/get_ride_guideline_left"
+                    app:layout_constraintEnd_toEndOf="@+id/getRide_estimateStartTimeEditText"
+                    app:layout_constraintTop_toBottomOf="@+id/getRide_startDate"/>
+
+
+                <!--
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:srcCompat="@drawable/ic_today_black_24dp" />
+                            -->
+
+                <EditText
+                    android:id="@+id/getRide_endDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:backgroundTint="@color/black"
+                    android:focusableInTouchMode="false"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:hint="@string/getride_leavetime2_date_hint"
+                    android:inputType="date"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toEndOf="@+id/get_ride_guideline_left"
+                    app:layout_constraintTop_toBottomOf="@+id/getRide_andTextView" />
+
+                <!--
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:srcCompat="@drawable/ic_access_time_black_24dp" />
+                            -->
+
+                <EditText
+                    android:id="@+id/getRide_estimateEndTimeEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/black"
+                    android:focusableInTouchMode="false"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:gravity="center"
+                    android:hint="@string/getride_leavetime2_hour_hint"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toEndOf="@+id/getRide_endDate"
+                    app:layout_constraintTop_toTopOf="@+id/getRide_endDate"/>
+
+                <TextView
+                    android:id="@+id/getRide_locationsTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="@string/getride_leavetime2_text"
+                    android:textColor="@color/black"
+                    android:textSize="25sp"
+                    app:layout_constraintStart_toEndOf="@id/get_ride_guideline_left"
+                    app:layout_constraintEnd_toStartOf="@id/get_ride_guideline_right"
+                    app:layout_constraintTop_toBottomOf="@+id/getRide_endDate" />
+
+                <EditText
+                    android:id="@+id/getRide_startPointEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:backgroundTint="@color/black"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:hint="@string/getride_set_starting_point_text"
+                    android:inputType="textCapWords"
+                    android:maxLines="1"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toEndOf="@+id/get_ride_guideline_left"
+                    app:layout_constraintEnd_toStartOf="@+id/get_ride_guideline_right"
+                    app:layout_constraintTop_toBottomOf="@id/getRide_locationsTextView" />
+
+                <EditText
+                    android:id="@+id/getRide_destinationEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/black"
+                    android:fontFamily="@font/open_sans_semibold"
+                    android:hint="@string/getride_set_ending_point_text"
+                    android:inputType="textCapWords"
+                    android:maxLines="1"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toEndOf="@+id/get_ride_guideline_left"
+                    app:layout_constraintEnd_toStartOf="@+id/get_ride_guideline_right"
+                    app:layout_constraintTop_toBottomOf="@id/getRide_startPointEditText" />
+
+                <Button
+                    android:id="@+id/getRide_btnSearch"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/custom_button2"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="@string/getride_search_btn_text"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/get_ride_guideline_left"
+                    app:layout_constraintEnd_toStartOf="@+id/get_ride_guideline_right"
+                    app:layout_constraintTop_toBottomOf="@+id/getRide_destinationEditText"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/get_ride_drawer_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:background="@drawable/hiden_drawer_bottom"
+            android:drawableTop="@drawable/ic_dehaze_black_24dp"
+            android:drawablePadding="5dp"
+            app:layout_constraintTop_toBottomOf="@+id/get_ride_drawer"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:onClick="expandableDrawer"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/get_ride_listcontainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/get_ride_outherLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="vertical">
+
+        <Spinner
+            android:id="@+id/getRide_sortListSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="10dp"
+            android:entries="@array/getRideSpinnerItems"
+            android:gravity="start"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/get_ride_outherLayout" />
+
+        <ListView
+            android:id="@+id/getRide_rideListView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="14dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/getRide_sortListSpinner" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
