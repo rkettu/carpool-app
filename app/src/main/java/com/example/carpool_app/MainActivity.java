@@ -2,6 +2,9 @@ package com.example.carpool_app;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -14,12 +17,15 @@ import android.os.Bundle;
 
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -32,12 +38,20 @@ import com.google.firebase.firestore.QuerySnapshot;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends FragmentActivity {
+
+public class MainActivity extends FragmentActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    // NavigationDrawer menu
+    DrawerLayout drawer;
+    NavigationView navigationView;
+
 
     private ViewPager ridesViewPager;
     private FragmentPagerAdapter fragmentPagerAdapter;
@@ -56,6 +70,14 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
+        //NavigationDrawer
+        drawer =  findViewById(R.id.drawer_layout);
+        navigationView =  findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
 
         // Introduce first-time users to your app
         String tutorialKey = "SOME_KEY";
@@ -107,7 +129,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void AppSettings(View v) {
-        ActivitySwitcher.GoToProfileActivity(this, FirebaseHelper.getUid());
+        drawer.openDrawer(GravityCompat.START);
     }
 
     public void SelectBookedTrips(View v) {
@@ -317,11 +339,25 @@ public class MainActivity extends FragmentActivity {
         });
     }
 
-    //Exits application when pressed back
+    //Exits application or navigationDrawer when pressed back
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        finishAffinity();
+        if (drawer.isDrawerOpen(GravityCompat.START)){
+            drawer.closeDrawer(GravityCompat.START);
+        }else {
+            super.onBackPressed();
+            finishAffinity();
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.nav_profile:
+                Log.d("NAVI", "onNavigationItemSelected: ");
+                break;
+        }
+        return false;
     }
 
     //viewpager for rides

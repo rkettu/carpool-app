@@ -141,4 +141,6 @@
     <string name="find_ride_details_no_luggage">Kyydillä ei ole huomautuksia koskien matkatavaroita.</string>
     <string name="ride_details_confirm_booking">Vahvista matkan varaus</string>
     <string name="book">Varaa</string>
+    <string name="navigation_drawer_open">Aukaise navi</string>
+    <string name="navigation_drawer_close">Sulje navi</string>
 </resources>
