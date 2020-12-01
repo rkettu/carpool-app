@@ -352,7 +352,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 public void getFullAddress(GetCoordinatesUtility getCoordinatesUtility) {
                     String address = getCoordinatesUtility.getFullAddress();
                     startEditor.setText(address);
-                    AutoCompleteStartpointListView.setVisibility(View.INVISIBLE);
+                    AutoCompleteStartpointListView.setVisibility(View.GONE);
                     if(address == null){
                         Toast.makeText(SetRideActivity.this, R.string.setride_check_start_position, Toast.LENGTH_LONG).show();
                     }
@@ -366,7 +366,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 public void getFullAddress(GetCoordinatesUtility getCoordinatesUtility) {
                     String address = getCoordinatesUtility.getFullAddress();
                     destinationEditor.setText(address);
-                    AutoCompleteDestinationListView.setVisibility(View.INVISIBLE);
+                    AutoCompleteDestinationListView.setVisibility(View.GONE);
                     if(address == null){
                         Toast.makeText(SetRideActivity.this, R.string.setride_check_destination_position, Toast.LENGTH_LONG).show();
                     }
@@ -439,6 +439,10 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
         else if(v.getId() == R.id.set_ride_sijaintiButton)
         {
 
+            Intent startIntro = new Intent(SetRideActivity.this, StartIntroActivity.class);
+            startActivity(startIntro);
+
+            /*
             if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             {
                 //Location granted
@@ -451,6 +455,7 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
                 //Location not granted
                 askLocationPermission();
             }
+             */
         }
     }
 
@@ -614,8 +619,8 @@ public class SetRideActivity extends AppCompatActivity implements Serializable, 
     // Set autocomplete lisviews invisible if user click anywhere out of listview
     public void anywhereClicked(View view) {
         Log.d("CLICK", "constrainClicked: ");
-        AutoCompleteStartpointListView.setVisibility(View.INVISIBLE);
-        AutoCompleteDestinationListView.setVisibility(View.INVISIBLE);
+        AutoCompleteStartpointListView.setVisibility(View.GONE);
+        AutoCompleteDestinationListView.setVisibility(View.GONE);
     }
 
     //This funktio will called when user add character in start- or destination editor.
