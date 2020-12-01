@@ -1,5 +1,6 @@
 package com.example.carpool_app;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -7,7 +8,11 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -27,15 +32,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RatingDialogFragment extends DialogFragment {
-    ListView ratingsListView;
-    RatingsListAdapter adapter;
-    List<RatingItem> rideInfo = new ArrayList<>();
     Context context;
+    RatingItem ratingItem;
+    RatingDialogFragment dialog;
+    Activity activity;
 
-    public RatingDialogFragment(Context context)
+    public RatingDialogFragment(Context context, RatingItem ratingItem, Activity activity)
     {
         super(); // Calling parent class constructor in case it's required
         this.context = context;
+        this.ratingItem = ratingItem;
+        dialog = this;
+        this.activity = activity;
     }
 
     @Override
@@ -44,69 +52,38 @@ public class RatingDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View v = inflater.inflate(R.layout.rating_dialog, null);
-        ratingsListView = (ListView)v.findViewById(R.id.rating_dialog_listView);
-        adapter = new RatingsListAdapter(context, null, rideInfo);
-        ratingsListView.setAdapter(adapter);
-        builder.setTitle("Ratings");
+        builder.setTitle("How would you rate this ride?");
         builder.setView(v)
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         RatingDialogFragment.this.getDialog().cancel();
                     }
                 });
+        ((TextView)v.findViewById(R.id.rating_dialog_fname)).setText(ratingItem.firstName);
+        ((TextView)v.findViewById(R.id.rating_dialog_currentRating)).setText(String.valueOf(ratingItem.rating));
+        Picasso.with(context).load(ratingItem.imgUri).into((ImageView)v.findViewById(R.id.rating_dialog_profile_img));
 
-        fillRatingsList();
+        final RatingBar rBar = (RatingBar)v.findViewById(R.id.rating_dialog_ratingBar);
+        ((Button)v.findViewById(R.id.rating_dialog_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                float setRating = rBar.getRating();
+                RatingGiver.rateRide(setRating, ratingItem.uid, ratingItem.associatedRideId, new RatingGiver.RatingCallback() {
+                    @Override
+                    public void doAfterRating() {
+                        // UPDATE LIST => rated user should be removed
+                        dialog.dismiss();
+                        activity.finish();
+                        activity.overridePendingTransition(0, 0);
+                        activity.startActivity(activity.getIntent());
+                        activity.overridePendingTransition(0, 0);
+                    }
+                });
+            }
+        });
 
         return builder.create();
 
     }
 
-    public void fillRatingsList()
-    {
-        CollectionReference ridesCollection = FirebaseFirestore.getInstance().collection("rides");
-        Query q = ridesCollection.whereArrayContains("participants", FirebaseHelper.getUid());
-        q.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()) {
-                    // Fill list
-                    for(QueryDocumentSnapshot doc : task.getResult()) {
-                        String uid = (String) doc.get("uid");
-                        final String date = CalendarHelper.getDateTimeString((long)doc.get("leaveTime"));
-                        final String rideStartDestination = doc.get("startCity") + " - " + doc.get("endCity");
-                        FirebaseFirestore.getInstance().collection("users").document(uid)
-                                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if(task.isSuccessful()) {
-                                    User u = (User)task.getResult().toObject(User.class);
-                                    RatingItem ratingItem = new RatingItem();
-                                    ratingItem.firstName = u.getFname();
-                                    ratingItem.ratingString = String.valueOf(u.getRating());
-                                    ratingItem.rideDate = date;
-                                    ratingItem.rideStartDestination = rideStartDestination;
-                                    ratingItem.imgUri = u.getImgUri();
-                                    rideInfo.add(ratingItem);
-                                    Picasso.with(context).load(u.getImgUri()).fetch(new Callback() {
-                                        @Override
-                                        public void onSuccess() {
-                                            adapter.notifyDataSetChanged();
-                                        }
-
-                                        @Override
-                                        public void onError() {
-                                            // couldn't load image??
-                                            // TODO: probably something
-                                        }
-                                    });
-
-                                }
-                            }
-                        });
-                    }
-
-                }
-            }
-        });
-    }
 }

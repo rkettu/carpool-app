@@ -21,7 +21,7 @@ public class RatingGiver {
         public void doAfterRating();
     }
 
-    public static void rateRide(int givenRating, String userId, final String rideId, final RatingCallback ratingCallback)
+    public static void rateRide(float givenRating, String riderId, final String rideId, final RatingCallback ratingCallback)
     {
         // Check for invalid values
         if(givenRating < minRating) givenRating = minRating;
@@ -30,7 +30,7 @@ public class RatingGiver {
         final float myRating = (float) givenRating;
 
         // Getting ride's current rating
-        final DocumentReference docRef = FirebaseFirestore.getInstance().collection("users").document(userId);
+        final DocumentReference docRef = FirebaseFirestore.getInstance().collection("users").document(riderId);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -54,13 +54,27 @@ public class RatingGiver {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 // removing user from ride participants list
-
+                                final DocumentReference documentRef = FirebaseFirestore.getInstance().collection("rides").document(rideId);
+                                documentRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if(task.isSuccessful())
+                                        {
+                                            DocumentSnapshot document = task.getResult();
+                                            Ride r = document.toObject(Ride.class);
+                                            r.removeFromParticipants(FirebaseHelper.getUid());
+                                            documentRef.update("participants", r.getParticipants()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    // Rating process complete, performing callback function
+                                                    ratingCallback.doAfterRating();
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
                             }
                         });
-
-                        // Rating complete, performing callback function
-                        ratingCallback.doAfterRating();
-
                     }
                 }
             }

@@ -55,6 +55,7 @@ public class RatingActivity extends AppCompatActivity {
                         String uid = (String) doc.get("uid");
                         final String date = CalendarHelper.getDateTimeString((long)doc.get("leaveTime"));
                         final String rideStartDestination = doc.get("startCity") + " - " + doc.get("endCity");
+                        final String rideId = doc.getId();
                         FirebaseFirestore.getInstance().collection("users").document(uid)
                                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
@@ -63,10 +64,12 @@ public class RatingActivity extends AppCompatActivity {
                                     User u = (User)task.getResult().toObject(User.class);
                                     RatingItem ratingItem = new RatingItem();
                                     ratingItem.firstName = u.getFname();
-                                    ratingItem.ratingString = String.valueOf(u.getRating());
+                                    ratingItem.rating = u.getRating();
                                     ratingItem.rideDate = date;
                                     ratingItem.rideStartDestination = rideStartDestination;
                                     ratingItem.imgUri = u.getImgUri();
+                                    ratingItem.uid = u.getUid();
+                                    ratingItem.associatedRideId = rideId;
                                     rideInfo.add(ratingItem);
                                     // Fetch images before adding to list => no visible loading for them
                                     Picasso.with(context).load(u.getImgUri()).fetch(new Callback() {

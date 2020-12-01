@@ -49,7 +49,7 @@ public class RatingsListAdapter extends BaseAdapter {
         final RatingItem currItem = userList.get(position);
 
         ((TextView) convertView.findViewById(R.id.ratings_list_item_fname)).setText(currItem.firstName);
-        ((TextView) convertView.findViewById(R.id.ratings_list_item_rating)).setText(currItem.ratingString);
+        ((TextView) convertView.findViewById(R.id.ratings_list_item_rating)).setText(String.valueOf(currItem.rating));
         ImageView userImg = (ImageView)convertView.findViewById(R.id.ratings_list_joku_img);
 
         Picasso.with(context).load(currItem.imgUri).into(userImg);
@@ -60,7 +60,7 @@ public class RatingsListAdapter extends BaseAdapter {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new RatingDialogFragment(context).show(((FragmentActivity)activity).getSupportFragmentManager(), "MOI");
+                new RatingDialogFragment(context, currItem, activity).show(((FragmentActivity)activity).getSupportFragmentManager(), "MOI");
             }
         });
 
