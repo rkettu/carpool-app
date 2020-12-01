@@ -15,6 +15,7 @@ import android.opengl.Visibility;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -133,7 +134,7 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
     }
 
     public void AppSettings(View v) {
-        drawer.openDrawer(GravityCompat.START);
+        drawer.openDrawer(Gravity.RIGHT);
     }
 
     public void SelectBookedTrips(View v) {
