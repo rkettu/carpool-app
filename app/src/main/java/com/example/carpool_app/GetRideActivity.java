@@ -183,6 +183,7 @@ public class GetRideActivity extends AppCompatActivity {
                 //clearing array list
                 try
                 {
+                    animationHandler();
                     //takes start point and destination to String, so we can use them on search
                     String startPoint = startPointEditText.getText().toString();
                     String destination = destinationEditText.getText().toString();
