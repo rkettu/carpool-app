@@ -21,7 +21,7 @@ public class RatingGiver {
         public void doAfterRating();
     }
 
-    public static void rateRide(int givenRating, String userId, final RatingCallback ratingCallback)
+    public static void rateRide(int givenRating, String userId, final String rideId, final RatingCallback ratingCallback)
     {
         // Check for invalid values
         if(givenRating < minRating) givenRating = minRating;
@@ -50,7 +50,13 @@ public class RatingGiver {
                         docRef.update(
                                 "rating", newRating,
                                 "ratingAmount", newRatingAmount
-                        );
+                        ).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                // removing user from ride participants list
+
+                            }
+                        });
 
                         // Rating complete, performing callback function
                         ratingCallback.doAfterRating();

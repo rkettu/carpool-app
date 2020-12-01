@@ -1,18 +1,24 @@
 package com.example.carpool_app;
 
-import android.app.Application;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.media.Rating;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 
-import org.w3c.dom.Text;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +28,16 @@ public class RatingsListAdapter extends BaseAdapter {
     private List<RatingItem> userList = new ArrayList<>();
     private Context context;
     private LayoutInflater inflater;
+    private Activity activity;
 
     public RatingsListAdapter(){
         // Needs constructor for notifyDataSetChanges function
     }
 
-    public RatingsListAdapter(Context context, List<RatingItem> userList) {
+    public RatingsListAdapter(Context context,Activity activity, List<RatingItem> userList) {
         this.context = context;
         this.userList = userList;
+        this.activity = activity;
     }
 
     @Override
@@ -38,16 +46,23 @@ public class RatingsListAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.ratings_list_item, container, false);
         }
 
-        RatingItem currItem = userList.get(position);
+        final RatingItem currItem = userList.get(position);
 
-        ((TextView) convertView.findViewById(R.id.ratings_list_item_joku_1)).setText(currItem.firstName);
-        ((TextView) convertView.findViewById(R.id.ratings_list_item_joku_2)).setText(currItem.ratingString);
+        ((TextView) convertView.findViewById(R.id.ratings_list_item_fname)).setText(currItem.firstName);
+        ((TextView) convertView.findViewById(R.id.ratings_list_item_rating)).setText(currItem.ratingString);
         ImageView userImg = (ImageView)convertView.findViewById(R.id.ratings_list_joku_img);
 
         Picasso.with(context).load(currItem.imgUri).into(userImg);
 
         ((TextView) convertView.findViewById(R.id.ratings_list_rideStartDestination)).setText(currItem.rideStartDestination);
         ((TextView) convertView.findViewById(R.id.ratings_list_rideTime)).setText(currItem.rideDate);
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new RatingDialogFragment(context).show(((FragmentActivity)activity).getSupportFragmentManager(), "MOI");
+            }
+        });
 
         return convertView;
     }
@@ -66,5 +81,6 @@ public class RatingsListAdapter extends BaseAdapter {
     public long getItemId(int position) {
         return position;
     }
+
 
 }

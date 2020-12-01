@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="80dp"
     android:orientation="horizontal"
     >
 
@@ -16,7 +16,7 @@
         android:src="@drawable/ic_person_black_100dp"
         app:civ_border_color="@color/white"
         app:civ_border_width="2dp"
-
+        android:layout_gravity="center"
         />
 
     <LinearLayout
@@ -28,17 +28,18 @@
         >
 
         <TextView
-            android:id="@+id/ratings_list_item_joku_1"
+            android:id="@+id/ratings_list_item_fname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="etunimi"
             tools:ignore="MissingConstraints" />
 
         <TextView
-            android:id="@+id/ratings_list_item_joku_2"
+            android:id="@+id/ratings_list_item_rating"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="ratingi"
+            android:drawableLeft="@drawable/ic_baseline_star_rate_18"
             tools:ignore="MissingConstraints" />
 
     </LinearLayout>
@@ -48,15 +49,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
+        android:layout_gravity="center"
         android:layout_weight="0"
         android:layout_marginRight="10dp"
-    >
+        >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ratings_list_rideStartDestination"
             android:text="OULU _ TURKU"
-            android:textSize="18dp"
+            android:textSize="20dp"
             android:layout_gravity="right|center"
             />
 

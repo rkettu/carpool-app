@@ -61,8 +61,8 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-
-        new RatingDialogFragment(getApplicationContext()).show(getSupportFragmentManager(), "MOI");
+        startActivity(new Intent(this, RatingActivity.class));
+        //new RatingDialogFragment(getApplicationContext()).show(getSupportFragmentManager(), "MOI");
 
         //findViewById(R.id.main_btnGetRide).setOnClickListener(this);
         //findViewById(R.id.main_btnOfferRide).setOnClickListener(this);
