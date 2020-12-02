@@ -2,6 +2,7 @@ package com.example.carpool_app;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -18,20 +19,24 @@ import android.content.SharedPreferences;
 
 import android.os.Bundle;
 
-import android.preference.PreferenceManager;
 import android.util.Log;
+
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+
 import android.view.LayoutInflater;
+
 import android.view.View;
 
-import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -39,12 +44,17 @@ import com.google.firebase.firestore.QuerySnapshot;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    // NavigationDrawer menu
+    DrawerLayout drawer;
+    NavigationView navigationView;
+
 
     private ViewPager ridesViewPager;
     private FragmentPagerAdapter fragmentPagerAdapter;
@@ -64,6 +74,26 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+
+        //NavigationDrawer
+        drawer =  findViewById(R.id.drawer_layout);
+        navigationView =  findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        Menu menu = navigationView.getMenu();
+        MenuItem logged_item = menu.findItem(R.id.nav_loginfo);
+        View hView = navigationView.inflateHeaderView(R.layout.navi_header);
+        TextView naviUser = (TextView) hView.findViewById(R.id.navi_header_text);
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null){
+            //navigationView.getMenu().clear(); // tyhjää itemit
+            naviUser.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+            logged_item.setTitle("LOGGED IN");
+            //navigationView.inflateHeaderView(R.layout.navi_header);
+        }else {
+            //navigationView.getMenu().clear(); // tyhjää itemit
+            logged_item.setTitle("LOGGED OUT");
+        }
+        navigationView.setNavigationItemSelectedListener(this);
 
         // Introduce first-time users to your app
         String tutorialKey = "SOME_KEY";
@@ -116,7 +146,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void AppSettings(View v) {
-        ActivitySwitcher.GoToProfileActivity(this, FirebaseHelper.getUid());
+        drawer.openDrawer(Gravity.RIGHT);
     }
 
     public void SelectBookedTrips(View v) {
@@ -332,11 +362,41 @@ public class MainActivity extends FragmentActivity {
         });
     }
 
-    //Exits application when pressed back
+    //Exits application or navigationDrawer when pressed back
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        finishAffinity();
+        if (drawer.isDrawerOpen(Gravity.RIGHT)){
+            drawer.closeDrawer(Gravity.RIGHT);
+        }else {
+            super.onBackPressed();
+            finishAffinity();
+        }
+    }
+
+    // NavigationDrawer items functionality
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.nav_profile:
+                Log.d("NAVI", "onNavigationItemSelected: PROFILE");
+                break;
+
+            case R.id.nav_rating:
+                Log.d("NAVI", "onNavigationItemSelected: RATING ");
+                break;
+
+            case R.id.nav_getride:
+                drawer.closeDrawer(Gravity.RIGHT);
+                SelectGetARide(null);
+                break;
+
+            case R.id.nav_setride:
+                drawer.closeDrawer(Gravity.RIGHT);
+                SelectOfferARide(null);
+                break;
+
+        }
+        return false;
     }
 
     //viewpager for rides
