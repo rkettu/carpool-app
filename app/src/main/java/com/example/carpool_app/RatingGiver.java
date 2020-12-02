@@ -4,10 +4,13 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 
 // Move to CLoud Functions OR set very firm firestore rules
@@ -19,6 +22,11 @@ public class RatingGiver {
     public interface RatingCallback
     {
         public void doAfterRating();
+    }
+
+    public interface ReviewAmountCallback
+    {
+        public void doAfterGettingAmount(int amount);
     }
 
     public static void rateRide(float givenRating, String riderId, final String rideId, final RatingCallback ratingCallback)
@@ -76,6 +84,21 @@ public class RatingGiver {
                             }
                         });
                     }
+                }
+            }
+        });
+    }
+
+    public static void GetAmountOfReviews(String uid)
+    {
+        CollectionReference ridesCollection = FirebaseFirestore.getInstance().collection("rides");
+        Query q = ridesCollection.whereArrayContains("participants", uid);
+        q.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    int amount = task.getResult().size();
+                    new ReviewAmountCallback().doAfterGettingAmount(amount);
                 }
             }
         });
