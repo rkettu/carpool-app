@@ -2,7 +2,6 @@ package com.example.carpool_app;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -11,7 +10,6 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
-import android.opengl.Visibility;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -35,6 +33,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -71,16 +70,17 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
         NavigationView navigationView = findViewById(R.id.nav_view);
         Menu menu = navigationView.getMenu();
         MenuItem logged_item = menu.findItem(R.id.nav_loginfo);
+        View hView = navigationView.inflateHeaderView(R.layout.navi_header);
+        TextView naviUser = (TextView) hView.findViewById(R.id.navi_header_text);
+
         if (FirebaseAuth.getInstance().getCurrentUser() != null){
             //navigationView.getMenu().clear(); // tyhjää itemit
-
+            naviUser.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
             logged_item.setTitle("LOGGED IN");
-            navigationView.inflateHeaderView(R.layout.navi_header_loggedin);
+            //navigationView.inflateHeaderView(R.layout.navi_header);
         }else {
             //navigationView.getMenu().clear(); // tyhjää itemit
-
             logged_item.setTitle("LOGGED OUT");
-            navigationView.inflateHeaderView(R.layout.navi_header_loggedout);
         }
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -347,20 +347,36 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
     //Exits application or navigationDrawer when pressed back
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)){
-            drawer.closeDrawer(GravityCompat.START);
+        if (drawer.isDrawerOpen(Gravity.RIGHT)){
+            drawer.closeDrawer(Gravity.RIGHT);
         }else {
             super.onBackPressed();
             finishAffinity();
         }
     }
 
+    // NavigationDrawer items functionality
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.nav_profile:
-                Log.d("NAVI", "onNavigationItemSelected: ");
+                Log.d("NAVI", "onNavigationItemSelected: PROFILE");
                 break;
+
+            case R.id.nav_rating:
+                Log.d("NAVI", "onNavigationItemSelected: RATING ");
+                break;
+
+            case R.id.nav_getride:
+                drawer.closeDrawer(Gravity.RIGHT);
+                SelectGetARide(null);
+                break;
+
+            case R.id.nav_setride:
+                drawer.closeDrawer(Gravity.RIGHT);
+                SelectOfferARide(null);
+                break;
+
         }
         return false;
     }
