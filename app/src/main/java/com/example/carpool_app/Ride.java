@@ -93,4 +93,9 @@ public class Ride implements Serializable {
     {
         participants = new ArrayList<>();
     }
+
+    public void removeFromParticipants(String userId)
+    {
+        participants.remove(userId);
+    }
 }
