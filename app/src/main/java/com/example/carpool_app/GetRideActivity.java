@@ -9,6 +9,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -503,6 +504,8 @@ public class GetRideActivity extends AppCompatActivity {
     {
         progressDialog = new ProgressDialog(context);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.getWindow().setDimAmount(0.2f);
+        progressDialog.getWindow().setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_round));
         progressDialog.setMessage(getString(R.string.getride_find_matching_route));
         progressDialog.setCancelable(false);
         progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.getride_dialog_close), new DialogInterface.OnClickListener() {

@@ -55,7 +55,6 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
     DrawerLayout drawer;
     NavigationView navigationView;
 
-
     private ViewPager ridesViewPager;
     private FragmentPagerAdapter fragmentPagerAdapter;
     private LinearLayout getRideBtn, offerRideBtn;
@@ -162,14 +161,8 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
     }
 
     public void SelectGetARide(View v) {
-        // COMMENTED OUT FOR TESTING PURPOSES => REMEMBER TO UNCOMMENT
-        /*
         Intent GetRideIntent = new Intent(MainActivity.this, GetRideActivity.class);
         startActivity(GetRideIntent);
-         */
-        // REMOVE THIS AND ADD TO PROPER BUTTON / LOCATIOIN
-        new Constant().startLoadingDialog(MainActivity.this);
-
     }
 
     public void SelectOfferARide(View v) {

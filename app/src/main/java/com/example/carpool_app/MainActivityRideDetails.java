@@ -3,7 +3,7 @@ package com.example.carpool_app;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.text.method.ScrollingMovementMethod;
@@ -49,24 +49,23 @@ interface MainActivityRideDetailsInterface{
  * for database push
  */
 
-
-public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
+public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap>{
 
     private TextView startPointDialog, destinationDialog, leaveTimeDialog, durationDialog, priceDialog,
                 freeSeatsDialog, wayPointsDialog, userNameDialog, distanceDialog, petsDialog, departureTxt, luggageTxt;
     private Button posBtn, negBtn;
     private ImageView profilePicture, closeDialogBtn;
     private Context context;
-    private GetRideRideDetailsInterface getRideRideDetailsInterface;
+    private MainActivityRideDetailsInterface mainActivityRideDetailsInterface;
     private ArrayList<RideUser> rideUserArrayList;
     private int position;
     private int page;
     private AlertDialog.Builder builder;
 
-    public MainActivityRideDetails(Context context, GetRideRideDetailsInterface getRideRideDetailsInterface, ArrayList<RideUser> rideUserArrayList, int position, int page)
+    public MainActivityRideDetails(Context context, MainActivityRideDetailsInterface mainActivityRideDetailsInterface, ArrayList<RideUser> rideUserArrayList, int position, int page)
     {
         this.context = context;
-        this.getRideRideDetailsInterface = getRideRideDetailsInterface;
+        this.mainActivityRideDetailsInterface = mainActivityRideDetailsInterface;
         this.rideUserArrayList = rideUserArrayList;
         this.position = position;
         this.page = page;
@@ -125,65 +124,93 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
             @Override
             public void onClick(View v) {
                 //Booked rides list page
+                AlertDialog.Builder adb = new AlertDialog.Builder(context);
                 if(page == 0) {
-                    try{
-                        //Remove the ride from database
-                        FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).update(
-                                "bookedRides", FieldValue.arrayRemove(rideUserArrayList.get(position).getRideId()));
-                        //Add one free seat to database
-                        FirebaseFirestore.getInstance().collection("rides").document(rideUserArrayList.get(position).getRideId()).update(
-                                "freeSlots", (rideUserArrayList.get(position).getRide().getFreeSlots() + 1));
-                        //Remove the current user from participants in ride collection
-                        FirebaseFirestore.getInstance().collection("rides").document(rideUserArrayList.get(position).getRideId()).update(
-                                "participants", FieldValue.arrayRemove(FirebaseAuth.getInstance().getCurrentUser().getUid()));
-                        rideUserArrayList.remove(position);
-                    }
-                    catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    finally {
-                        //notify adapter and go back to Main Activity
-                        MainActivityRidesAdapter adapter = new MainActivityRidesAdapter();
-                        adapter.notifyDataSetChanged();
-                        Intent i = new Intent(context, MainActivity.class);
-                        context.startActivity(i);
-                    }
-                }
-                //Offered rides list page
-                else {
-                    //Delete the ride for each user
-                    FirebaseFirestore.getInstance().collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    adb.setCancelable(true);
+                    adb.setTitle(context.getResources().getString(R.string.warning));
+                    adb.setMessage(context.getResources().getString(R.string.main_activity_ride_details_delete_booked_ride));
+                    adb.setNegativeButton(context.getResources().getText(R.string.no), new DialogInterface.OnClickListener() {
                         @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful()) {
-                                try{
-                                    //for loop for every document, if field "bookedRides" contains the ride user is deleting, remove it.
-                                    for(QueryDocumentSnapshot doc : task.getResult()) {
-                                        ArrayList<String> rides = (ArrayList<String>) doc.get("bookedRides");
-                                        if(rides != null) {
-                                            if(rides.contains(rideUserArrayList.get(position).getRideId())) {
-                                                FirebaseFirestore.getInstance().collection("users").document(doc.getId()).update(
-                                                        "bookedRides", FieldValue.arrayRemove(rideUserArrayList.get(position).getRideId())
-                                                );
-                                            }
-                                        }
-                                    }
-                                }
-                                catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                finally {
-                                    //Delete the ride from database
-                                    FirebaseFirestore.getInstance().collection("rides").document(rideUserArrayList.get(position).getRideId()).delete();
-                                    MainActivityRidesAdapter adapter = new MainActivityRidesAdapter();
-                                    adapter.notifyDataSetChanged();
-                                    Intent i = new Intent(context, MainActivity.class);
-                                    context.startActivity(i);
-                                }
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    adb.setPositiveButton(context.getResources().getText(R.string.yes), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try{
+                                //Remove the ride from database
+                                FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).update(
+                                        "bookedRides", FieldValue.arrayRemove(rideUserArrayList.get(position).getRideId()));
+                                //Add one free seat to database
+                                FirebaseFirestore.getInstance().collection("rides").document(rideUserArrayList.get(position).getRideId()).update(
+                                        "freeSlots", (rideUserArrayList.get(position).getRide().getFreeSlots() + 1));
+                                //Remove the current user from participants in ride collection
+                                FirebaseFirestore.getInstance().collection("rides").document(rideUserArrayList.get(position).getRideId()).update(
+                                        "participants", FieldValue.arrayRemove(FirebaseAuth.getInstance().getCurrentUser().getUid()));
+                                rideUserArrayList.remove(position);
+                            }
+                            catch (Exception e){
+                                e.printStackTrace();
+                                mainActivityRideDetailsInterface.whenFailed();
+                            }
+                            finally {
+                                mainActivityRideDetailsInterface.whenDone();
                             }
                         }
                     });
                 }
+                //Offered rides list page
+                else {
+                    adb.setCancelable(true);
+                    adb.setTitle(context.getResources().getString(R.string.warning));
+                    adb.setMessage(context.getResources().getString(R.string.main_activity_ride_details_delete_offered_ride));
+                    adb.setNegativeButton(context.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    adb.setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Delete the ride for each user
+                            FirebaseFirestore.getInstance().collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if(task.isSuccessful()) {
+                                        try{
+                                            //for loop for every document, if field "bookedRides" contains the ride user is deleting, remove it.
+                                            for(QueryDocumentSnapshot doc : task.getResult()) {
+                                                ArrayList<String> rides = (ArrayList<String>) doc.get("bookedRides");
+                                                if(rides != null) {
+                                                    if(rides.contains(rideUserArrayList.get(position).getRideId())) {
+                                                        FirebaseFirestore.getInstance().collection("users").document(doc.getId()).update(
+                                                                "bookedRides", FieldValue.arrayRemove(rideUserArrayList.get(position).getRideId())
+                                                        );
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        catch (Exception e) {
+                                            e.printStackTrace();
+                                            mainActivityRideDetailsInterface.whenFailed();
+                                        }
+                                        finally {
+                                            //Delete the ride from database
+                                            FirebaseFirestore.getInstance().collection("rides").document(rideUserArrayList.get(position).getRideId()).delete();
+                                            mainActivityRideDetailsInterface.whenDone();
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+                AlertDialog dialog = adb.show();
+                dialog.show();
             }
         });
 
@@ -198,9 +225,9 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap> {
         alertDialog.show();
         alertDialog.getWindow().setBackgroundDrawableResource(R.drawable.background_rating);
 
-        if(getRideRideDetailsInterface != null)
+        if(mainActivityRideDetailsInterface != null)
         {
-            getRideRideDetailsInterface.showDialog(alertDialog);
+            mainActivityRideDetailsInterface.showDialog(alertDialog);
         }
     }
 
