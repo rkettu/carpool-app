@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:orientation="horizontal"
+    >
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ratings_list_joku_img"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="10dp"
+        android:src="@drawable/ic_person_black_100dp"
+        app:civ_border_color="@color/white"
+        app:civ_border_width="2dp"
+        android:layout_gravity="center"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        >
+
+        <TextView
+            android:id="@+id/ratings_list_item_fname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="etunimi"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/ratings_list_item_rating"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ratingi"
+            android:drawableLeft="@drawable/ic_baseline_star_rate_18"
+            tools:ignore="MissingConstraints" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_weight="0"
+        android:layout_marginRight="10dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ratings_list_rideStartDestination"
+            android:text="OULU _ TURKU"
+            android:textSize="20dp"
+            android:layout_gravity="right|center"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ratings_list_rideTime"
+            android:text="12.12.2012"
+            android:textSize="12dp"
+            android:layout_gravity="right|center"
+            />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

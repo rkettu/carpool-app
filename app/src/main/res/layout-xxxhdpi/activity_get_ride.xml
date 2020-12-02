@@ -25,7 +25,8 @@
             android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -117,7 +118,7 @@
                     android:hint="@string/getride_leavetime1_date_hint"
                     android:inputType="date"
                     android:textColor="@color/black"
-                    android:textSize="15sp"
+                    android:textSize="18sp"
                     app:layout_constraintStart_toEndOf="@id/get_ride_guideline_left"
                     app:layout_constraintTop_toBottomOf="@id/getRide_startTimeTextView"/>
 
@@ -138,7 +139,7 @@
                     android:gravity="center"
                     android:hint="@string/getride_leavetime1_hour_hint"
                     android:textColor="@color/black"
-                    android:textSize="15sp"
+                    android:textSize="18sp"
                     app:layout_constraintStart_toEndOf="@+id/getRide_startDate"
                     app:layout_constraintTop_toTopOf="@+id/getRide_startDate" />
 
@@ -151,7 +152,7 @@
                     android:fontFamily="@font/montserrat_medium"
                     android:text="@string/getride_and"
                     android:textColor="@color/black"
-                    android:textSize="15sp"
+                    android:textSize="18sp"
                     app:layout_constraintStart_toEndOf="@+id/get_ride_guideline_left"
                     app:layout_constraintEnd_toEndOf="@+id/getRide_estimateStartTimeEditText"
                     app:layout_constraintTop_toBottomOf="@+id/getRide_startDate"/>
@@ -168,14 +169,13 @@
                     android:id="@+id/getRide_endDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
                     android:backgroundTint="@color/black"
                     android:focusableInTouchMode="false"
                     android:fontFamily="@font/open_sans_semibold"
                     android:hint="@string/getride_leavetime2_date_hint"
                     android:inputType="date"
                     android:textColor="@color/black"
-                    android:textSize="15sp"
+                    android:textSize="18sp"
                     app:layout_constraintStart_toEndOf="@+id/get_ride_guideline_left"
                     app:layout_constraintTop_toBottomOf="@+id/getRide_andTextView" />
 
@@ -196,7 +196,7 @@
                     android:gravity="center"
                     android:hint="@string/getride_leavetime2_hour_hint"
                     android:textColor="@color/black"
-                    android:textSize="15sp"
+                    android:textSize="18sp"
                     app:layout_constraintStart_toEndOf="@+id/getRide_endDate"
                     app:layout_constraintTop_toTopOf="@+id/getRide_endDate"/>
 
@@ -224,6 +224,7 @@
                     android:inputType="textCapWords"
                     android:maxLines="1"
                     android:textColor="@color/black"
+                    android:textSize="18sp"
                     app:layout_constraintStart_toEndOf="@+id/get_ride_guideline_left"
                     app:layout_constraintEnd_toStartOf="@+id/get_ride_guideline_right"
                     app:layout_constraintTop_toBottomOf="@id/getRide_locationsTextView" />
@@ -238,6 +239,7 @@
                     android:inputType="textCapWords"
                     android:maxLines="1"
                     android:textColor="@color/black"
+                    android:textSize="18sp"
                     app:layout_constraintStart_toEndOf="@+id/get_ride_guideline_left"
                     app:layout_constraintEnd_toStartOf="@+id/get_ride_guideline_right"
                     app:layout_constraintTop_toBottomOf="@id/getRide_startPointEditText" />
@@ -252,7 +254,7 @@
                     android:fontFamily="@font/montserrat_medium"
                     android:text="@string/getride_search_btn_text"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toEndOf="@+id/get_ride_guideline_left"
                     app:layout_constraintEnd_toStartOf="@+id/get_ride_guideline_right"
@@ -290,34 +292,32 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:orientation="vertical">
 
-    <Spinner
-        android:id="@+id/getRide_sortListSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="16dp"
-        android:entries="@array/getRideSpinnerItems"
-        android:gravity="start"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/get_ride_outherLayout" />
+        <Spinner
+            android:id="@+id/getRide_sortListSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="10dp"
+            android:entries="@array/getRideSpinnerItems"
+            android:gravity="start"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/get_ride_outherLayout" />
 
-    <ListView
-        android:id="@+id/getRide_rideListView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="14dp"
-        android:fontFamily="@font/montserrat_medium"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/getRide_sortListSpinner" />
+        <ListView
+            android:id="@+id/getRide_rideListView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="14dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/getRide_sortListSpinner" />
 
     </LinearLayout>
 
