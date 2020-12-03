@@ -17,6 +17,7 @@ import android.graphics.drawable.ColorDrawable;
 
 import android.content.SharedPreferences;
 
+import android.opengl.Visibility;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -50,6 +51,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class MainActivity extends FragmentActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -88,6 +91,7 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
         TextView naviEmail = (TextView) headerView.findViewById(R.id.navi_header_emailtext);
         ImageButton naviBackBtn =  (ImageButton) headerView.findViewById(R.id.navi_header_backbtn);
 
+
         //BackButton functionality in navigation menu
         naviBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +106,21 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
             naviUser.setText(getString(R.string.navi_header_hello) + " " + FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
             naviEmail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
             logged_item.setTitle(getString(R.string.drawer_menu_logout));
-            //navigationView.inflateHeaderView(R.layout.navi_header);
+
+            //Check if is some non rated ride and put red notification badge to rating icon
+            RatingGiver.GetAmountOfReviews(FirebaseAuth.getInstance().getUid(), new RatingGiver.ReviewAmountCallback() {
+                @Override
+                public void doAfterGettingAmount(int amount) {
+                    Log.d("NAVI", "onCreate: "  + amount);
+                    if(amount > 0){
+                        TextView badgeNumber = (TextView) findViewById(R.id.main_menu_badge);
+                        badgeNumber.setText(String.valueOf(amount));
+                        badgeNumber.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
+
         }else {
             //navigationView.getMenu().clear(); // tyhjää itemit
             logged_item.setTitle(getString(R.string.drawer_menu_login));
