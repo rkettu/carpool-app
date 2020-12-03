@@ -7,23 +7,26 @@
             <menu>
                 <item android:id="@+id/nav_profile"
                     android:icon="@drawable/ic_baseline_person_24"
-                    android:title="Profile"/>
+                    android:title="@string/drawer_menu_profile" />
 
                 <item android:id="@+id/nav_rating"
                     android:icon="@drawable/ic_baseline_star_rate_24"
-                    android:title="Rating"/>
+                    android:title="@string/drawer_menu_rating"/>
+
+                <item android:id="@+id/nav_sign"
+                    android:icon="@drawable/ic_login_24"
+                    android:title="" />
             </menu>
         </item>
 
         <item android:id="@+id/nav_getride"
             android:icon="@drawable/ic_baseline_car_24"
-            android:title="Get A Ride" />
+            android:title="@string/drawer_menu_getride" />
         <item android:id="@+id/nav_setride"
-            android:icon="@drawable/ic_baseline_car_24"
-            android:title="Offer A Ride" />
+            android:icon="@drawable/ic_add_road_24"
+            android:title="@string/drawer_menu_setride" />
 
-
-
+        
     </group>
 
 

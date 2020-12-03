@@ -1,305 +1,272 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".MainActivity"
-    android:fitsSystemWindows="true"
-    tools:openDrawer="start">
+    tools:context=".MainActivity">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/main_guideline_middle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5"
+        />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/main_guideline_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="24dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/main_guideline_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="24dp" />
+
+    <View
+        android:id="@+id/view5"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
+        android:layout_height="0dp"
+        android:layout_marginBottom="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/ic_backgroundmain"
+        app:layout_constraintBottom_toTopOf="@+id/activitymainCustomButtongroup"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/main_appLogo"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="25dp"
+        android:alpha="100"
+        android:src="@mipmap/ic_launcher"
+        app:civ_border_color="@color/white"
+        app:civ_border_width="2dp"
+        app:layout_constraintEnd_toStartOf="@+id/main_guideline_middle"
+        app:layout_constraintStart_toStartOf="@id/main_guideline_left"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/main_guideline_middle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5"
-            />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/main_btnSettings"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:onClick="AppSettings"
+        android:src="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/main_reviewsText"
+        app:layout_constraintEnd_toEndOf="@id/main_guideline_right"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/main_nameText"
+        app:layout_constraintTop_toTopOf="@+id/main_nameText" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/main_guideline_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="24dp" />
+    <ListView
+        android:id="@+id/main_settingsListView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/main_btnSettings"
+        app:layout_constraintRight_toLeftOf="@id/main_guideline_right"
+        app:layout_constraintLeft_toRightOf="@id/main_appLogo"
+        />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/main_guideline_right"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_end="24dp" />
+    <TextView
+        android:id="@+id/main_nameText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="namee_defaul0"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/main_guideline_middle"/>
 
-        <View
-            android:id="@+id/view5"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="15dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:background="@drawable/ic_backgroundmain"
-            app:layout_constraintBottom_toTopOf="@+id/activitymainCustomButtongroup"/>
+    <RatingBar
+        android:id="@+id/main_ratingBar"
+        style="@android:style/Widget.Holo.RatingBar.Indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleX=".5"
+        android:scaleY=".5"
+        android:transformPivotX="0dp"
+        android:transformPivotY="0dp"
+        android:isIndicator="true"
+        android:numStars="5"
+        android:progressBackgroundTint="#415301"
+        android:progressTint="@color/starColor"
+        android:secondaryProgressTint="#00000000"
+        android:stepSize="0.1"
+        app:layout_constraintStart_toEndOf="@id/main_guideline_middle"
+        app:layout_constraintTop_toBottomOf="@+id/main_nameText" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/main_appLogo"
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="25dp"
-            android:alpha="100"
-            android:src="@mipmap/ic_launcher"
-            app:civ_border_color="@color/white"
-            app:civ_border_width="2dp"
-            app:layout_constraintEnd_toStartOf="@+id/main_guideline_middle"
-            app:layout_constraintStart_toStartOf="@id/main_guideline_left"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
-
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/main_btnSettings"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/main_reviewsText"
-            app:layout_constraintEnd_toEndOf="@id/main_guideline_right"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/main_nameText"
-            app:layout_constraintTop_toTopOf="@+id/main_nameText" />
-
-        <ListView
-            android:id="@+id/main_settingsListView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/main_btnSettings"
-            app:layout_constraintRight_toLeftOf="@id/main_guideline_right"
-            app:layout_constraintLeft_toRightOf="@id/main_appLogo"
-            />
-
-        <TextView
-            android:id="@+id/main_nameText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:fontFamily="@font/montserrat_medium"
-            android:text="namee_defaul0"
-            android:textColor="@color/white"
-            android:textSize="13sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@id/main_guideline_middle"/>
-
-        <RatingBar
-            android:id="@+id/main_ratingBar"
-            style="@android:style/Widget.Holo.RatingBar.Indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleX=".5"
-            android:scaleY=".5"
-            android:transformPivotX="0dp"
-            android:transformPivotY="0dp"
-            android:isIndicator="true"
-            android:numStars="5"
-            android:progressBackgroundTint="#415301"
-            android:progressTint="@color/starColor"
-            android:secondaryProgressTint="#00000000"
-            android:stepSize="0.1"
-            app:layout_constraintStart_toEndOf="@id/main_guideline_middle"
-            app:layout_constraintTop_toBottomOf="@+id/main_nameText" />
-
-        <TextView
-            android:id="@+id/main_reviewsText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:fontFamily="@font/montserrat_medium"
-            android:text="Reviews -10-"
-            android:textColor="@color/white"
-            android:textSize="10sp"
-            app:layout_constraintStart_toEndOf="@id/main_guideline_middle"
-            app:layout_constraintBottom_toBottomOf="@id/main_btnSettings"/>
-
-        <LinearLayout
-            android:id="@+id/main_btnGetRide"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/custom_button1"
-            android:onClick="SelectGetARide"
-            android:orientation="horizontal"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintTop_toBottomOf="@id/main_appLogo"
-            app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
-            app:layout_constraintStart_toStartOf="@+id/main_guideline_middle">
-
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:src="@drawable/ic_baseline_search_24" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/montserrat_medium"
-                android:gravity="center"
-                android:text="@string/main_button_book_ride"
-                android:textColor="@color/green"
-                android:textSize="14sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/main_btnOfferRide"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/custom_button1"
-            android:orientation="horizontal"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintTop_toBottomOf="@id/main_btnGetRide"
-            app:layout_constraintStart_toStartOf="@+id/main_guideline_middle"
-            app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
-            android:onClick="SelectOfferARide">
-
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:src="@drawable/ic_drive_eta_black_24dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/main_button_offer_ride"
-                android:fontFamily="@font/montserrat_medium"
-                android:textColor="@color/green"
-                android:textSize="14sp"/>
-
-        </LinearLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/activitymainCustomButtongroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            app:layout_constraintTop_toBottomOf="@+id/main_btnOfferRide">
-
-            <ImageView
-                android:id="@+id/customButtonsLine"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_mainactivitycustombuttonline"
-                android:adjustViewBounds="true"
-                android:cropToPadding="false"
-                android:scaleType="fitXY"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"/>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/main_btnOfferedRides"
-                android:layout_width="180dp"
-                android:layout_height="50dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:onClick="SelectOfferedTrips">
-
-                <ImageView
-                    android:id="@+id/offerBackground"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_mainactivitycustombuttonleft"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat_medium"
-                    android:text="@string/main_fragment_tab_booked"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    app:layout_constraintHorizontal_bias="0.32"
-                    app:layout_constraintVertical_bias="0.3"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/main_btnBookedTrips"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="125dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:onClick="SelectBookedTrips">
-
-                <ImageView
-                    android:id="@+id/bookBackground"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_mainactivitycustombuttonright"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat_medium"
-                    android:text="@string/main_fragment_tab_offered"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    app:layout_constraintVertical_bias="0.3"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/main_viewPager"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="10dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/activitymainCustomButtongroup"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/main_reviewsText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="Reviews -10-"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@id/main_guideline_middle"
+        app:layout_constraintBottom_toBottomOf="@id/main_btnSettings"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:id="@+id/main_btnGetRide"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/custom_button1"
+        android:onClick="SelectGetARide"
+        android:orientation="horizontal"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toBottomOf="@id/main_appLogo"
+        app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
+        app:layout_constraintStart_toStartOf="@+id/main_guideline_middle">
 
-        <FrameLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:src="@drawable/ic_baseline_search_24" />
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/fragment_container"/>
+            android:fontFamily="@font/montserrat_medium"
+            android:gravity="center"
+            android:text="@string/main_button_book_ride"
+            android:textColor="@color/green"
+            android:textSize="14sp" />
 
     </LinearLayout>
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:headerLayout="@layout/navi_header"
-        app:menu="@menu/drawer_menu" />
+    <LinearLayout
+        android:id="@+id/main_btnOfferRide"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/custom_button1"
+        android:orientation="horizontal"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toBottomOf="@id/main_btnGetRide"
+        app:layout_constraintStart_toStartOf="@+id/main_guideline_middle"
+        app:layout_constraintEnd_toStartOf="@+id/main_guideline_right"
+        android:onClick="SelectOfferARide">
 
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:src="@drawable/ic_drive_eta_black_24dp" />
 
-</androidx.drawerlayout.widget.DrawerLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/main_button_offer_ride"
+            android:fontFamily="@font/montserrat_medium"
+            android:textColor="@color/green"
+            android:textSize="14sp"/>
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/activitymainCustomButtongroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        app:layout_constraintTop_toBottomOf="@+id/main_btnOfferRide">
+
+        <ImageView
+            android:id="@+id/customButtonsLine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_mainactivitycustombuttonline"
+            android:adjustViewBounds="true"
+            android:cropToPadding="false"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_btnOfferedRides"
+            android:layout_width="180dp"
+            android:layout_height="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:onClick="SelectOfferedTrips">
+
+            <ImageView
+                android:id="@+id/offerBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_mainactivitycustombuttonleft"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="@string/main_fragment_tab_booked"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintHorizontal_bias="0.32"
+                app:layout_constraintVertical_bias="0.3"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_btnBookedTrips"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="125dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:onClick="SelectBookedTrips">
+
+            <ImageView
+                android:id="@+id/bookBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_mainactivitycustombuttonright"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="@string/main_fragment_tab_offered"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintVertical_bias="0.3"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/main_viewPager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activitymainCustomButtongroup"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

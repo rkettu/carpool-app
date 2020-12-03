@@ -42,9 +42,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -79,18 +82,30 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
         navigationView =  findViewById(R.id.nav_view);
         NavigationView navigationView = findViewById(R.id.nav_view);
         Menu menu = navigationView.getMenu();
-        MenuItem logged_item = menu.findItem(R.id.nav_loginfo);
-        View hView = navigationView.inflateHeaderView(R.layout.navi_header);
-        TextView naviUser = (TextView) hView.findViewById(R.id.navi_header_text);
+        MenuItem logged_item = menu.findItem(R.id.nav_sign);
+        View headerView = navigationView.inflateHeaderView(R.layout.navi_header);
+        TextView naviUser = (TextView) headerView.findViewById(R.id.navi_header_text);
+        TextView naviEmail = (TextView) headerView.findViewById(R.id.navi_header_emailtext);
+        ImageButton naviBackBtn =  (ImageButton) headerView.findViewById(R.id.navi_header_backbtn);
 
+        //BackButton functionality in navigation menu
+        naviBackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.closeDrawer(Gravity.RIGHT);
+            }
+        });
+
+        //Checking if user is signed in
         if (FirebaseAuth.getInstance().getCurrentUser() != null){
             //navigationView.getMenu().clear(); // tyhjää itemit
-            naviUser.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-            logged_item.setTitle("LOGGED IN");
+            naviUser.setText(getString(R.string.navi_header_hello) + " " + FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+            naviEmail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+            logged_item.setTitle(getString(R.string.drawer_menu_logout));
             //navigationView.inflateHeaderView(R.layout.navi_header);
         }else {
             //navigationView.getMenu().clear(); // tyhjää itemit
-            logged_item.setTitle("LOGGED OUT");
+            logged_item.setTitle(getString(R.string.drawer_menu_login));
         }
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -145,6 +160,7 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
     }
 
     public void AppSettings(View v) {
+
         drawer.openDrawer(Gravity.RIGHT);
     }
 
@@ -169,6 +185,17 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
         Intent SetRideIntent = new Intent(MainActivity.this, SetRideActivity.class);
         startActivity(SetRideIntent);
     }
+
+    public void SelectProfile(View v) {
+        ActivitySwitcher.GoToProfileActivity(this, FirebaseAuth.getInstance().getUid());
+    }
+
+    public void SelectRating(View v) {
+        Intent RatingIntent = new Intent(MainActivity.this, RatingActivity.class);
+        startActivity(RatingIntent);
+    }
+
+
 
     //first get rideId's from current user
     //then get rides
@@ -372,10 +399,36 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
         switch (item.getItemId()){
             case R.id.nav_profile:
                 Log.d("NAVI", "onNavigationItemSelected: PROFILE");
+                if(FirebaseAuth.getInstance().getCurrentUser() != null){
+                    drawer.closeDrawer(Gravity.RIGHT);
+                    SelectProfile(null);
+                }else{
+                    Toast.makeText(MainActivity.this, "Sinun tulee olla kirjautunut sisään", Toast.LENGTH_LONG).show();
+                }
                 break;
 
             case R.id.nav_rating:
                 Log.d("NAVI", "onNavigationItemSelected: RATING ");
+                if(FirebaseAuth.getInstance().getCurrentUser() != null){
+                    drawer.closeDrawer(Gravity.RIGHT);
+                    SelectRating(null);
+                }else{
+                    Toast.makeText(MainActivity.this, "Sinun tulee olla kirjautunut sisään", Toast.LENGTH_LONG).show();
+                }
+                break;
+
+            case R.id.nav_sign:
+                drawer.closeDrawer(Gravity.RIGHT);
+                Log.d("NAVI", "onNavigationItemSelected: SIGN ");
+                if(FirebaseAuth.getInstance().getCurrentUser() != null){
+                    //Log Out
+                    Log.d("NAVI", "onNavigationItemSelected: LOGOUT?? ");
+                    FirebaseAuth.getInstance().signOut();
+                    recreate();
+                } else {
+                    //Log In
+                    FirebaseHelper.GoToLogin(getApplicationContext());
+                }
                 break;
 
             case R.id.nav_getride:

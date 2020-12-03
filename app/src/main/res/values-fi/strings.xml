@@ -153,5 +153,13 @@
     <string name="main_activity_adapter_delete_booked_ride">Poistit matkan varauksen</string>
     <string name="main_activity_adapter_delete_offered_ride">Poistit tarjoamasi matkan</string>
     <string name="get_ride_details_confirm_ride_msg">Vahvistamalla tämän matkan varauksen hyväksyt myös kaikki sovellukseen liittyvät käyttöehdot</string>
+    <string name="drawer_menu_profile">Profiili</string>
+    <string name="drawer_menu_rating">Arviointi</string>
+    <string name="drawer_menu_getride">Varaa kyyti</string>
+    <string name="drawer_menu_setride">Tarjoa kyyti</string>
+    <string name="navi_header_hello">Hei</string>
+    <string name="drawer_menu_logout">Kirjaudu ulos</string>
+    <string name="drawer_menu_logoin">Kirjaudu sisään</string>
+    <string name="drawer_menu_login">Kirjaudu sisään</string>
 
 </resources>
