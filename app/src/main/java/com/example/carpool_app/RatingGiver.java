@@ -89,7 +89,7 @@ public class RatingGiver {
         });
     }
 
-    public static void GetAmountOfReviews(String uid)
+    public static void GetAmountOfReviews(String uid, final ReviewAmountCallback reviewAmountCallback)
     {
         CollectionReference ridesCollection = FirebaseFirestore.getInstance().collection("rides");
         Query q = ridesCollection.whereArrayContains("participants", uid);
@@ -98,7 +98,7 @@ public class RatingGiver {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     int amount = task.getResult().size();
-                    new ReviewAmountCallback().doAfterGettingAmount(amount);
+                    reviewAmountCallback.doAfterGettingAmount(amount);
                 }
             }
         });
