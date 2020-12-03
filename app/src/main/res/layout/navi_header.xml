@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="176dp"
-    android:background="@color/gray"
+    android:background="@drawable/backgroundmenu"
     android:padding="20dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
@@ -20,9 +20,10 @@
         android:id="@+id/navi_header_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="rdasf"
+        android:text=""
         android:textSize="20dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/black"
+        android:fontFamily="@font/montserrat_medium"
         android:layout_marginBottom="7dp"
         app:layout_constraintBottom_toTopOf="@id/navi_header_emailtext"
         app:layout_constraintLeft_toLeftOf="parent" />
@@ -32,9 +33,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|left"
-        android:text="gasdf"
+        android:text=""
         android:textSize="15dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:fontFamily="@font/montserrat_medium"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />
 

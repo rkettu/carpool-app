@@ -18,6 +18,8 @@
     <string name="navi_header_hello">Hello</string>
     <string name="drawer_menu_profile">Profile</string>
     <string name="drawer_menu_rating">Rating</string>
+    <string name="drawer_menu_logout">Log Out</string>
+    <string name="drawer_menu_login">Log In</string>
     <string name="drawer_menu_getride">Get A Ride</string>
     <string name="drawer_menu_setride">Set A Ride</string>
 

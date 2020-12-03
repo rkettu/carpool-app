@@ -47,6 +47,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -81,7 +82,7 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
         navigationView =  findViewById(R.id.nav_view);
         NavigationView navigationView = findViewById(R.id.nav_view);
         Menu menu = navigationView.getMenu();
-        //MenuItem logged_item = menu.findItem(R.id.nav_loginfo);
+        MenuItem logged_item = menu.findItem(R.id.nav_sign);
         View headerView = navigationView.inflateHeaderView(R.layout.navi_header);
         TextView naviUser = (TextView) headerView.findViewById(R.id.navi_header_text);
         TextView naviEmail = (TextView) headerView.findViewById(R.id.navi_header_emailtext);
@@ -100,11 +101,11 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
             //navigationView.getMenu().clear(); // tyhjää itemit
             naviUser.setText(getString(R.string.navi_header_hello) + " " + FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
             naviEmail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-            //logged_item.setTitle("LOGGED IN");
+            logged_item.setTitle(getString(R.string.drawer_menu_logout));
             //navigationView.inflateHeaderView(R.layout.navi_header);
         }else {
             //navigationView.getMenu().clear(); // tyhjää itemit
-            //logged_item.setTitle("LOGGED OUT");
+            logged_item.setTitle(getString(R.string.drawer_menu_login));
         }
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -186,8 +187,7 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
     }
 
     public void SelectProfile(View v) {
-        Intent ProfileIntent = new Intent(MainActivity.this, ProfileActivity.class);
-        startActivity(ProfileIntent);
+        ActivitySwitcher.GoToProfileActivity(this, FirebaseAuth.getInstance().getUid());
     }
 
     public void SelectRating(View v) {
@@ -398,21 +398,37 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.nav_profile:
-                drawer.closeDrawer(Gravity.RIGHT);
                 Log.d("NAVI", "onNavigationItemSelected: PROFILE");
-                //SelectProfile(null);
+                if(FirebaseAuth.getInstance().getCurrentUser() != null){
+                    drawer.closeDrawer(Gravity.RIGHT);
+                    SelectProfile(null);
+                }else{
+                    Toast.makeText(MainActivity.this, "Sinun tulee olla kirjautunut sisään", Toast.LENGTH_LONG).show();
+                }
                 break;
 
             case R.id.nav_rating:
-                drawer.closeDrawer(Gravity.RIGHT);
                 Log.d("NAVI", "onNavigationItemSelected: RATING ");
-                SelectRating(null);
+                if(FirebaseAuth.getInstance().getCurrentUser() != null){
+                    drawer.closeDrawer(Gravity.RIGHT);
+                    SelectRating(null);
+                }else{
+                    Toast.makeText(MainActivity.this, "Sinun tulee olla kirjautunut sisään", Toast.LENGTH_LONG).show();
+                }
                 break;
 
             case R.id.nav_sign:
                 drawer.closeDrawer(Gravity.RIGHT);
                 Log.d("NAVI", "onNavigationItemSelected: SIGN ");
-
+                if(FirebaseAuth.getInstance().getCurrentUser() != null){
+                    //Log Out
+                    Log.d("NAVI", "onNavigationItemSelected: LOGOUT?? ");
+                    FirebaseAuth.getInstance().signOut();
+                    recreate();
+                } else {
+                    //Log In
+                    FirebaseHelper.GoToLogin(getApplicationContext());
+                }
                 break;
 
             case R.id.nav_getride:

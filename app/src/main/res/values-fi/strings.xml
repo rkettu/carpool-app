@@ -158,5 +158,8 @@
     <string name="drawer_menu_getride">Varaa kyyti</string>
     <string name="drawer_menu_setride">Tarjoa kyyti</string>
     <string name="navi_header_hello">Hei</string>
+    <string name="drawer_menu_logout">Kirjaudu ulos</string>
+    <string name="drawer_menu_logoin">Kirjaudu sisään</string>
+    <string name="drawer_menu_login">Kirjaudu sisään</string>
 
 </resources>
