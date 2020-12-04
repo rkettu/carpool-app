@@ -161,5 +161,6 @@
     <string name="drawer_menu_logout">Kirjaudu ulos</string>
     <string name="drawer_menu_logoin">Kirjaudu sisään</string>
     <string name="drawer_menu_login">Kirjaudu sisään</string>
+    <string name="navi_shouldlogin">Kirjaudu sisään nähdäksesi</string>
 
 </resources>

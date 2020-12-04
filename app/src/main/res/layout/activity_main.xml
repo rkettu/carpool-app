@@ -58,15 +58,29 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/main_btnSettings"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:onClick="AppSettings"
-        android:src="@color/white"
+        android:src="@drawable/ic_menu_24"
         app:layout_constraintBottom_toBottomOf="@+id/main_reviewsText"
         app:layout_constraintEnd_toEndOf="@id/main_guideline_right"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/main_nameText"
         app:layout_constraintTop_toTopOf="@+id/main_nameText" />
+
+    <TextView
+        android:id="@+id/main_menu_badge"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintRight_toRightOf="@id/main_btnSettings"
+        app:layout_constraintTop_toTopOf="@id/main_btnSettings"
+        android:background="@drawable/badge_background"
+        android:padding="3dp"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:text="0"
+        android:textSize="10sp"
+        android:visibility="invisible"/>
 
     <ListView
         android:id="@+id/main_settingsListView"
