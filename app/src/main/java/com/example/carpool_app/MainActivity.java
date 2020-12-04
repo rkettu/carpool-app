@@ -2,6 +2,7 @@ package com.example.carpool_app;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -13,6 +14,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 
 import android.content.SharedPreferences;
@@ -47,6 +49,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,6 +63,8 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
     // NavigationDrawer menu
     DrawerLayout drawer;
     NavigationView navigationView;
+
+    TextView tv_rating;
 
     private ViewPager ridesViewPager;
     private FragmentPagerAdapter fragmentPagerAdapter;
@@ -107,7 +112,7 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
             naviEmail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
             logged_item.setTitle(getString(R.string.drawer_menu_logout));
 
-            //Check if is some non rated ride and put red notification badge to rating icon
+            //Check if is some unreviewed ride and put red notification badge to menu icon
             RatingGiver.GetAmountOfReviews(FirebaseAuth.getInstance().getUid(), new RatingGiver.ReviewAmountCallback() {
                 @Override
                 public void doAfterGettingAmount(int amount) {
@@ -116,6 +121,13 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
                         TextView badgeNumber = (TextView) findViewById(R.id.main_menu_badge);
                         badgeNumber.setText(String.valueOf(amount));
                         badgeNumber.setVisibility(View.VISIBLE);
+
+                        LayoutInflater li = LayoutInflater.from(MainActivity.this);
+                        tv_rating = (TextView)li.inflate(R.layout.rating_badge,null);
+                        navigationView.getMenu().findItem(R.id.nav_rating).setActionView(tv_rating);
+
+
+                        tv_rating.setText(String.valueOf(amount));
                     }
                 }
             });
@@ -442,7 +454,8 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
                     //Log Out
                     Log.d("NAVI", "onNavigationItemSelected: LOGOUT?? ");
                     FirebaseAuth.getInstance().signOut();
-                    recreate();
+                    finish();
+                    startActivity(getIntent());
                 } else {
                     //Log In
                     FirebaseHelper.GoToLogin(getApplicationContext());

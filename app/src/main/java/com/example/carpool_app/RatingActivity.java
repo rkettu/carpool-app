@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
@@ -39,7 +40,18 @@ public class RatingActivity extends AppCompatActivity {
         ratingsListView.setAdapter(adapter);
 
         fillRatingsList();
+
     }
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent main = new Intent(RatingActivity.this, MainActivity.class);
+        startActivity(main);
+        finish();
+        super.onBackPressed();
+    }
+
 
     public void fillRatingsList()
     {
