@@ -324,43 +324,50 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap>{
         alertDialog.getWindow().setBackgroundDrawableResource(R.drawable.background_rating);
 
         //can add all the information about ride participants
-        final int[] taskCount = {rideUserArrayList.get(position).getRide().getParticipants().size()};
-        for(int i = 0; i < rideUserArrayList.get(position).getRide().getParticipants().size(); i++){
-            FirebaseFirestore.getInstance().collection("users").document(rideUserArrayList.get(position).getRide().getParticipants().get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful()){
-                        Log.d("TAG", "onPostExecute: " + taskCount[0]);
-                        DocumentSnapshot doc = task.getResult();
-                        if(doc.exists()){
-                            User user = doc.toObject(User.class);
-                            participantsDialog.append(user.getFname() + " " + user.getLname() + ", " + user.getPhone() + "\n");
+        if(rideUserArrayList.get(position).getRide().getParticipants().size() > 0) {
+            final int[] taskCount = {rideUserArrayList.get(position).getRide().getParticipants().size()};
+            for (int i = 0; i < rideUserArrayList.get(position).getRide().getParticipants().size(); i++) {
+                FirebaseFirestore.getInstance().collection("users").document(rideUserArrayList.get(position).getRide().getParticipants().get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("TAG", "onPostExecute: " + taskCount[0]);
+                            DocumentSnapshot doc = task.getResult();
+                            if (doc.exists()) {
+                                User user = doc.toObject(User.class);
+                                participantsDialog.append(user.getFname() + " " + user.getLname() + ", " + user.getPhone() + "\n");
+                                taskCount[0]--;
+                            } else {
+                                //doc doesn't exist
+                            }
+                        } else {
+                            //task is not successful
                             taskCount[0]--;
                         }
-                        else{
-                            //doc doesn't exist
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if (taskCount[0] == 0) {
+                                alertDialog.show();
+                                alertDialog.getWindow().setBackgroundDrawableResource(R.drawable.background_rating);
+                                alertDialog.getWindow().setLayout(ConstraintLayout.LayoutParams.WRAP_CONTENT, (int) (context.getResources().getDisplayMetrics().heightPixels * 0.80));
+                                alertDialog.setContentView(dialogLayout);
+                                mainActivityRideDetailsInterface.showDialog();
+                            }
                         }
                     }
-                    else{
-                        //task is not successful
-                        taskCount[0]--;
-                    }
-                }
-            }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful()){
-                        if(taskCount[0] == 0){
-                            alertDialog.show();
-                            alertDialog.getWindow().setBackgroundDrawableResource(R.drawable.background_rating);
-                            alertDialog.getWindow().setLayout(ConstraintLayout.LayoutParams.WRAP_CONTENT, (int) (context.getResources().getDisplayMetrics().heightPixels * 0.80));
-                            alertDialog.setContentView(dialogLayout);
-                            ConstraintLayout innerLayout = dialogLayout.findViewById(R.id.main_ride_details_inner_layout);
-                            mainActivityRideDetailsInterface.showDialog();
-                        }
-                    }
-                }
-            });
+                });
+            }
+        }
+        else{
+            participantsDialog.setText(context.getResources().getString(R.string.no_participants));
+            alertDialog.show();
+            alertDialog.getWindow().setBackgroundDrawableResource(R.drawable.background_rating);
+            alertDialog.getWindow().setLayout(ConstraintLayout.LayoutParams.WRAP_CONTENT, (int) (context.getResources().getDisplayMetrics().heightPixels * 0.80));
+            alertDialog.setContentView(dialogLayout);
+            mainActivityRideDetailsInterface.showDialog();
         }
     }
 }
