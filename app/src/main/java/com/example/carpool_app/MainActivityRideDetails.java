@@ -62,7 +62,7 @@ interface MainActivityRideDetailsInterface{
 public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap>{
 
     private TextView startPointDialog, destinationDialog, leaveTimeDialog, durationDialog, priceDialog, participantsDialog,
-                freeSeatsDialog, wayPointsDialog, userNameDialog, phoneNumberDialog, distanceDialog, petsDialog, departureTxt, luggageTxt;
+                freeSeatsDialog, wayPointsDialog, userNameDialog, distanceDialog, petsDialog, departureTxt, luggageTxt;
     private Button posBtn, negBtn;
     private ImageView profilePicture, closeDialogBtn;
     private NestedScrollView detailsView;
@@ -99,21 +99,7 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap>{
         userNameDialog = dialogLayout.findViewById(R.id.main_ride_details_user_name);
         String userName = rideUserArrayList.get(position).getUser().getFname() + " " + rideUserArrayList.get(position).getUser().getLname();
         userNameDialog.setText(userName);
-        phoneNumberDialog = dialogLayout.findViewById(R.id.main_ride_details_phone_number);
-        phoneNumberDialog.setVisibility(View.GONE);
         participantsDialog = dialogLayout.findViewById(R.id.main_ride_participants);
-        participantsDialog.setVisibility(View.GONE);
-        if(page == 0){
-            phoneNumberDialog.setVisibility(View.VISIBLE);
-            phoneNumberDialog.setText(rideUserArrayList.get(position).getUser().getPhone());
-        }
-        else if(page == 1 && rideUserArrayList.get(position).getRide().getParticipants().size() > 0){
-            participantsDialog.setVisibility(View.VISIBLE);
-        }
-        else{
-            participantsDialog.setVisibility(View.VISIBLE);
-            participantsDialog.setText("No participants");
-        }
         startPointDialog = dialogLayout.findViewById(R.id.main_ride_details_start_point);
         String startPoint = context.getResources().getString(R.string.find_ride_details_startpoint);
         startPointDialog.setText(startPoint + ": " + rideUserArrayList.get(position).getRide().getStartAddress());
@@ -321,10 +307,8 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap>{
             }
         });
 
-        alertDialog.getWindow().setBackgroundDrawableResource(R.drawable.background_rating);
-
         //can add all the information about ride participants
-        if(rideUserArrayList.get(position).getRide().getParticipants().size() > 0) {
+        if(rideUserArrayList.get(position).getRide().getParticipants().size() > 0 && page == 1) {
             final int[] taskCount = {rideUserArrayList.get(position).getRide().getParticipants().size()};
             for (int i = 0; i < rideUserArrayList.get(position).getRide().getParticipants().size(); i++) {
                 FirebaseFirestore.getInstance().collection("users").document(rideUserArrayList.get(position).getRide().getParticipants().get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -367,6 +351,14 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap>{
                     }
                 });
             }
+        }
+        else if(page == 0){
+            participantsDialog.setVisibility(View.GONE);
+            alertDialog.show();
+            alertDialog.getWindow().setBackgroundDrawableResource(R.drawable.background_rating);
+            alertDialog.getWindow().setLayout(ConstraintLayout.LayoutParams.WRAP_CONTENT, (int) (context.getResources().getDisplayMetrics().heightPixels * 0.80));
+            alertDialog.setContentView(dialogLayout);
+            mainActivityRideDetailsInterface.showDialog();
         }
         else{
             participantsDialog.setText(context.getResources().getString(R.string.no_participants));
