@@ -433,7 +433,7 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
                     drawer.closeDrawer(Gravity.RIGHT);
                     SelectProfile(null);
                 }else{
-                    Toast.makeText(MainActivity.this, "Sinun tulee olla kirjautunut sisään", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, getString(R.string.navi_shouldlogin), Toast.LENGTH_LONG).show();
                 }
                 break;
 
@@ -443,7 +443,7 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
                     drawer.closeDrawer(Gravity.RIGHT);
                     SelectRating(null);
                 }else{
-                    Toast.makeText(MainActivity.this, "Sinun tulee olla kirjautunut sisään", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, getString(R.string.navi_shouldlogin), Toast.LENGTH_LONG).show();
                 }
                 break;
 
