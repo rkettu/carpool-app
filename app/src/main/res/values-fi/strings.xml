@@ -154,5 +154,6 @@
     <string name="main_activity_adapter_delete_offered_ride">Poistit tarjoamasi matkan</string>
     <string name="get_ride_details_confirm_ride_msg">Vahvistamalla tämän matkan varauksen hyväksyt myös kaikki sovellukseen liittyvät käyttöehdot</string>
     <string name="no_participants">Ei kyyditettäviä</string>
+    <string name="no_rating">Ei arviointeja</string>
 
 </resources>

@@ -334,12 +334,19 @@ public class MainActivityRideDetails extends AsyncTask<Void, Void, Bitmap>{
                             Log.d("TAG", "onPostExecute: " + taskCount[0]);
                             DocumentSnapshot doc = task.getResult();
                             if (doc.exists()) {
-                                User user = doc.toObject(User.class);
-                                participantsDialog.append(user.getFname() + " " + user.getLname() + ", " + user.getPhone() + "\n");
-                                taskCount[0]--;
+                                if((double) (task.getResult().get("rating")) != 0){
+                                    double rating = (double) (task.getResult().get("rating"));
+                                    String formatRating = String.format("%.2f", rating);
+                                    participantsDialog.append((String)(task.getResult().get("fname")) + " " + (String) (task.getResult().get("lname")) + " - " + formatRating + "/5" + "\n");
+                                }
+                                else{
+                                    participantsDialog.append((String)(task.getResult().get("fname")) + " " + (String) (task.getResult().get("lname")) + " - " + context.getResources().getString(R.string.no_rating) + "\n");
+                                }
+
                             } else {
                                 //doc doesn't exist
                             }
+                            taskCount[0]--;
                         } else {
                             //task is not successful
                             taskCount[0]--;
