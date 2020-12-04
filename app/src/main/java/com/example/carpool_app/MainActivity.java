@@ -2,6 +2,7 @@ package com.example.carpool_app;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -13,10 +14,12 @@ import android.app.AlertDialog;
 import android.content.Intent;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 
 import android.content.SharedPreferences;
 
+import android.opengl.Visibility;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -42,11 +45,17 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class MainActivity extends FragmentActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -54,6 +63,8 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
     // NavigationDrawer menu
     DrawerLayout drawer;
     NavigationView navigationView;
+
+    TextView tv_rating;
 
     private ViewPager ridesViewPager;
     private FragmentPagerAdapter fragmentPagerAdapter;
@@ -78,18 +89,52 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
         navigationView =  findViewById(R.id.nav_view);
         NavigationView navigationView = findViewById(R.id.nav_view);
         Menu menu = navigationView.getMenu();
-        MenuItem logged_item = menu.findItem(R.id.nav_loginfo);
-        View hView = navigationView.inflateHeaderView(R.layout.navi_header);
-        TextView naviUser = (TextView) hView.findViewById(R.id.navi_header_text);
+        MenuItem logged_item = menu.findItem(R.id.nav_sign);
+        View headerView = navigationView.inflateHeaderView(R.layout.navi_header);
+        TextView naviUser = (TextView) headerView.findViewById(R.id.navi_header_text);
+        TextView naviEmail = (TextView) headerView.findViewById(R.id.navi_header_emailtext);
+        ImageButton naviBackBtn =  (ImageButton) headerView.findViewById(R.id.navi_header_backbtn);
 
+
+        //BackButton functionality in navigation menu
+        naviBackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.closeDrawer(Gravity.RIGHT);
+            }
+        });
+
+        //Checking if user is signed in
         if (FirebaseAuth.getInstance().getCurrentUser() != null){
             //navigationView.getMenu().clear(); // tyhjää itemit
-            naviUser.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-            logged_item.setTitle("LOGGED IN");
-            //navigationView.inflateHeaderView(R.layout.navi_header);
+            naviUser.setText(getString(R.string.navi_header_hello) + " " + FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+            naviEmail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+            logged_item.setTitle(getString(R.string.drawer_menu_logout));
+
+            //Check if is some unreviewed ride and put red notification badge to menu icon
+            RatingGiver.GetAmountOfReviews(FirebaseAuth.getInstance().getUid(), new RatingGiver.ReviewAmountCallback() {
+                @Override
+                public void doAfterGettingAmount(int amount) {
+                    Log.d("NAVI", "onCreate: "  + amount);
+                    if(amount > 0){
+                        TextView badgeNumber = (TextView) findViewById(R.id.main_menu_badge);
+                        badgeNumber.setText(String.valueOf(amount));
+                        badgeNumber.setVisibility(View.VISIBLE);
+
+                        LayoutInflater li = LayoutInflater.from(MainActivity.this);
+                        tv_rating = (TextView)li.inflate(R.layout.rating_badge,null);
+                        navigationView.getMenu().findItem(R.id.nav_rating).setActionView(tv_rating);
+
+
+                        tv_rating.setText(String.valueOf(amount));
+                    }
+                }
+            });
+
+
         }else {
             //navigationView.getMenu().clear(); // tyhjää itemit
-            logged_item.setTitle("LOGGED OUT");
+            logged_item.setTitle(getString(R.string.drawer_menu_login));
         }
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -143,6 +188,7 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
     }
 
     public void AppSettings(View v) {
+
         drawer.openDrawer(Gravity.RIGHT);
     }
 
@@ -167,6 +213,17 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
         Intent SetRideIntent = new Intent(MainActivity.this, SetRideActivity.class);
         startActivity(SetRideIntent);
     }
+
+    public void SelectProfile(View v) {
+        ActivitySwitcher.GoToProfileActivity(this, FirebaseAuth.getInstance().getUid());
+    }
+
+    public void SelectRating(View v) {
+        Intent RatingIntent = new Intent(MainActivity.this, RatingActivity.class);
+        startActivity(RatingIntent);
+    }
+
+
 
     //first get rideId's from current user
     //then get rides
@@ -371,10 +428,37 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
         switch (item.getItemId()){
             case R.id.nav_profile:
                 Log.d("NAVI", "onNavigationItemSelected: PROFILE");
+                if(FirebaseAuth.getInstance().getCurrentUser() != null){
+                    drawer.closeDrawer(Gravity.RIGHT);
+                    SelectProfile(null);
+                }else{
+                    Toast.makeText(MainActivity.this, getString(R.string.navi_shouldlogin), Toast.LENGTH_LONG).show();
+                }
                 break;
 
             case R.id.nav_rating:
                 Log.d("NAVI", "onNavigationItemSelected: RATING ");
+                if(FirebaseAuth.getInstance().getCurrentUser() != null){
+                    drawer.closeDrawer(Gravity.RIGHT);
+                    SelectRating(null);
+                }else{
+                    Toast.makeText(MainActivity.this, getString(R.string.navi_shouldlogin), Toast.LENGTH_LONG).show();
+                }
+                break;
+
+            case R.id.nav_sign:
+                drawer.closeDrawer(Gravity.RIGHT);
+                Log.d("NAVI", "onNavigationItemSelected: SIGN ");
+                if(FirebaseAuth.getInstance().getCurrentUser() != null){
+                    //Log Out
+                    Log.d("NAVI", "onNavigationItemSelected: LOGOUT?? ");
+                    FirebaseAuth.getInstance().signOut();
+                    finish();
+                    startActivity(getIntent());
+                } else {
+                    //Log In
+                    FirebaseHelper.GoToLogin(getApplicationContext());
+                }
                 break;
 
             case R.id.nav_getride:
