@@ -84,7 +84,6 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
         setContentView(R.layout.activity_main);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-
         //NavigationDrawer
         drawer =  findViewById(R.id.drawer_layout);
         navigationView =  findViewById(R.id.nav_view);
@@ -147,7 +146,6 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
             startActivity(startIntro);
             getPreferences(MODE_PRIVATE).edit().putBoolean(tutorialKey, false).apply();
         }
-
 
         //findViewById(R.id.main_btnGetRide).setOnClickListener(this);
         //findViewById(R.id.main_btnOfferRide).setOnClickListener(this);
@@ -384,6 +382,7 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
         Log.d("TAG", "initMainLayoutItems: ");
         ridesViewPager = findViewById(R.id.main_viewPager);
         fragmentPagerAdapter = new RidesViewPagerAdapter(getSupportFragmentManager());
+        fragmentPagerAdapter.notifyDataSetChanged();
         ridesViewPager.setAdapter(fragmentPagerAdapter);
         //page change listener is for header layout background color change
         ridesViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {

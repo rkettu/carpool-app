@@ -171,6 +171,8 @@
     <string name="main_activity_adapter_delete_booked_ride">You have canceled the booked trip</string>
     <string name="main_activity_adapter_delete_offered_ride">You have canceled the offered ride</string>
     <string name="get_ride_details_confirm_ride_msg">By confirming the booking of this trip you also accept all the terms of use related to the application</string>
+    <string name="no_participants">No participants</string>
+    <string name="no_rating">No rating</string>
 
 
 </resources>
