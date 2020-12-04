@@ -97,7 +97,7 @@ public class MainActivityRidesAdapter extends BaseAdapter {
                     constant.startLoadingDialog(context);
                     MainActivityRideDetails mainActivityRideDetails = new MainActivityRideDetails(context, new MainActivityRideDetailsInterface() {
                         @Override
-                        public void showDialog(AlertDialog alertDialog) {
+                        public void showDialog() {
                             constant.dismissLoadingDialog();
                         }
 

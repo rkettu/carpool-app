@@ -123,7 +123,7 @@ public class GetRideAdapter extends BaseAdapter {
                     constant.startLoadingDialog(context);
                     GetRideRideDetails getRideRideDetails = new GetRideRideDetails(context, new GetRideRideDetailsInterface() {
                         @Override
-                        public void showDialog(AlertDialog alertDialog) {
+                        public void showDialog() {
                             constant.dismissLoadingDialog();
                         }
 

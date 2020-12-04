@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
  */
 
 interface GetRideRideDetailsInterface {
-    void showDialog(AlertDialog alertDialog);
+    void showDialog();
     void whenDone();
     void whenFailed();
 }
@@ -54,6 +55,7 @@ public class GetRideRideDetails extends AsyncTask<Void, Void, Bitmap> {
                 wayPointsDialog, userNameDialog, distanceDialog, petsDialog, departureTxt, luggageTxt;
     private Button bookRideBtn;
     private ImageView profilePicture, closeDialogBtn;
+    private View dialogLayout;
     private Context context;
     private GetRideRideDetailsInterface getRideRideDetailsInterface;
     private ArrayList<RideUser> rideUserArrayList;
@@ -76,9 +78,8 @@ public class GetRideRideDetails extends AsyncTask<Void, Void, Bitmap> {
         //building the alert dialog and giving it layout.
         builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View dialogLayout = inflater.inflate(R.layout.dialog_get_ride_ride_details, null);
+        dialogLayout = inflater.inflate(R.layout.dialog_get_ride_ride_details, null);
 
-        builder.setView(dialogLayout);
         initDialogLayoutItems(dialogLayout, rideUserArrayList, position);
     }
 
@@ -135,9 +136,11 @@ public class GetRideRideDetails extends AsyncTask<Void, Void, Bitmap> {
         //show the dialog
         alertDialog.show();
         alertDialog.getWindow().setBackgroundDrawableResource(R.drawable.background_rating);
+        alertDialog.getWindow().setLayout(ConstraintLayout.LayoutParams.WRAP_CONTENT, (int) (context.getResources().getDisplayMetrics().heightPixels * 0.80));
+        alertDialog.setContentView(dialogLayout);
         if(getRideRideDetailsInterface != null)
         {
-            getRideRideDetailsInterface.showDialog(alertDialog);
+            getRideRideDetailsInterface.showDialog();
         }
     }
 
