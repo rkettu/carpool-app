@@ -103,6 +103,7 @@
     <string name="setridedetails_price_example">Price: </string>
     <string name="setridedetails_km_example"> per kilometer</string>
 
+    <string name="signup_header">Sign Up</string>
     <string name="signup_fname_hint">Firstname*</string>
     <string name="signup_lname_hint">Lastname*</string>
     <string name="signup_email_hint">Email*</string>
@@ -112,6 +113,7 @@
     <string name="signup_tos_checkbox_text">I accept the Terms of Service.</string>
     <string name="signup_tos_link">Terms of Services Here.</string>
     <string name="signup_signup_btn_text">Sign Up</string>
+
     <string name="ridedetailsdialog_book_ride_btn_text">Book ride</string>
     <string name="myalertdialog_title">Done!</string>
     <string name="myalertdialog_details">Great! Ride has been successfully created. Return to main menu by pressing OK.</string>

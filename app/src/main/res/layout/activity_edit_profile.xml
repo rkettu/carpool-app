@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".EditProfileActivity"
-    android:background="@drawable/background_login">
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -37,7 +37,8 @@
             android:layout_marginTop="50dp"
             android:onClick="pickImage"
             android:src="@drawable/ic_person_add_black_100dp"
-            app:civ_border_color="@color/white"
+            app:civ_border_color="@color/green"
+            app:civ_circle_background_color="@color/pastelGreen"
             app:civ_border_width="2dp"
             app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
             app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
@@ -47,30 +48,14 @@
             android:id="@+id/editprofile_textViewfName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/editprofile_first_name_text"
             android:paddingTop="24dp"
             android:paddingLeft="5dp"
-            android:textColor="@color/white"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="@string/editprofile_first_name_text"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
             app:layout_constraintEnd_toStartOf="@+id/editprofile_textViewlName"
-            app:layout_constraintTop_toBottomOf="@+id/editprofile_profile_image"
-            android:fontFamily="@font/montserrat_medium"  />
-
-        <EditText
-            android:id="@+id/editprofile_firstNameedit"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:hint="@string/editprofile_first_name_hint"
-            android:inputType="text"
-            android:maxLines="1"
-            android:text="fName"
-            android:textColor="@color/white"
-            android:textColorHint="@color/hintlog"
-            app:layout_constraintEnd_toStartOf="@+id/editprofile_lastNameedit"
-            app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
-            app:layout_constraintTop_toBottomOf="@+id/editprofile_textViewfName"
-            android:fontFamily="@font/open_sans_semibold"/>
+            app:layout_constraintTop_toBottomOf="@+id/editprofile_profile_image"/>
 
         <TextView
             android:id="@+id/editprofile_textViewlName"
@@ -79,110 +64,119 @@
             android:text="@string/editprofile_last_name_text"
             android:paddingTop="24dp"
             android:paddingLeft="5dp"
-            android:textColor="@color/white"
+            android:fontFamily="@font/montserrat_medium"
+            android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
             app:layout_constraintStart_toEndOf="@+id/editprofile_textViewfName"
-            app:layout_constraintTop_toBottomOf="@+id/editprofile_profile_image"
-            android:fontFamily="@font/montserrat_medium"/>
+            app:layout_constraintTop_toBottomOf="@+id/editprofile_profile_image"/>
+
+        <EditText
+            android:id="@+id/editprofile_firstNameedit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/editprofile_first_name_hint"
+            android:inputType="text"
+            android:maxLines="1"
+            android:text="fName"
+            android:textColorHint="@color/hintlog"
+            android:fontFamily="@font/open_sans_semibold"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/editprofile_lastNameedit"
+            app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
+            app:layout_constraintTop_toBottomOf="@+id/editprofile_textViewfName"/>
 
         <EditText
             android:id="@+id/editprofile_lastNameedit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
             android:hint="@string/editprofile_last_name_hint"
             android:inputType="text"
             android:maxLines="1"
             android:text="lName"
-            android:textColor="@color/white"
             android:textColorHint="@color/hintlog"
+            android:fontFamily="@font/open_sans_semibold"
+            android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
             app:layout_constraintStart_toEndOf="@+id/editprofile_firstNameedit"
-            app:layout_constraintTop_toBottomOf="@+id/editprofile_textViewlName"
-            android:fontFamily="@font/open_sans_semibold"/>
+            app:layout_constraintTop_toBottomOf="@+id/editprofile_textViewlName"/>
 
         <TextView
             android:id="@+id/editprofile_textViewEmail"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/editprofile_email_text"
-            android:textColor="@color/white"
             android:paddingTop="10dp"
             android:paddingLeft="5dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
             app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
-            app:layout_constraintTop_toBottomOf="@+id/editprofile_firstNameedit"
-            android:fontFamily="@font/montserrat_medium"/>
+            app:layout_constraintTop_toBottomOf="@+id/editprofile_firstNameedit"/>
 
         <EditText
             android:id="@+id/editprofile_emailedit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
             android:text="Email"
             android:hint="@string/editprofile_email_hint"
             android:inputType="text"
             android:maxLines="1"
-            android:textColor="@color/white"
             android:textColorHint="@color/hintlog"
-            app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
-            app:layout_constraintTop_toBottomOf="@+id/editprofile_textViewEmail"
+            android:fontFamily="@font/open_sans_semibold"
+            android:textSize="18sp"
             android:drawableStart="@drawable/ic_mail_outline_black_24dp"
             android:drawablePadding="16dp"
-            android:fontFamily="@font/open_sans_semibold"/>
+            app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
+            app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
+            app:layout_constraintTop_toBottomOf="@+id/editprofile_textViewEmail"/>
 
         <TextView
             android:id="@+id/editprofile_textViewPhoNum"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/editprofile_phone_text"
-            android:textColor="@color/white"
             android:paddingTop="10dp"
             android:paddingLeft="5dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
             app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
-            app:layout_constraintTop_toBottomOf="@+id/editprofile_emailedit"
-            android:fontFamily="@font/montserrat_medium"/>
+            app:layout_constraintTop_toBottomOf="@+id/editprofile_emailedit"/>
 
         <EditText
             android:id="@+id/editprofile_phoNumedit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
             android:text="phoNum"
             android:hint="@string/editprofile_phone_hint"
             android:maxLines="1"
             android:inputType="phone"
-            android:textColor="@color/white"
             android:textColorHint="@color/hintlog"
-            app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
-            app:layout_constraintTop_toBottomOf="@+id/editprofile_textViewPhoNum"
+            android:fontFamily="@font/open_sans_semibold"
+            android:textSize="18sp"
             android:drawableStart="@drawable/ic_call_black_24dp"
             android:drawablePadding="16dp"
-            android:fontFamily="@font/open_sans_semibold"/>
+            app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
+            app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
+            app:layout_constraintTop_toBottomOf="@+id/editprofile_textViewPhoNum"/>
 
         <TextView
             android:id="@+id/editprofile_textViewBio"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/editprofile_bio_text"
-            android:textColor="@color/white"
             android:paddingTop="10dp"
             android:paddingLeft="5dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
             app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
-            app:layout_constraintTop_toBottomOf="@+id/editprofile_phoNumedit"
-            android:fontFamily="@font/montserrat_medium"/>
+            app:layout_constraintTop_toBottomOf="@+id/editprofile_phoNumedit"/>
 
         <EditText
             android:id="@+id/editprofile_bioedit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
             android:inputType="textMultiLine"
             android:hint="@string/editprofile_bio_hint"
             android:maxLength="255"
@@ -196,7 +190,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
             app:layout_constraintTop_toBottomOf="@+id/editprofile_textViewBio"
-            android:background="@drawable/custom_edittext1"
+            android:background="@drawable/bg_round"
             android:fontFamily="@font/open_sans_regular"/>
 
         <Button
@@ -208,37 +202,37 @@
             android:textStyle="bold"
             android:textAllCaps="false"
             android:textColor="@color/pastelGreen"
+            android:fontFamily="@font/montserrat_medium"
+            android:textSize="20sp"
             android:layout_marginTop="10dp"
             app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
             app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
             app:layout_constraintTop_toBottomOf="@+id/editprofile_bioedit"
-            android:onClick="saveChanges"
-            android:fontFamily="@font/montserrat_medium" />
+            android:onClick="saveChanges"/>
 
         <TextView
             android:id="@+id/editprofile_textViewPassword"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/editprofile_change_password_text"
-            android:textColor="@color/white"
             android:paddingTop="24dp"
             android:paddingLeft="5dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
             app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
-            app:layout_constraintTop_toBottomOf="@+id/editprofile_saveProfileDetailButton"
-            android:fontFamily="@font/montserrat_medium" />
+            app:layout_constraintTop_toBottomOf="@+id/editprofile_saveProfileDetailButton"/>
 
         <EditText
             android:id="@+id/editprofile_oldPassedit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
             android:hint="@string/editprofile_old_password_hint"
             android:fontFamily="@font/open_sans_regular"
             android:maxLines="1"
             android:inputType="textPassword"
-            android:textColor="@color/white"
             android:textColorHint="@color/hintlog"
+            android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
             app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
             app:layout_constraintTop_toBottomOf="@+id/editprofile_textViewPassword" />
@@ -247,13 +241,12 @@
             android:id="@+id/editprofile_passedit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
             android:hint="@string/editprofile_new_password_hint"
             android:fontFamily="@font/open_sans_regular"
             android:maxLines="1"
             android:inputType="textPassword"
-            android:textColor="@color/white"
             android:textColorHint="@color/hintlog"
+            android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
             app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
             app:layout_constraintTop_toBottomOf="@+id/editprofile_oldPassedit" />
@@ -263,13 +256,12 @@
             android:id="@+id/editprofile_passtwoedit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
             android:hint="@string/editprofile_confirm_password_hint"
             android:fontFamily="@font/open_sans_regular"
             android:maxLines="1"
             android:inputType="textPassword"
-            android:textColor="@color/white"
             android:textColorHint="@color/hintlog"
+            android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
             app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
             app:layout_constraintTop_toBottomOf="@+id/editprofile_passedit" />
@@ -283,12 +275,12 @@
             android:textStyle="bold"
             android:textAllCaps="false"
             android:textColor="@color/pastelGreen"
+            android:fontFamily="@font/montserrat_medium"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="50dp"
             app:layout_constraintEnd_toStartOf="@+id/editprofile_guideline_right"
             app:layout_constraintStart_toStartOf="@+id/editprofile_guideline_left"
-            app:layout_constraintTop_toBottomOf="@+id/editprofile_passtwoedit"
-            android:fontFamily="@font/montserrat_medium" />
+            app:layout_constraintTop_toBottomOf="@+id/editprofile_passtwoedit"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

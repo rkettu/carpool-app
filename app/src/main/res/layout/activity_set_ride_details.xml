@@ -38,7 +38,7 @@
             app:layout_constraintGuide_percent="0.5"/>
 
         <TextView
-            android:id="@+id/setRideDetails_textView_otsikko"
+            android:id="@+id/setRideDetails_textView_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
@@ -62,7 +62,7 @@
             android:textSize="25sp"
             android:fontFamily="@font/montserrat_medium"
             android:textColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@id/setRideDetails_textView_otsikko"/>
+            app:layout_constraintTop_toBottomOf="@id/setRideDetails_textView_header"/>
 
         <EditText
             android:id="@+id/setRideDetails_editText_date"
