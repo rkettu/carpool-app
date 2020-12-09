@@ -71,6 +71,7 @@
     <string name="setride_location_button_positive">Mene asetuksiin</string>
     <string name="setride_location_button_negative">Peruuta</string>
 
+    <string name="signup_header">Luo Käyttäjä</string>
     <string name="signup_tos_link">Käyttöehdot täällä</string>
     <string name="signup_tos_checkbox_text">Hyväksyn käyttöehdot.</string>
     <string name="signup_signup_btn_text">Luo tunnukset</string>
