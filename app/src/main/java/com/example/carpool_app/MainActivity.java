@@ -76,7 +76,6 @@ public class MainActivity extends FragmentActivity implements NavigationView.OnN
         setContentView(R.layout.activity_main);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-
         //NavigationDrawer
         drawer =  findViewById(R.id.drawer_layout);
         navigationView =  findViewById(R.id.nav_view);

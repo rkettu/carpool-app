@@ -49,6 +49,7 @@ public class Mailer {
         Send(queue, jsonBody, url);
     }
 
+
     // "User " + fname + " has left your ride " + rideStartDestination + " on " + rideDate;
     public static void SendUserJoinedEmail(Context context, String targetEmail, String fname, String rideStartDestination, String rideDate)
     {
