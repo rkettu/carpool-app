@@ -143,7 +143,7 @@ public class SignUpActivity extends AppCompatActivity {
                      */
                     // Moving to edit profile activity...
                     Intent i = new Intent(getApplicationContext(), EditProfileActivity.class);
-                    i.putExtra("USERINFO", user);
+                    i.putExtra("JOKUKEY", user);
                     startActivity(i);
 
                 } else /* failed to create user */ {
